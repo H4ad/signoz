@@ -19,6 +19,7 @@ import { ROLES } from 'types/roles';
 
 import RightContainer, { RightContainerProps } from '../index';
 import { timeItems, timePreferance, timePreferenceType } from '../timeItems';
+import { vi } from 'vitest';
 
 const mockStore = configureStore([thunk]);
 const createMockStore = (): ReturnType<typeof mockStore> =>
@@ -107,13 +108,13 @@ const render = (ui: React.ReactElement): ReturnType<typeof rtlRender> =>
 	);
 
 // eslint-disable-next-line sonarjs/no-duplicate-string
-jest.mock('hooks/queryBuilder/useCreateAlerts', () => ({
+vi.mock('hooks/queryBuilder/useCreateAlerts', () => ({
 	__esModule: true,
-	default: jest.fn(() => jest.fn()),
+	default: vi.fn(() => vi.fn()),
 }));
 
-jest.mock('lucide-react', () => ({
-	...jest.requireActual('lucide-react'),
+vi.mock('lucide-react', async () => ({
+	...(await vi.importActual('lucide-react')),
 	ConciergeBell: (): JSX.Element => <svg data-testid="lucide-concierge-bell" />,
 	SquareArrowOutUpRight: (): JSX.Element => (
 		<svg data-testid="lucide-square-arrow-out-up-right" />
@@ -124,55 +125,55 @@ jest.mock('lucide-react', () => ({
 describe('RightContainer - Alerts Section', () => {
 	const defaultProps: RightContainerProps = {
 		title: 'Test Widget',
-		setTitle: jest.fn(),
+		setTitle: vi.fn(),
 		description: 'Test Description',
-		setDescription: jest.fn(),
+		setDescription: vi.fn(),
 		opacity: '1',
-		setOpacity: jest.fn(),
+		setOpacity: vi.fn(),
 		selectedNullZeroValue: '',
-		setSelectedNullZeroValue: jest.fn(),
+		setSelectedNullZeroValue: vi.fn(),
 		selectedGraph: PANEL_TYPES.TIME_SERIES,
-		setSelectedTime: jest.fn(),
+		setSelectedTime: vi.fn(),
 		selectedTime: timeItems[0] as timePreferance,
 		yAxisUnit: '',
 		stackedBarChart: false,
-		setStackedBarChart: jest.fn(),
+		setStackedBarChart: vi.fn(),
 		bucketWidth: 0,
 		bucketCount: 0,
 		combineHistogram: false,
-		setCombineHistogram: jest.fn(),
-		setBucketWidth: jest.fn(),
-		setBucketCount: jest.fn(),
-		setYAxisUnit: jest.fn(),
+		setCombineHistogram: vi.fn(),
+		setBucketWidth: vi.fn(),
+		setBucketCount: vi.fn(),
+		setYAxisUnit: vi.fn(),
 		decimalPrecision: 2 as const,
-		setDecimalPrecision: jest.fn(),
-		setGraphHandler: jest.fn(),
+		setDecimalPrecision: vi.fn(),
+		setGraphHandler: vi.fn(),
 		thresholds: [],
-		setThresholds: jest.fn(),
+		setThresholds: vi.fn(),
 		selectedWidget: mockWidget,
 		isFillSpans: false,
-		setIsFillSpans: jest.fn(),
+		setIsFillSpans: vi.fn(),
 		softMin: null,
 		softMax: null,
 		columnUnits: {},
-		setColumnUnits: jest.fn(),
-		setSoftMin: jest.fn(),
-		setSoftMax: jest.fn(),
+		setColumnUnits: vi.fn(),
+		setSoftMin: vi.fn(),
+		setSoftMax: vi.fn(),
 		isLogScale: false,
-		setIsLogScale: jest.fn(),
+		setIsLogScale: vi.fn(),
 		legendPosition: LegendPosition.BOTTOM,
-		setLegendPosition: jest.fn(),
+		setLegendPosition: vi.fn(),
 		customLegendColors: {},
-		setCustomLegendColors: jest.fn(),
+		setCustomLegendColors: vi.fn(),
 		queryResponse: undefined,
 		contextLinks: { linksData: [] },
-		setContextLinks: jest.fn(),
+		setContextLinks: vi.fn(),
 		enableDrillDown: false,
 		isNewDashboard: false,
 	};
 
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	});
 
 	it('renders alerts section for TIME_SERIES panel type', () => {
@@ -193,10 +194,9 @@ describe('RightContainer - Alerts Section', () => {
 	});
 
 	it('calls onCreateAlertsHandler when alerts section is clicked', async () => {
-		const mockCreateAlertsHandler = jest.fn();
-		const useCreateAlerts = jest.requireMock('hooks/queryBuilder/useCreateAlerts')
-			.default;
-		useCreateAlerts.mockReturnValue(mockCreateAlertsHandler);
+		const mockCreateAlertsHandler = vi.fn();
+		const useCreateAlerts = await vi.importMock<any>('hooks/queryBuilder/useCreateAlerts');
+		useCreateAlerts.default.mockReturnValue(mockCreateAlertsHandler);
 
 		render(<RightContainer {...defaultProps} />);
 
@@ -208,13 +208,12 @@ describe('RightContainer - Alerts Section', () => {
 		expect(mockCreateAlertsHandler).toHaveBeenCalledTimes(1);
 	});
 
-	it('passes correct parameters to useCreateAlerts hook', () => {
-		const useCreateAlerts = jest.requireMock('hooks/queryBuilder/useCreateAlerts')
-			.default;
+	it('passes correct parameters to useCreateAlerts hook', async () => {
+		const useCreateAlerts = await vi.importMock('hooks/queryBuilder/useCreateAlerts');
 
 		render(<RightContainer {...defaultProps} />);
 
-		expect(useCreateAlerts).toHaveBeenCalledWith(mockWidget, 'panelView');
+		expect(useCreateAlerts.default).toHaveBeenCalledWith(mockWidget, 'panelView');
 	});
 
 	it('renders alerts section for VALUE panel type', () => {

@@ -9,19 +9,20 @@ import * as appHooks from 'providers/App/App';
 import { AlertTypes } from 'types/api/alerts/alertTypes';
 
 import AlertTypeSelection from '../AlertTypeSelection';
+import { vi } from 'vitest';
 
-const useUrlQuerySpy = jest.spyOn(useUrlQueryHooks, 'default');
-const useSafeNavigateSpy = jest.spyOn(navigateHooks, 'useSafeNavigate');
-const useAppContextSpy = jest.spyOn(appHooks, 'useAppContext');
+const useUrlQuerySpy = vi.spyOn(useUrlQueryHooks, 'default');
+const useSafeNavigateSpy = vi.spyOn(navigateHooks, 'useSafeNavigate');
+const useAppContextSpy = vi.spyOn(appHooks, 'useAppContext');
 
-const mockSetUrlQuery = jest.fn();
-const mockSafeNavigate = jest.fn();
-const mockToString = jest.fn();
-const mockGetUrlQuery = jest.fn();
+const mockSetUrlQuery = vi.fn();
+const mockSafeNavigate = vi.fn();
+const mockToString = vi.fn();
+const mockGetUrlQuery = vi.fn();
 
 describe('AlertTypeSelection', () => {
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		useAppContextSpy.mockReturnValue(getAppContextMockState());
 		useUrlQuerySpy.mockReturnValue(({
 			set: mockSetUrlQuery,

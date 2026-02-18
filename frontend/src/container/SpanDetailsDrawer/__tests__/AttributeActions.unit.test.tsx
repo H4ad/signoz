@@ -8,10 +8,11 @@ import {
 } from 'tests/test-utils';
 
 import AttributeActions from '../Attributes/AttributeActions';
+import { vi } from 'vitest';
 
 // Mock only Popover from antd to simplify hover/open behavior while keeping other components real
-jest.mock('antd', () => {
-	const actual = jest.requireActual('antd');
+vi.mock('antd', async () => {
+	const actual = await vi.importActual('antd');
 	const MockPopover = ({
 		content,
 		children,
@@ -32,8 +33,8 @@ jest.mock('antd', () => {
 });
 
 // Mock getAggregateKeys API used inside useTraceActions to resolve autocomplete keys
-jest.mock('api/queryBuilder/getAttributeKeys', () => ({
-	getAggregateKeys: jest.fn().mockResolvedValue({
+vi.mock('api/queryBuilder/getAttributeKeys', () => ({
+	getAggregateKeys: vi.fn().mockResolvedValue({
 		payload: {
 			attributeKeys: [
 				{
@@ -51,7 +52,7 @@ const record = { field: 'http.method', value: 'GET' };
 
 describe('AttributeActions (unit)', () => {
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	});
 
 	it('renders core action buttons (pin, filter in/out, more)', async () => {
@@ -73,7 +74,7 @@ describe('AttributeActions (unit)', () => {
 	});
 
 	it('applies "Filter for" and calls redirectWithQueryBuilderData with correct query', async () => {
-		const redirectWithQueryBuilderData = jest.fn();
+		const redirectWithQueryBuilderData = vi.fn();
 		const currentQuery = {
 			builder: {
 				queryData: [
@@ -121,7 +122,7 @@ describe('AttributeActions (unit)', () => {
 	});
 
 	it('applies "Filter out" and calls redirectWithQueryBuilderData with correct query', async () => {
-		const redirectWithQueryBuilderData = jest.fn();
+		const redirectWithQueryBuilderData = vi.fn();
 		const currentQuery = {
 			builder: {
 				queryData: [
@@ -169,7 +170,7 @@ describe('AttributeActions (unit)', () => {
 	});
 
 	it('opens more actions on hover and calls Group By handler; closes after click', async () => {
-		const redirectWithQueryBuilderData = jest.fn();
+		const redirectWithQueryBuilderData = vi.fn();
 		const currentQuery = {
 			builder: {
 				queryData: [

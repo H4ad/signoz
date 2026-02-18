@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import { useSearchParams } from 'react-router-dom-v5-compat';
@@ -11,34 +12,40 @@ import { render, screen } from 'tests/test-utils';
 import Summary from '../Summary';
 import { TreemapViewType } from '../types';
 
-jest.mock('d3-hierarchy', () => ({
-	stratify: jest.fn().mockReturnValue({
-		id: jest.fn().mockReturnValue({
-			parentId: jest.fn().mockReturnValue(
-				jest.fn().mockReturnValue({
-					sum: jest.fn().mockReturnValue({
-						descendants: jest.fn().mockReturnValue([]),
-						eachBefore: jest.fn().mockReturnValue([]),
+vi.mock('d3-hierarchy', () => ({
+	stratify: vi.fn().mockReturnValue({
+		id: vi.fn().mockReturnValue({
+			parentId: vi.fn().mockReturnValue(
+				vi.fn().mockReturnValue({
+					sum: vi.fn().mockReturnValue({
+						descendants: vi.fn().mockReturnValue([]),
+						eachBefore: vi.fn().mockReturnValue([]),
 					}),
 				}),
 			),
 		}),
 	}),
-	treemapBinary: jest.fn(),
+	treemapBinary: vi.fn(),
 }));
-jest.mock('react-use', () => ({
-	useWindowSize: jest.fn().mockReturnValue({ width: 1000, height: 1000 }),
+
+vi.mock('react-use', () => ({
+	useWindowSize: vi.fn().mockReturnValue({ width: 1000, height: 1000 }),
 }));
-jest.mock('react-router-dom-v5-compat', () => {
-	const actual = jest.requireActual('react-router-dom-v5-compat');
+
+vi.mock('react-router-dom-v5-compat', async () => {
+	const actual = await vi.importActual<any>('react-router-dom-v5-compat');
 	return {
 		...actual,
-		useSearchParams: jest.fn(),
+		useNavigate: vi.fn(),
+		useLocation: (): { pathname: string } => ({
+			pathname: `${ROUTES.METRICS_EXPLORER_BASE}`,
+		}),
+		useSearchParams: vi.fn(),
 		useNavigationType: (): any => 'PUSH',
 	};
 });
-jest.mock('react-router-dom', () => ({
-	...jest.requireActual('react-router-dom'),
+vi.mock('react-router-dom', async () => ({
+	...(await vi.importActual<any>('react-router-dom')),
 	useLocation: (): { pathname: string } => ({
 		pathname: `${ROUTES.METRICS_EXPLORER_BASE}`,
 	}),
@@ -46,7 +53,7 @@ jest.mock('react-router-dom', () => ({
 
 const queryClient = new QueryClient();
 const mockMetricName = 'test-metric';
-jest.spyOn(useGetMetricsListHooks, 'useGetMetricsList').mockReturnValue({
+vi.spyOn(useGetMetricsListHooks, 'useGetMetricsList').mockReturnValue({
 	data: {
 		payload: {
 			status: 'success',
@@ -68,7 +75,7 @@ jest.spyOn(useGetMetricsListHooks, 'useGetMetricsList').mockReturnValue({
 	isError: false,
 	isLoading: false,
 } as any);
-jest.spyOn(useGetMetricsTreeMapHooks, 'useGetMetricsTreeMap').mockReturnValue({
+vi.spyOn(useGetMetricsTreeMapHooks, 'useGetMetricsTreeMap').mockReturnValue({
 	data: {
 		payload: {
 			status: 'success',
@@ -92,11 +99,11 @@ jest.spyOn(useGetMetricsTreeMapHooks, 'useGetMetricsTreeMap').mockReturnValue({
 	isError: false,
 	isLoading: false,
 } as any);
-const mockSetSearchParams = jest.fn();
+const mockSetSearchParams = vi.fn();
 
 describe('Summary', () => {
 	it('persists inspect modal open state across page refresh', () => {
-		(useSearchParams as jest.Mock).mockReturnValue([
+		(useSearchParams as ReturnType<typeof vi.fn>).mockReturnValue([
 			new URLSearchParams({
 				isInspectModalOpen: 'true',
 				selectedMetricName: 'test-metric',
@@ -116,7 +123,7 @@ describe('Summary', () => {
 	});
 
 	it('persists metric details modal state across page refresh', () => {
-		(useSearchParams as jest.Mock).mockReturnValue([
+		(useSearchParams as ReturnType<typeof vi.fn>).mockReturnValue([
 			new URLSearchParams({
 				isMetricDetailsOpen: 'true',
 				selectedMetricName: mockMetricName,

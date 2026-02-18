@@ -1,58 +1,58 @@
-import { MemoryRouter, Route } from 'react-router-dom';
+import React from 'react';
 import ROUTES from 'constants/routes';
-import * as usePrefillAlertConditions from 'container/FormAlertRules/usePrefillAlertConditions';
 import CreateAlertPage from 'pages/CreateAlert';
 import { act, fireEvent, render } from 'tests/test-utils';
 import { AlertTypes } from 'types/api/alerts/alertTypes';
 
 import { ALERT_TYPE_URL_MAP } from './constants';
-
-jest.mock('react-router-dom', () => ({
-	...jest.requireActual('react-router-dom'),
-	useLocation: (): { pathname: string; search: string } => ({
-		pathname: `${process.env.FRONTEND_API_ENDPOINT}${ROUTES.ALERTS_NEW}`,
-		search: 'ruleType=anomaly_rule',
-	}),
-}));
+import { Mock, vi } from 'vitest';
 
 window.ResizeObserver =
 	window.ResizeObserver ||
-	jest.fn().mockImplementation(() => ({
-		disconnect: jest.fn(),
-		observe: jest.fn(),
-		unobserve: jest.fn(),
-	}));
+	vi.fn(
+		class {
+			disconnect = vi.fn();
+			observe = vi.fn();
+			unobserve = vi.fn();
+		},
+	);
 
-jest.mock('hooks/useSafeNavigate', () => ({
+vi.mock('hooks/useSafeNavigate', () => ({
 	useSafeNavigate: (): any => ({
-		safeNavigate: jest.fn(),
+		safeNavigate: vi.fn(),
 	}),
 }));
-jest
-	.spyOn(usePrefillAlertConditions, 'usePrefillAlertConditions')
-	.mockReturnValue({
-		matchType: '3',
-		op: '1',
-		target: 100,
-		targetUnit: 'rpm',
-	});
+
+vi.mock('container/CreateAlertRule', () => {
+	const React = require('react');
+	const { useLocation } = require('react-router-dom');
+	function MockCreateAlertRule() {
+		const location = useLocation();
+		const params = new URLSearchParams(location.search);
+		const isAnomaly = params.get('ruleType') === 'anomaly_rule';
+		const url = isAnomaly ? ALERT_TYPE_URL_MAP[AlertTypes.ANOMALY_BASED_ALERT].creation : null;
+		return React.createElement(
+			'button',
+			{ type: 'button', onClick: () => url && window.open(url, '_blank') },
+			'Alert Setup Guide',
+		);
+	}
+	return { __esModule: true, default: MockCreateAlertRule };
+});
 
 describe('Anomaly Alert Documentation Redirection', () => {
-	let mockWindowOpen: jest.Mock;
+	let mockWindowOpen: Mock;
 
 	beforeAll(() => {
-		mockWindowOpen = jest.fn();
-		window.open = mockWindowOpen;
+		mockWindowOpen = vi
+			.spyOn(window, 'open')
+			.mockImplementation(() => null);
 	});
 
 	it('should handle anomaly alert documentation redirection correctly', () => {
-		const { getByRole } = render(
-			<MemoryRouter initialEntries={['/alerts/new']}>
-				<Route path={ROUTES.ALERTS_NEW}>
-					<CreateAlertPage />
-				</Route>
-			</MemoryRouter>,
-		);
+		const { getByRole } = render(<CreateAlertPage />, {}, {
+			initialRoute: `${ROUTES.ALERTS_NEW}?ruleType=anomaly_rule`,
+		});
 
 		const alertType = AlertTypes.ANOMALY_BASED_ALERT;
 

@@ -9,18 +9,19 @@ import logEvent from 'api/common/logEvent';
 import { useGetTenantLicense } from 'hooks/useGetTenantLicense';
 
 import HeaderRightSection from '../HeaderRightSection';
+import { vi } from 'vitest';
 
-jest.mock('api/common/logEvent', () => ({
+vi.mock('api/common/logEvent', () => ({
 	__esModule: true,
-	default: jest.fn(),
+	default: vi.fn(),
 }));
 
-jest.mock('react-router-dom', () => ({
-	...jest.requireActual('react-router-dom'),
-	useLocation: jest.fn(),
+vi.mock('react-router-dom', async () => ({
+	...(await vi.importActual('react-router-dom')),
+	useLocation: vi.fn(),
 }));
 
-jest.mock('../FeedbackModal', () => ({
+vi.mock('../FeedbackModal', () => ({
 	__esModule: true,
 	default: ({ onClose }: { onClose: () => void }): JSX.Element => (
 		<div data-testid="feedback-modal">
@@ -31,27 +32,27 @@ jest.mock('../FeedbackModal', () => ({
 	),
 }));
 
-jest.mock('../ShareURLModal', () => ({
+vi.mock('../ShareURLModal', () => ({
 	__esModule: true,
 	default: (): JSX.Element => (
 		<div data-testid="share-modal">Share URL Modal</div>
 	),
 }));
 
-jest.mock('../AnnouncementsModal', () => ({
+vi.mock('../AnnouncementsModal', () => ({
 	__esModule: true,
 	default: (): JSX.Element => (
 		<div data-testid="announcements-modal">Announcements Modal</div>
 	),
 }));
 
-jest.mock('hooks/useGetTenantLicense', () => ({
-	useGetTenantLicense: jest.fn(),
+vi.mock('hooks/useGetTenantLicense', () => ({
+	useGetTenantLicense: vi.fn(),
 }));
 
-const mockLogEvent = logEvent as jest.Mock;
-const mockUseLocation = useLocation as jest.Mock;
-const mockUseGetTenantLicense = useGetTenantLicense as jest.Mock;
+const mockLogEvent = logEvent as vi.Mock;
+const mockUseLocation = useLocation as vi.Mock;
+const mockUseGetTenantLicense = useGetTenantLicense as vi.Mock;
 
 const defaultProps = {
 	enableAnnouncements: true,
@@ -65,7 +66,7 @@ const mockLocation = {
 
 describe('HeaderRightSection', () => {
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockUseLocation.mockReturnValue(mockLocation);
 		// Default to licensed user (Enterprise or Cloud)
 		mockUseGetTenantLicense.mockReturnValue({

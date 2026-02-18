@@ -1,5 +1,6 @@
 /* eslint-disable sonarjs/no-identical-functions */
 /* eslint-disable sonarjs/no-duplicate-string */
+import { vi } from 'vitest';
 import {
 	fireEvent,
 	render,
@@ -16,24 +17,24 @@ import {
 import VariableItem from './VariableItem';
 
 // Mock modules
-jest.mock('api/dashboard/variables/dashboardVariablesQuery', () => ({
+vi.mock('api/dashboard/variables/dashboardVariablesQuery', () => ({
 	__esModule: true,
-	default: jest.fn().mockResolvedValue({
+	default: vi.fn().mockResolvedValue({
 		payload: {
 			variableValues: ['value1', 'value2', 'value3'],
 		},
 	}),
 }));
 
-jest.mock('uuid', () => ({
-	v4: jest.fn().mockReturnValue('test-uuid'),
+vi.mock('uuid', () => ({
+	v4: vi.fn().mockReturnValue('test-uuid'),
 }));
 
 // Mock functions
-const onCancel = jest.fn();
-const onSave = jest.fn();
-const validateName = jest.fn(() => true);
-const validateAttributeKey = jest.fn(() => true);
+const onCancel = vi.fn();
+const onSave = vi.fn();
+const validateName = vi.fn((): boolean => true);
+const validateAttributeKey = vi.fn((): boolean => true);
 
 // Mode constant
 const VARIABLE_MODE = 'ADD';
@@ -154,7 +155,7 @@ describe('VariableItem Component', () => {
 	});
 
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	});
 
 	test('renders without crashing', () => {
@@ -169,7 +170,7 @@ describe('VariableItem Component', () => {
 	describe('Variable Name Validation', () => {
 		test('shows error when variable name already exists', () => {
 			// Set validateName to return false (name exists)
-			const mockValidateName = jest.fn().mockReturnValue(false);
+			const mockValidateName = vi.fn().mockReturnValue(false);
 
 			renderVariableItem({ ...basicVariableData, name: '' }, {}, mockValidateName);
 
@@ -185,7 +186,7 @@ describe('VariableItem Component', () => {
 
 		test('allows save when current variable name is used', () => {
 			// Mock validate to return false for all other names but true for own name
-			const mockValidateName = jest
+			const mockValidateName = vi
 				.fn()
 				.mockImplementation((name) => name === TEST_VAR_NAMES.VAR1);
 
@@ -245,7 +246,7 @@ describe('VariableItem Component', () => {
 	describe('Dynamic Variable Attribute Key Validation', () => {
 		test('shows error when attribute key already exists', async () => {
 			// Mock validateAttributeKey to return false (attribute key exists)
-			const mockValidateAttributeKey = jest.fn().mockReturnValue(false);
+			const mockValidateAttributeKey = vi.fn().mockReturnValue(false);
 
 			// Create a dynamic variable
 			const dynamicVariable: IDashboardVariable = {
@@ -281,7 +282,7 @@ describe('VariableItem Component', () => {
 
 		test('allows saving when attribute key is unique', async () => {
 			// Mock validateAttributeKey to return true (attribute key is unique)
-			const mockValidateAttributeKey = jest.fn().mockReturnValue(true);
+			const mockValidateAttributeKey = vi.fn().mockReturnValue(true);
 
 			// Create a dynamic variable
 			const dynamicVariable: IDashboardVariable = {
@@ -319,7 +320,7 @@ describe('VariableItem Component', () => {
 
 		test('allows same attribute key for current variable being edited', async () => {
 			// Mock validateAttributeKey to return true for same variable
-			const mockValidateAttributeKey = jest.fn().mockImplementation(
+			const mockValidateAttributeKey = vi.fn().mockImplementation(
 				(attributeKey, currentVariableId) =>
 					// Allow if it's the same variable ID
 					currentVariableId === TEST_VAR_IDS.VAR1,
@@ -352,7 +353,7 @@ describe('VariableItem Component', () => {
 
 		test('does not validate attribute key for non-dynamic variables', async () => {
 			// Mock validateAttributeKey to return false (would show error for dynamic)
-			const mockValidateAttributeKey = jest.fn().mockReturnValue(false);
+			const mockValidateAttributeKey = vi.fn().mockReturnValue(false);
 
 			// Create a non-dynamic variable
 			const queryVariable: IDashboardVariable = {

@@ -17,6 +17,7 @@ import { QueryRangePayload } from 'types/api/metrics/getQueryRange';
 import { IBuilderQuery } from 'types/api/queryBuilder/queryBuilderData';
 
 import EntityLogs from '../EntityLogs';
+import { vi } from 'vitest';
 
 // Custom verifyPayload function for EntityLogs that works with the correct payload structure
 const verifyEntityLogsPayload = ({
@@ -44,7 +45,7 @@ const verifyEntityLogsPayload = ({
 	return queryData;
 };
 
-jest.mock(
+vi.mock(
 	'components/OverlayScrollbar/OverlayScrollbar',
 	() =>
 		function MockOverlayScrollbar({

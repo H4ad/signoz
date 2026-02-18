@@ -10,16 +10,17 @@ import { GetMetricQueryRange } from 'lib/dashboard/getQueryResults';
 import { IBuilderQuery } from 'types/api/queryBuilder/queryBuilderData';
 
 import DomainMetrics from './DomainMetrics';
+import { vi } from 'vitest';
 
 // Mock the API call
-jest.mock('lib/dashboard/getQueryResults', () => ({
-	GetMetricQueryRange: jest.fn(),
+vi.mock('lib/dashboard/getQueryResults', () => ({
+	GetMetricQueryRange: vi.fn(),
 }));
 
 // Mock ErrorState component
-jest.mock('./ErrorState', () => ({
+vi.mock('./ErrorState', () => ({
 	__esModule: true,
-	default: jest.fn(({ refetch }) => (
+	default: vi.fn(({ refetch }) => (
 		<div data-testid="error-state">
 			<button type="button" onClick={refetch} data-testid="retry-button">
 				Retry
@@ -77,7 +78,7 @@ describe('DomainMetrics - V5 Query Payload Tests', () => {
 				},
 			},
 		});
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	});
 
 	afterEach(() => {
@@ -93,7 +94,7 @@ describe('DomainMetrics - V5 Query Payload Tests', () => {
 
 	describe('1. V5 Query Payload with Filters', () => {
 		it('sends correct V5 payload structure with domain name filters', async () => {
-			(GetMetricQueryRange as jest.Mock).mockResolvedValue(mockSuccessResponse);
+			(GetMetricQueryRange as vi.Mock).mockResolvedValue(mockSuccessResponse);
 
 			renderComponent();
 
@@ -101,7 +102,7 @@ describe('DomainMetrics - V5 Query Payload Tests', () => {
 				expect(GetMetricQueryRange).toHaveBeenCalledTimes(1);
 			});
 
-			const [payload, version] = (GetMetricQueryRange as jest.Mock).mock.calls[0];
+			const [payload, version] = (GetMetricQueryRange as vi.Mock).mock.calls[0];
 
 			// Verify it's using V5
 			expect(version).toBe(ENTITY_VERSION_V5);
@@ -183,7 +184,7 @@ describe('DomainMetrics - V5 Query Payload Tests', () => {
 		});
 
 		it('includes custom filters in filter expressions', async () => {
-			(GetMetricQueryRange as jest.Mock).mockResolvedValue(mockSuccessResponse);
+			(GetMetricQueryRange as vi.Mock).mockResolvedValue(mockSuccessResponse);
 
 			const customFilters: IBuilderQuery['filters'] = {
 				items: [
@@ -220,7 +221,7 @@ describe('DomainMetrics - V5 Query Payload Tests', () => {
 				expect(GetMetricQueryRange).toHaveBeenCalled();
 			});
 
-			const [payload] = (GetMetricQueryRange as jest.Mock).mock.calls[0];
+			const [payload] = (GetMetricQueryRange as vi.Mock).mock.calls[0];
 			const queryData = payload.query.builder.queryData;
 
 			// Verify all queries include the custom filters
@@ -237,7 +238,7 @@ describe('DomainMetrics - V5 Query Payload Tests', () => {
 
 	describe('2. Data Display State', () => {
 		it('displays metrics when data is successfully loaded', async () => {
-			(GetMetricQueryRange as jest.Mock).mockResolvedValue(mockSuccessResponse);
+			(GetMetricQueryRange as vi.Mock).mockResolvedValue(mockSuccessResponse);
 
 			renderComponent();
 
@@ -277,7 +278,7 @@ describe('DomainMetrics - V5 Query Payload Tests', () => {
 				},
 			};
 
-			(GetMetricQueryRange as jest.Mock).mockResolvedValue(emptyResponse);
+			(GetMetricQueryRange as vi.Mock).mockResolvedValue(emptyResponse);
 
 			renderComponent();
 
@@ -294,7 +295,7 @@ describe('DomainMetrics - V5 Query Payload Tests', () => {
 
 	describe('4. Error State', () => {
 		it('displays error state when API call fails', async () => {
-			(GetMetricQueryRange as jest.Mock).mockRejectedValue(new Error('API Error'));
+			(GetMetricQueryRange as vi.Mock).mockRejectedValue(new Error('API Error'));
 
 			renderComponent();
 
@@ -307,7 +308,7 @@ describe('DomainMetrics - V5 Query Payload Tests', () => {
 
 		it('retries API call when retry button is clicked', async () => {
 			let callCount = 0;
-			(GetMetricQueryRange as jest.Mock).mockImplementation(() => {
+			(GetMetricQueryRange as vi.Mock).mockImplementation(() => {
 				callCount += 1;
 				if (callCount === 1) {
 					return Promise.reject(new Error('API Error'));

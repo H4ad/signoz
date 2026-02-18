@@ -6,6 +6,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { IDashboardVariable } from 'types/api/dashboard/getAll';
 
 import DynamicVariableSelection from '../DynamicVariableSelection';
+import { vi } from 'vitest';
 
 // Don't mock the components - use real ones
 
@@ -33,10 +34,10 @@ const mockQueryResult = {
 	dataUpdatedAt: 0,
 	errorUpdatedAt: 0,
 	failureCount: 0,
-	refetch: jest.fn(),
-	remove: jest.fn(),
-	fetchNextPage: jest.fn(),
-	fetchPreviousPage: jest.fn(),
+	refetch: vi.fn(),
+	remove: vi.fn(),
+	fetchNextPage: vi.fn(),
+	fetchPreviousPage: vi.fn(),
 	hasNextPage: false,
 	hasPreviousPage: false,
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -52,10 +53,10 @@ const mockApiResponse = {
 };
 
 // Mock scrollIntoView since it's not available in JSDOM
-window.HTMLElement.prototype.scrollIntoView = jest.fn();
+window.HTMLElement.prototype.scrollIntoView = vi.fn();
 
 describe('DynamicVariableSelection Component', () => {
-	const mockOnValueUpdate = jest.fn();
+	const mockOnValueUpdate = vi.fn();
 
 	const mockDynamicVariableData: IDashboardVariable = {
 		id: 'var1',
@@ -86,18 +87,18 @@ describe('DynamicVariableSelection Component', () => {
 	};
 
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockOnValueUpdate.mockClear();
 
 		// Mock useSelector
-		const useSelectorSpy = jest.spyOn(ReactRedux, 'useSelector');
+		const useSelectorSpy = vi.spyOn(ReactRedux, 'useSelector');
 		useSelectorSpy.mockReturnValue({
 			minTime: '2023-01-01T00:00:00Z',
 			maxTime: '2023-01-02T00:00:00Z',
 		});
 
 		// Mock useQuery with success state
-		const useQuerySpy = jest.spyOn(ReactQuery, 'useQuery');
+		const useQuerySpy = vi.spyOn(ReactQuery, 'useQuery');
 		useQuerySpy.mockReturnValue({
 			...mockQueryResult,
 			data: mockApiResponse,
@@ -154,7 +155,7 @@ describe('DynamicVariableSelection Component', () => {
 
 	it('shows loading state correctly', () => {
 		// Mock loading state
-		jest.spyOn(ReactQuery, 'useQuery').mockReturnValue({
+		vi.spyOn(ReactQuery, 'useQuery').mockReturnValue({
 			...mockQueryResult,
 			data: null,
 			isLoading: true,
@@ -188,7 +189,7 @@ describe('DynamicVariableSelection Component', () => {
 		const errorMessage = 'Failed to fetch data';
 
 		// Mock error state
-		jest.spyOn(ReactQuery, 'useQuery').mockReturnValue({
+		vi.spyOn(ReactQuery, 'useQuery').mockReturnValue({
 			...mockQueryResult,
 			data: null,
 			isLoading: false,

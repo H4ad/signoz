@@ -1,6 +1,7 @@
 import { DataTypes } from 'types/api/queryBuilder/queryAutocompleteResponse';
 
 import {
+import { vi } from 'vitest';
 	flattenObject,
 	getDataTypes,
 	getSanitizedLogBody,
@@ -292,7 +293,7 @@ describe('getSanitizedLogBody', () => {
 	it('should handle error cases and return fallback', () => {
 		// Mock console.error to avoid noise in tests
 		const originalConsoleError = console.error;
-		console.error = jest.fn();
+		console.error = vi.fn();
 
 		// Create a scenario that might cause an error
 		const input = 'Normal text';

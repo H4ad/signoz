@@ -3,11 +3,12 @@ import { server } from 'mocks-server/server';
 import { render, screen, userEvent } from 'tests/test-utils';
 
 import SpanLogs from '../SpanLogs';
+import { vi } from 'vitest';
 
 // Mock external dependencies
-jest.mock('hooks/queryBuilder/useQueryBuilder', () => ({
+vi.mock('hooks/queryBuilder/useQueryBuilder', () => ({
 	useQueryBuilder: (): any => ({
-		updateAllQueriesOperators: jest.fn().mockReturnValue({
+		updateAllQueriesOperators: vi.fn().mockReturnValue({
 			builder: {
 				queryData: [
 					{
@@ -31,15 +32,15 @@ jest.mock('hooks/queryBuilder/useQueryBuilder', () => ({
 }));
 
 // Mock window.open
-const mockWindowOpen = jest.fn();
+const mockWindowOpen = vi.fn();
 Object.defineProperty(window, 'open', {
 	writable: true,
 	value: mockWindowOpen,
 });
 
 // Mock Virtuoso to avoid complex virtualization
-jest.mock('react-virtuoso', () => ({
-	Virtuoso: jest.fn(({ data, itemContent }: any) => (
+vi.mock('react-virtuoso', () => ({
+	Virtuoso: vi.fn(({ data, itemContent }: any) => (
 		<div data-testid="virtuoso">
 			{data?.map((item: any, index: number) => (
 				<div key={item.id || index} data-testid={`log-item-${item.id}`}>
@@ -51,7 +52,7 @@ jest.mock('react-virtuoso', () => ({
 }));
 
 // Mock RawLogView component
-jest.mock(
+vi.mock(
 	'components/Logs/RawLogView',
 	() =>
 		function MockRawLogView({
@@ -76,28 +77,28 @@ jest.mock(
 );
 
 // Mock PreferenceContextProvider
-jest.mock('providers/preferences/context/PreferenceContextProvider', () => ({
+vi.mock('providers/preferences/context/PreferenceContextProvider', () => ({
 	PreferenceContextProvider: ({ children }: any): JSX.Element => (
 		<div>{children}</div>
 	),
 }));
 
 // Mock OverlayScrollbar
-jest.mock('components/OverlayScrollbar/OverlayScrollbar', () => ({
+vi.mock('components/OverlayScrollbar/OverlayScrollbar', () => ({
 	default: ({ children }: any): JSX.Element => (
 		<div data-testid="overlay-scrollbar">{children}</div>
 	),
 }));
 
 // Mock LogsLoading component
-jest.mock('container/LogsLoading/LogsLoading', () => ({
+vi.mock('container/LogsLoading/LogsLoading', () => ({
 	LogsLoading: function MockLogsLoading(): JSX.Element {
 		return <div data-testid="logs-loading">Loading logs...</div>;
 	},
 }));
 
 // Mock LogsError component
-jest.mock(
+vi.mock(
 	'container/LogsError/LogsError',
 	() =>
 		function MockLogsError(): JSX.Element {
@@ -121,13 +122,13 @@ const defaultProps = {
 	isLoading: false,
 	isError: false,
 	isFetching: false,
-	isLogSpanRelated: jest.fn().mockReturnValue(false),
-	handleExplorerPageRedirect: jest.fn(),
+	isLogSpanRelated: vi.fn().mockReturnValue(false),
+	handleExplorerPageRedirect: vi.fn(),
 };
 
 describe('SpanLogs', () => {
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockWindowOpen.mockClear();
 	});
 
@@ -162,7 +163,7 @@ describe('SpanLogs', () => {
 			<SpanLogs
 				// eslint-disable-next-line react/jsx-props-no-spreading
 				{...defaultProps}
-				emptyStateConfig={getEmptyLogsListConfig(jest.fn())}
+				emptyStateConfig={getEmptyLogsListConfig(vi.fn())}
 			/>,
 		);
 
@@ -194,7 +195,7 @@ describe('SpanLogs', () => {
 
 	it('should call handleExplorerPageRedirect when Log Explorer button is clicked', async () => {
 		const user = userEvent.setup({ pointerEventsCheck: 0 });
-		const mockHandleExplorerPageRedirect = jest.fn();
+		const mockHandleExplorerPageRedirect = vi.fn();
 
 		render(
 			<SpanLogs

@@ -1,11 +1,15 @@
-import { Router } from 'react-router-dom';
 import { act, renderHook } from '@testing-library/react';
 import { createMemoryHistory } from 'history';
+import { vi } from 'vitest';
+
+import { Router } from 'react-router-dom';
 
 import useUrlQuery from './useUrlQuery';
 
+vi.unmock('react-router-dom');
+
 describe('useUrlQuery', () => {
-	test('returns URLSearchParams object for the current URL search', () => {
+	test('returns URLSearchParams object for the current URL search', async () => {
 		const history = createMemoryHistory({
 			initialEntries: ['/test?param1=value1&param2=value2'],
 		});

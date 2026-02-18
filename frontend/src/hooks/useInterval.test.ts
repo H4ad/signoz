@@ -1,12 +1,13 @@
 import { act, renderHook } from '@testing-library/react';
 
 import useInterval from './useInterval';
+import { vi } from 'vitest';
 
-jest.useFakeTimers();
+vi.useFakeTimers();
 
 describe('useInterval', () => {
 	test('calls the callback with a given delay', () => {
-		const callback = jest.fn();
+		const callback = vi.fn();
 		const delay = 1000;
 
 		renderHook(() => useInterval(callback, delay));
@@ -14,40 +15,40 @@ describe('useInterval', () => {
 		expect(callback).toHaveBeenCalledTimes(0);
 
 		act(() => {
-			jest.advanceTimersByTime(delay);
+			vi.advanceTimersByTime(delay);
 		});
 
 		expect(callback).toHaveBeenCalledTimes(1);
 
 		act(() => {
-			jest.advanceTimersByTime(delay);
+			vi.advanceTimersByTime(delay);
 		});
 
 		expect(callback).toHaveBeenCalledTimes(2);
 	});
 
 	test('does not call the callback if not enabled', () => {
-		const callback = jest.fn();
+		const callback = vi.fn();
 		const delay = 1000;
 		const enabled = false;
 
 		renderHook(() => useInterval(callback, delay, enabled));
 
 		act(() => {
-			jest.advanceTimersByTime(delay);
+			vi.advanceTimersByTime(delay);
 		});
 
 		expect(callback).toHaveBeenCalledTimes(0);
 	});
 
 	test('cleans up the interval when unmounted', () => {
-		const callback = jest.fn();
+		const callback = vi.fn();
 		const delay = 1000;
 
 		const { unmount } = renderHook(() => useInterval(callback, delay));
 
 		act(() => {
-			jest.advanceTimersByTime(delay);
+			vi.advanceTimersByTime(delay);
 		});
 
 		expect(callback).toHaveBeenCalledTimes(1);
@@ -55,14 +56,14 @@ describe('useInterval', () => {
 		unmount();
 
 		act(() => {
-			jest.advanceTimersByTime(delay);
+			vi.advanceTimersByTime(delay);
 		});
 
 		expect(callback).toHaveBeenCalledTimes(1);
 	});
 
 	test('updates the interval when delay changes', () => {
-		const callback = jest.fn();
+		const callback = vi.fn();
 		const initialDelay = 1000;
 		const newDelay = 2000;
 
@@ -71,7 +72,7 @@ describe('useInterval', () => {
 		});
 
 		act(() => {
-			jest.advanceTimersByTime(initialDelay);
+			vi.advanceTimersByTime(initialDelay);
 		});
 
 		expect(callback).toHaveBeenCalledTimes(1);
@@ -79,13 +80,13 @@ describe('useInterval', () => {
 		rerender({ delay: newDelay });
 
 		act(() => {
-			jest.advanceTimersByTime(initialDelay);
+			vi.advanceTimersByTime(initialDelay);
 		});
 
 		expect(callback).toHaveBeenCalledTimes(1);
 
 		act(() => {
-			jest.advanceTimersByTime(newDelay - initialDelay);
+			vi.advanceTimersByTime(newDelay - initialDelay);
 		});
 
 		expect(callback).toHaveBeenCalledTimes(2);

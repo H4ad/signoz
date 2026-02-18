@@ -1,8 +1,9 @@
 import { act, renderHook } from '@testing-library/react';
 
 import { useShiftHoldOverlay } from '../useShiftHoldOverlay';
+import { vi } from 'vitest';
 
-jest.useFakeTimers();
+vi.useFakeTimers();
 
 function pressShift(target: EventTarget = window): void {
 	const event = new KeyboardEvent('keydown', {
@@ -24,7 +25,7 @@ function releaseShift(): void {
 
 describe('useShiftHoldOverlay', () => {
 	afterEach(() => {
-		jest.clearAllTimers();
+		vi.clearAllTimers();
 	});
 
 	it('shows overlay after holding Shift for 600ms', () => {
@@ -32,7 +33,7 @@ describe('useShiftHoldOverlay', () => {
 
 		act(() => {
 			pressShift();
-			jest.advanceTimersByTime(600);
+			vi.advanceTimersByTime(600);
 		});
 
 		expect(result.current).toBe(true);
@@ -43,9 +44,9 @@ describe('useShiftHoldOverlay', () => {
 
 		act(() => {
 			pressShift();
-			jest.advanceTimersByTime(300);
+			vi.advanceTimersByTime(300);
 			releaseShift();
-			jest.advanceTimersByTime(600);
+			vi.advanceTimersByTime(600);
 		});
 
 		expect(result.current).toBe(false);
@@ -56,7 +57,7 @@ describe('useShiftHoldOverlay', () => {
 
 		act(() => {
 			pressShift();
-			jest.advanceTimersByTime(600);
+			vi.advanceTimersByTime(600);
 		});
 
 		expect(result.current).toBe(true);
@@ -75,7 +76,7 @@ describe('useShiftHoldOverlay', () => {
 
 		act(() => {
 			pressShift();
-			jest.advanceTimersByTime(600);
+			vi.advanceTimersByTime(600);
 		});
 
 		expect(result.current).toBe(false);
@@ -89,7 +90,7 @@ describe('useShiftHoldOverlay', () => {
 
 		act(() => {
 			pressShift(input);
-			jest.advanceTimersByTime(600);
+			vi.advanceTimersByTime(600);
 		});
 
 		expect(result.current).toBe(false);
@@ -102,7 +103,7 @@ describe('useShiftHoldOverlay', () => {
 
 		act(() => {
 			pressShift();
-			jest.advanceTimersByTime(600);
+			vi.advanceTimersByTime(600);
 		});
 
 		expect(result.current).toBe(true);
@@ -119,7 +120,7 @@ describe('useShiftHoldOverlay', () => {
 
 		act(() => {
 			pressShift();
-			jest.advanceTimersByTime(600);
+			vi.advanceTimersByTime(600);
 		});
 
 		expect(result.current).toBe(true);
@@ -136,7 +137,7 @@ describe('useShiftHoldOverlay', () => {
 
 		act(() => {
 			pressShift();
-			jest.advanceTimersByTime(600);
+			vi.advanceTimersByTime(600);
 		});
 
 		expect(result.current).toBe(false);

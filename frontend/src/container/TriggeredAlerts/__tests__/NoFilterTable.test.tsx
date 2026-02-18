@@ -2,9 +2,10 @@ import { fireEvent, render, screen } from '@testing-library/react';
 
 import NoFilterTable from '../NoFilterTable';
 import { createAlert } from './mockUtils';
+import { vi } from 'vitest';
 
-jest.mock('providers/Timezone', () => ({
-	useTimezone: jest.requireActual('./mockUtils').useMockTimezone,
+vi.mock('providers/Timezone', async () => ({
+	useTimezone: (await vi.importActual('./mockUtils')).useMockTimezone,
 }));
 
 const allAlerts = [

@@ -5,6 +5,7 @@ import { render } from '@testing-library/react';
 import EditAction from 'container/PipelinePage/PipelineListsView/TableComponents/TableActions/EditAction';
 import i18n from 'ReactI18';
 import store from 'store';
+import { vi } from 'vitest';
 
 describe('PipelinePage container test', () => {
 	it('should render EditAction section', () => {
@@ -12,7 +13,7 @@ describe('PipelinePage container test', () => {
 			<MemoryRouter>
 				<Provider store={store}>
 					<I18nextProvider i18n={i18n}>
-						<EditAction isPipelineAction editAction={jest.fn()} />
+						<EditAction isPipelineAction editAction={vi.fn()} />
 					</I18nextProvider>
 				</Provider>
 			</MemoryRouter>,

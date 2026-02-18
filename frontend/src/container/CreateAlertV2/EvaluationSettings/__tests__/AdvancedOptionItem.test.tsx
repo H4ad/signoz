@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import AdvancedOptionItem from '../AdvancedOptionItem/AdvancedOptionItem';
+import { vi } from 'vitest';
 
 const TEST_INPUT_PLACEHOLDER = 'Test input';
 const TEST_TITLE = 'Test Title';
@@ -24,7 +25,7 @@ describe('AdvancedOptionItem', () => {
 	};
 
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	});
 
 	it('should render title, description and switch', () => {

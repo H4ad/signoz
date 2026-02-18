@@ -4,33 +4,34 @@ import ROUTES from 'constants/routes';
 import history from 'lib/history';
 import { rest, server } from 'mocks-server/server';
 import { render, screen, userEvent, waitFor } from 'tests/test-utils';
+import { MockedFunction, vi } from 'vitest';
 
 import ResetPassword from '../index';
 
 // Mock dependencies
-jest.mock('lib/history', () => ({
+vi.mock('lib/history', () => ({
 	__esModule: true,
 	default: {
-		push: jest.fn(),
+		push: vi.fn(),
 		location: {
 			search: '?token=reset-token-123',
 		},
 	},
 }));
 
-jest.mock('api/utils', () => ({
-	Logout: jest.fn(),
+vi.mock('api/utils', () => ({
+	Logout: vi.fn(),
 }));
 
-const mockSuccessNotification = jest.fn();
-const mockErrorNotification = jest.fn();
+const mockSuccessNotification = vi.fn();
+const mockErrorNotification = vi.fn();
 
 interface MockNotifications {
-	success: jest.MockedFunction<(...args: unknown[]) => void>;
-	error: jest.MockedFunction<(...args: unknown[]) => void>;
+	success: MockedFunction<(...args: unknown[]) => void>;
+	error: MockedFunction<(...args: unknown[]) => void>;
 }
 
-jest.mock('hooks/useNotifications', () => ({
+vi.mock('hooks/useNotifications', () => ({
 	useNotifications: (): { notifications: MockNotifications } => ({
 		notifications: {
 			success: mockSuccessNotification,
@@ -41,13 +42,11 @@ jest.mock('hooks/useNotifications', () => ({
 
 const RESET_PASSWORD_ENDPOINT = '*/resetPassword';
 
-const mockHistoryPush = history.push as jest.MockedFunction<
-	typeof history.push
->;
+const mockHistoryPush = history.push as MockedFunction<typeof history.push>;
 
 describe('ResetPassword Component', () => {
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockSuccessNotification.mockClear();
 		mockErrorNotification.mockClear();
 		window.history.pushState({}, '', '/password-reset?token=reset-token-123');

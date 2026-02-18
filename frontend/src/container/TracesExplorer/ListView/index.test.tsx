@@ -2,6 +2,7 @@ import { rest, server } from 'mocks-server/server';
 import { render, screen, waitFor } from 'tests/test-utils';
 
 import ListView from './index';
+import { vi } from 'vitest';
 
 // Helper to create error response
 const createErrorResponse = (
@@ -40,8 +41,8 @@ const createErrorHandler = (
 const renderListView = (
 	props: Record<string, unknown> = {},
 ): ReturnType<typeof render> => {
-	const setWarning = jest.fn();
-	const setIsLoadingQueries = jest.fn();
+	const setWarning = vi.fn();
+	const setIsLoadingQueries = vi.fn();
 	return render(
 		<ListView
 			isFilterApplied={false}
@@ -74,7 +75,7 @@ const verifyControlsVisibility = (): void => {
 
 describe('Traces ListView - Error and Empty States', () => {
 	afterEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	});
 
 	describe('Empty State', () => {

@@ -3,15 +3,16 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import RoutingPoliciesList from '../RoutingPolicyList';
 import { RoutingPolicyListItemProps } from '../types';
 import { getUseRoutingPoliciesMockData } from './testUtils';
+import { vi } from 'vitest';
 
 const useRoutingPolicesMockData = getUseRoutingPoliciesMockData();
-const mockHandlePolicyDetailsModalOpen = jest.fn();
-const mockHandleDeleteModalOpen = jest.fn();
-const mockRefetchRoutingPolicies = jest.fn();
+const mockHandlePolicyDetailsModalOpen = vi.fn();
+const mockHandleDeleteModalOpen = vi.fn();
+const mockRefetchRoutingPolicies = vi.fn();
 
-jest.mock('../RoutingPolicyListItem', () => ({
+vi.mock('../RoutingPolicyListItem', () => ({
 	__esModule: true,
-	default: jest.fn(({ routingPolicy }: RoutingPolicyListItemProps) => (
+	default: vi.fn(({ routingPolicy }: RoutingPolicyListItemProps) => (
 		<div data-testid="routing-policy-list-item">{routingPolicy.name}</div>
 	)),
 }));

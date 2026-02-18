@@ -1,4 +1,5 @@
 import { IConfigureServiceModalProps } from '../ConfigureServiceModal';
+import { vi } from 'vitest';
 
 const CLOUD_ACCOUNT_ID = '123456789012';
 
@@ -26,7 +27,7 @@ const accountsResponse = {
 
 const defaultModalProps: Omit<IConfigureServiceModalProps, 'initialConfig'> = {
 	isOpen: true,
-	onClose: jest.fn(),
+	onClose: vi.fn(),
 	serviceName: 'S3 Sync',
 	serviceId: 's3sync',
 	cloudAccountId: CLOUD_ACCOUNT_ID,

@@ -1,5 +1,6 @@
 /* eslint-disable sonarjs/no-duplicate-string */
 /* eslint-disable import/no-unresolved */
+import { vi } from 'vitest';
 import { negateOperator, OPERATORS } from 'constants/antlrQueryConstants';
 import {
 	BaseAutocompleteData,
@@ -19,7 +20,7 @@ import {
 
 describe('convertFiltersToExpression', () => {
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	});
 
 	it('should handle empty, null, and undefined inputs', () => {
@@ -977,7 +978,7 @@ describe('convertAggregationToExpression', () => {
 
 describe('removeKeysFromExpression', () => {
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	});
 
 	describe('Backward compatibility (removeOnlyVariableExpressions = false)', () => {
@@ -1197,7 +1198,7 @@ describe('removeKeysFromExpression', () => {
 
 describe('formatValueForExpression', () => {
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	});
 
 	describe('Variable values', () => {

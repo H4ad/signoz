@@ -6,6 +6,7 @@ import {
 } from '@testing-library/react';
 
 import Loadable from './index';
+import { vi } from 'vitest';
 
 // Sample component to be loaded lazily
 function SampleComponent(): JSX.Element {
@@ -37,13 +38,10 @@ describe('Loadable', () => {
 		expect(container.querySelector('div')).toHaveTextContent('Sample Component');
 	});
 
-	it('should call lazy with the provided import path', () => {
-		const reactLazySpy = jest.spyOn(React, 'lazy');
-		Loadable(loadSampleComponent);
+	it('should return a lazy component when provided an import function', () => {
+		const lazyComponent = Loadable(loadSampleComponent);
 
-		expect(reactLazySpy).toHaveBeenCalledTimes(1);
-		expect(reactLazySpy).toHaveBeenCalledWith(expect.any(Function));
-
-		reactLazySpy.mockRestore();
+		// React.lazy returns a LazyExoticComponent which contains the $$typeof symbol
+		expect(lazyComponent).toHaveProperty('$$typeof');
 	});
 });

@@ -12,31 +12,32 @@ import * as useTestAlertRuleHook from '../../../../hooks/alerts/useTestAlertRule
 import * as useUpdateAlertRuleHook from '../../../../hooks/alerts/useUpdateAlertRule';
 import { CreateAlertProvider } from '../../context';
 import CreateAlertHeader from '../CreateAlertHeader';
+import { vi } from 'vitest';
 
-const mockSafeNavigate = jest.fn();
-jest.spyOn(useSafeNavigateHook, 'useSafeNavigate').mockReturnValue({
+const mockSafeNavigate = vi.fn();
+vi.spyOn(useSafeNavigateHook, 'useSafeNavigate').mockReturnValue({
 	safeNavigate: mockSafeNavigate,
 });
 
-jest.spyOn(useCreateAlertRuleHook, 'useCreateAlertRule').mockReturnValue({
-	mutate: jest.fn(),
+vi.spyOn(useCreateAlertRuleHook, 'useCreateAlertRule').mockReturnValue({
+	mutate: vi.fn(),
 	isLoading: false,
 } as any);
-jest.spyOn(useTestAlertRuleHook, 'useTestAlertRule').mockReturnValue({
-	mutate: jest.fn(),
+vi.spyOn(useTestAlertRuleHook, 'useTestAlertRule').mockReturnValue({
+	mutate: vi.fn(),
 	isLoading: false,
 } as any);
-jest.spyOn(useUpdateAlertRuleHook, 'useUpdateAlertRule').mockReturnValue({
-	mutate: jest.fn(),
+vi.spyOn(useUpdateAlertRuleHook, 'useUpdateAlertRule').mockReturnValue({
+	mutate: vi.fn(),
 	isLoading: false,
 } as any);
 
-jest.mock('uplot', () => {
+vi.mock('uplot', () => {
 	const paths = {
-		spline: jest.fn(),
-		bars: jest.fn(),
+		spline: vi.fn(),
+		bars: vi.fn(),
 	};
-	const uplotMock = jest.fn(() => ({
+	const uplotMock = vi.fn(() => ({
 		paths,
 	}));
 	return {
@@ -45,8 +46,8 @@ jest.mock('uplot', () => {
 	};
 });
 
-jest.mock('react-router-dom', () => ({
-	...jest.requireActual('react-router-dom'),
+vi.mock('react-router-dom', async () => ({
+	...(await vi.importActual('react-router-dom')),
 	useLocation: (): { search: string } => ({
 		search: '',
 	}),

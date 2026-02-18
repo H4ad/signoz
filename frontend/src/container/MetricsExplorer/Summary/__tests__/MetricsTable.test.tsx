@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 import { fireEvent, render, screen } from '@testing-library/react';
@@ -35,24 +36,24 @@ const mockQueryFilters: TagFilter = {
 	op: 'AND',
 };
 
-jest.mock('react-router-dom-v5-compat', () => {
-	const actual = jest.requireActual('react-router-dom-v5-compat');
+vi.mock('react-router-dom-v5-compat', async () => {
+	const actual = await vi.importActual<any>('react-router-dom-v5-compat');
 	return {
 		...actual,
-		useSearchParams: jest.fn().mockReturnValue([{}, jest.fn()]),
+		useSearchParams: vi.fn().mockReturnValue([{}, vi.fn()]),
 		useNavigationType: (): any => 'PUSH',
 	};
 });
 describe('MetricsTable', () => {
 	beforeEach(() => {
-		jest
+		vi
 			.spyOn(useQueryBuilderOperationsHooks, 'useQueryOperations')
 			.mockReturnValue({
-				handleChangeQueryData: jest.fn(),
+				handleChangeQueryData: vi.fn(),
 			} as any);
 	});
 
-	jest
+	vi
 		.spyOn(useGetMetricsListFilterValues, 'useGetMetricsListFilterValues')
 		.mockReturnValue({
 			data: {
@@ -78,10 +79,10 @@ describe('MetricsTable', () => {
 						data={mockData}
 						pageSize={10}
 						currentPage={1}
-						onPaginationChange={jest.fn()}
-						setOrderBy={jest.fn()}
+						onPaginationChange={vi.fn()}
+						setOrderBy={vi.fn()}
 						totalCount={2}
-						openMetricDetails={jest.fn()}
+						openMetricDetails={vi.fn()}
 						queryFilters={mockQueryFilters}
 					/>
 				</Provider>
@@ -102,10 +103,10 @@ describe('MetricsTable', () => {
 						data={mockData}
 						pageSize={10}
 						currentPage={1}
-						onPaginationChange={jest.fn()}
-						setOrderBy={jest.fn()}
+						onPaginationChange={vi.fn()}
+						setOrderBy={vi.fn()}
 						totalCount={2}
-						openMetricDetails={jest.fn()}
+						openMetricDetails={vi.fn()}
 						queryFilters={mockQueryFilters}
 						isLoading
 					/>
@@ -126,10 +127,10 @@ describe('MetricsTable', () => {
 						data={[]}
 						pageSize={10}
 						currentPage={1}
-						onPaginationChange={jest.fn()}
-						setOrderBy={jest.fn()}
+						onPaginationChange={vi.fn()}
+						setOrderBy={vi.fn()}
 						totalCount={2}
-						openMetricDetails={jest.fn()}
+						openMetricDetails={vi.fn()}
 						queryFilters={mockQueryFilters}
 					/>
 				</Provider>
@@ -154,10 +155,10 @@ describe('MetricsTable', () => {
 						data={[]}
 						pageSize={10}
 						currentPage={1}
-						onPaginationChange={jest.fn()}
-						setOrderBy={jest.fn()}
+						onPaginationChange={vi.fn()}
+						setOrderBy={vi.fn()}
 						totalCount={2}
-						openMetricDetails={jest.fn()}
+						openMetricDetails={vi.fn()}
 						queryFilters={mockQueryFilters}
 					/>
 				</Provider>
@@ -173,7 +174,7 @@ describe('MetricsTable', () => {
 	});
 
 	it('calls openMetricDetails when row is clicked', () => {
-		const mockOpenMetricDetails = jest.fn();
+		const mockOpenMetricDetails = vi.fn();
 		render(
 			<MemoryRouter>
 				<Provider store={store}>
@@ -183,8 +184,8 @@ describe('MetricsTable', () => {
 						data={mockData}
 						pageSize={10}
 						currentPage={1}
-						onPaginationChange={jest.fn()}
-						setOrderBy={jest.fn()}
+						onPaginationChange={vi.fn()}
+						setOrderBy={vi.fn()}
 						totalCount={2}
 						openMetricDetails={mockOpenMetricDetails}
 						queryFilters={mockQueryFilters}
@@ -198,7 +199,7 @@ describe('MetricsTable', () => {
 	});
 
 	it('calls setOrderBy when column header is clicked', () => {
-		const mockSetOrderBy = jest.fn();
+		const mockSetOrderBy = vi.fn();
 		render(
 			<MemoryRouter>
 				<Provider store={store}>
@@ -208,10 +209,10 @@ describe('MetricsTable', () => {
 						data={mockData}
 						pageSize={10}
 						currentPage={1}
-						onPaginationChange={jest.fn()}
+						onPaginationChange={vi.fn()}
 						setOrderBy={mockSetOrderBy}
 						totalCount={2}
-						openMetricDetails={jest.fn()}
+						openMetricDetails={vi.fn()}
 						queryFilters={mockQueryFilters}
 					/>
 				</Provider>

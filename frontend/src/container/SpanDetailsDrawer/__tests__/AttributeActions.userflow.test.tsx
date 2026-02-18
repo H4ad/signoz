@@ -8,24 +8,25 @@ import MockQueryClientProvider from 'providers/test/MockQueryClientProvider';
 import { Span } from 'types/api/trace/getTraceV2';
 
 import SpanDetailsDrawer from '../SpanDetailsDrawer';
+import { vi } from 'vitest';
 
 // Mock external dependencies
-const mockRedirectWithQueryBuilderData = jest.fn();
+const mockRedirectWithQueryBuilderData = vi.fn();
 const mockNotifications = {
-	success: jest.fn(),
-	error: jest.fn(),
+	success: vi.fn(),
+	error: vi.fn(),
 };
-const mockSetCopy = jest.fn();
+const mockSetCopy = vi.fn();
 const mockQueryClient = {
-	fetchQuery: jest.fn(),
+	fetchQuery: vi.fn(),
 };
 
-jest.mock('uplot', () => {
+vi.mock('uplot', () => {
 	const paths = {
-		spline: jest.fn(),
-		bars: jest.fn(),
+		spline: vi.fn(),
+		bars: vi.fn(),
 	};
-	const uplotMock = jest.fn(() => ({
+	const uplotMock = vi.fn(() => ({
 		paths,
 	}));
 	return {
@@ -35,7 +36,7 @@ jest.mock('uplot', () => {
 });
 
 // Mock the hooks
-jest.mock('hooks/queryBuilder/useQueryBuilder', () => ({
+vi.mock('hooks/queryBuilder/useQueryBuilder', () => ({
 	useQueryBuilder: (): any => ({
 		currentQuery: {
 			builder: {
@@ -54,21 +55,21 @@ jest.mock('hooks/queryBuilder/useQueryBuilder', () => ({
 	}),
 }));
 
-jest.mock('hooks/useNotifications', () => ({
+vi.mock('hooks/useNotifications', () => ({
 	useNotifications: (): any => ({ notifications: mockNotifications }),
 }));
 
-jest.mock('react-use', () => ({
-	...jest.requireActual('react-use'),
+vi.mock('react-use', async () => ({
+	...(await vi.importActual('react-use')),
 	useCopyToClipboard: (): any => [{ value: '' }, mockSetCopy],
 }));
 
-jest.mock('react-query', () => ({
-	...jest.requireActual('react-query'),
+vi.mock('react-query', async () => ({
+	...(await vi.importActual('react-query')),
 	useQueryClient: (): any => mockQueryClient,
 }));
 
-jest.mock('@signozhq/sonner', () => ({ toast: jest.fn() }));
+vi.mock('@signozhq/sonner', () => ({ toast: vi.fn() }));
 
 // Mock the API response for getAggregateKeys
 const mockAggregateKeysResponse = {
@@ -91,7 +92,7 @@ const mockAggregateKeysResponse = {
 };
 
 beforeEach(() => {
-	jest.clearAllMocks();
+	vi.clearAllMocks();
 	mockQueryClient.fetchQuery.mockResolvedValue(mockAggregateKeysResponse);
 });
 
@@ -137,7 +138,7 @@ const renderSpanDetailsDrawer = (span: Span = createMockSpan()): any => {
 					<Route>
 						<SpanDetailsDrawer
 							isSpanDetailsDocked={false}
-							setIsSpanDetailsDocked={jest.fn()}
+							setIsSpanDetailsDocked={vi.fn()}
 							selectedSpan={span}
 							traceStartTime={span.timestamp}
 							traceEndTime={span.timestamp + span.durationNano}

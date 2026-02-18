@@ -1,6 +1,8 @@
 import { Provider, useSelector } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
+import type { Mock } from 'vitest';
 import { ENVIRONMENT } from 'constants/env';
 import { server } from 'mocks-server/server';
 import { rest } from 'msw';
@@ -8,7 +10,7 @@ import MockQueryClientProvider from 'providers/test/MockQueryClientProvider';
 import TimezoneProvider from 'providers/Timezone';
 import store from 'store';
 
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
 
 import * as appContextHooks from '../../../providers/App/App';
 import { LicenseEvent } from '../../../types/api/licensesV3/getActive';
@@ -19,18 +21,21 @@ import {
 	TAG_FROM_QUERY,
 } from './constants';
 
-jest.mock('hooks/useResourceAttribute', () =>
-	jest.fn(() => ({
+vi.mock('hooks/useResourceAttribute', () =>
+	vi.fn(() => ({
 		queries: [],
 	})),
 );
 
-jest.mock('react-redux', () => ({
-	...jest.requireActual('react-redux'),
-	useSelector: jest.fn(),
-}));
+vi.mock('react-redux', async () => {
+	const actual = await vi.importActual('react-redux');
+	return {
+		...actual,
+		useSelector: vi.fn(),
+	};
+});
 
-jest.spyOn(appContextHooks, 'useAppContext').mockReturnValue({
+vi.spyOn(appContextHooks, 'useAppContext').mockReturnValue({
 	user: {
 		role: 'admin',
 	},
@@ -76,11 +81,11 @@ const BASE_URL = ENVIRONMENT.baseURL;
 const listErrorsURL = `${BASE_URL}/api/v1/listErrors`;
 const countErrorsURL = `${BASE_URL}/api/v1/countErrors`;
 
-const postListErrorsSpy = jest.fn();
+const postListErrorsSpy = vi.fn();
 
 describe('Exceptions - All Errors', () => {
 	beforeEach(() => {
-		(useSelector as jest.Mock).mockReturnValue({
+		(useSelector as Mock).mockReturnValue({
 			maxTime: 1000,
 			minTime: 0,
 			loading: false,

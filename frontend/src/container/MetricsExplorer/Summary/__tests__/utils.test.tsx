@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { Color } from '@signozhq/design-tokens';
 import { render } from '@testing-library/react';
 import { MetricType } from 'api/metricsExplorer/getMetricsList';

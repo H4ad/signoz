@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { TraceData } from '../fixtures/TraceData';
 import { spanToTreeUtil } from '../spanToTree';
 

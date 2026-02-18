@@ -4,17 +4,18 @@ import { fireEvent, render, screen, within } from 'tests/test-utils';
 
 import OnboardingContainer from '..';
 import { OnboardingContextProvider } from '../context/OnboardingContext';
+import { vi } from 'vitest';
 
-jest.mock('react-markdown', () => jest.fn());
-jest.mock('rehype-raw', () => jest.fn());
+vi.mock('react-markdown', () => vi.fn());
+vi.mock('rehype-raw', () => vi.fn());
 
-const successNotification = jest.fn();
-jest.mock('hooks/useNotifications', () => ({
+const successNotification = vi.fn();
+vi.mock('hooks/useNotifications', () => ({
 	__esModule: true,
-	useNotifications: jest.fn(() => ({
+	useNotifications: vi.fn(() => ({
 		notifications: {
 			success: successNotification,
-			error: jest.fn(),
+			error: vi.fn(),
 		},
 	})),
 }));

@@ -8,9 +8,10 @@ import { Channels } from 'types/api/channels/getAll';
 
 import { CreateAlertProvider } from '../../context';
 import AlertThreshold from '../AlertThreshold';
+import { vi } from 'vitest';
 
 const mockChannels: Channels[] = [];
-const mockRefreshChannels = jest.fn();
+const mockRefreshChannels = vi.fn();
 const mockIsLoadingChannels = false;
 const mockIsErrorChannels = false;
 const mockProps = {
@@ -20,12 +21,12 @@ const mockProps = {
 	refreshChannels: mockRefreshChannels,
 };
 
-jest.mock('uplot', () => {
+vi.mock('uplot', () => {
 	const paths = {
-		spline: jest.fn(),
-		bars: jest.fn(),
+		spline: vi.fn(),
+		bars: vi.fn(),
 	};
-	const uplotMock: any = jest.fn(() => ({
+	const uplotMock: any = vi.fn(() => ({
 		paths,
 	}));
 	uplotMock.paths = paths;
@@ -33,7 +34,7 @@ jest.mock('uplot', () => {
 });
 
 // Mock the ThresholdItem component
-jest.mock('../ThresholdItem', () => ({
+vi.mock('../ThresholdItem', () => ({
 	__esModule: true,
 	default: function MockThresholdItem({
 		threshold,
@@ -62,7 +63,7 @@ jest.mock('../ThresholdItem', () => ({
 }));
 
 // Mock useQueryBuilder hook
-jest.mock('hooks/queryBuilder/useQueryBuilder', () => ({
+vi.mock('hooks/queryBuilder/useQueryBuilder', () => ({
 	useQueryBuilder: (): {
 		currentQuery: {
 			dataSource: string;
@@ -87,9 +88,9 @@ jest.mock('hooks/queryBuilder/useQueryBuilder', () => ({
 }));
 
 // Mock getAllChannels API
-jest.mock('api/channels/getAll', () => ({
+vi.mock('api/channels/getAll', () => ({
 	__esModule: true,
-	default: jest.fn(() =>
+	default: vi.fn(() =>
 		Promise.resolve({
 			data: [
 				{ id: '1', name: 'Email Channel' },
@@ -100,16 +101,16 @@ jest.mock('api/channels/getAll', () => ({
 }));
 
 // Mock alert format categories
-jest.mock('container/NewWidget/RightContainer/alertFomatCategories', () => ({
-	getCategoryByOptionId: jest.fn(() => ({ name: 'bytes' })),
-	getCategorySelectOptionByName: jest.fn(() => [
+vi.mock('container/NewWidget/RightContainer/alertFomatCategories', () => ({
+	getCategoryByOptionId: vi.fn(() => ({ name: 'bytes' })),
+	getCategorySelectOptionByName: vi.fn(() => [
 		{ label: 'Bytes', value: 'bytes' },
 		{ label: 'KB', value: 'kb' },
 	]),
 }));
 
-jest.mock('container/CreateAlertV2/utils', () => ({
-	...jest.requireActual('container/CreateAlertV2/utils'),
+vi.mock('container/CreateAlertV2/utils', async () => ({
+	...(await vi.importActual('container/CreateAlertV2/utils')),
 }));
 
 const TEST_STRINGS = {
@@ -150,7 +151,7 @@ const verifySelectRenders = (title: string): void => {
 
 describe('AlertThreshold', () => {
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	});
 
 	it('renders the main condition sentence', () => {

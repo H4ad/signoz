@@ -6,6 +6,7 @@ import { IDashboardVariable } from 'types/api/dashboard/getAll';
 import '@testing-library/jest-dom/extend-expect';
 
 import VariableItem from './VariableItem';
+import { vi } from 'vitest';
 
 const mockVariableData: IDashboardVariable = {
 	id: 'test_variable',
@@ -26,17 +27,17 @@ const mockCustomVariableData: IDashboardVariable = {
 	customValue: 'option1,option2,option3',
 };
 
-const mockOnValueUpdate = jest.fn();
+const mockOnValueUpdate = vi.fn();
 
 describe('VariableItem', () => {
-	let useEffectSpy: jest.SpyInstance;
+	let useEffectSpy: vi.SpyInstance;
 
 	beforeEach(() => {
-		useEffectSpy = jest.spyOn(React, 'useEffect');
+		useEffectSpy = vi.spyOn(React, 'useEffect');
 	});
 
 	afterEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		useEffectSpy.mockRestore();
 	});
 

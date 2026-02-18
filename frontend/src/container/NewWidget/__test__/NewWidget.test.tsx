@@ -23,7 +23,7 @@ import {
 } from 'tests/test-utils';
 
 import NewWidget from '..';
-import {
+import { vi } from 'vitest';
 	getDefaultWidgetData,
 	placeWidgetAtBottom,
 	placeWidgetBetweenRows,
@@ -54,29 +54,29 @@ const checkStackSeriesState = (
 const MOCK_SEARCH_PARAMS =
 	'?graphType=bar&widgetId=b473eef0-8eb5-4dd3-8089-c1817734084f&compositeQuery=%7B"id"%3A"f026c678-9abf-42af-a3dc-f73dc8cbb810"%2C"builder"%3A%7B"queryData"%3A%5B%7B"dataSource"%3A"metrics"%2C"queryName"%3A"A"%2C"aggregateOperator"%3A"count"%2C"aggregateAttribute"%3A%7B"id"%3A"----"%2C"dataType"%3A""%2C"key"%3A""%2C"type"%3A""%7D%2C"timeAggregation"%3A"rate"%2C"spaceAggregation"%3A"sum"%2C"filter"%3A%7B"expression"%3A""%7D%2C"aggregations"%3A%5B%7B"metricName"%3A""%2C"temporality"%3A""%2C"timeAggregation"%3A"count"%2C"spaceAggregation"%3A"sum"%2C"reduceTo"%3A"avg"%7D%5D%2C"functions"%3A%5B%5D%2C"filters"%3A%7B"items"%3A%5B%5D%2C"op"%3A"AND"%7D%2C"expression"%3A"A"%2C"disabled"%3Afalse%2C"stepInterval"%3Anull%2C"having"%3A%5B%5D%2C"limit"%3Anull%2C"orderBy"%3A%5B%5D%2C"groupBy"%3A%5B%5D%2C"legend"%3A""%2C"reduceTo"%3A"avg"%2C"source"%3A""%7D%5D%2C"queryFormulas"%3A%5B%5D%2C"queryTraceOperator"%3A%5B%5D%7D%2C"clickhouse_sql"%3A%5B%7B"name"%3A"A"%2C"legend"%3A""%2C"disabled"%3Afalse%2C"query"%3A""%7D%5D%2C"promql"%3A%5B%7B"name"%3A"A"%2C"query"%3A""%2C"legend"%3A""%2C"disabled"%3Afalse%7D%5D%2C"queryType"%3A"builder"%7D&relativeTime=30m';
 // Mocks
-jest.mock('uplot', () => ({
-	paths: { spline: jest.fn(), bars: jest.fn() },
-	default: jest.fn(() => ({ paths: { spline: jest.fn(), bars: jest.fn() } })),
+vi.mock('uplot', () => ({
+	paths: { spline: vi.fn(), bars: vi.fn() },
+	default: vi.fn(() => ({ paths: { spline: vi.fn(), bars: vi.fn() } })),
 }));
 
-jest.mock('react-router-dom', () => ({
-	...jest.requireActual('react-router-dom'),
+vi.mock('react-router-dom', async () => ({
+	...(await vi.importActual('react-router-dom')),
 	useLocation: (): { pathname: string; search: string } => ({
 		pathname: '',
 		search: MOCK_SEARCH_PARAMS,
 	}),
 }));
 
-jest.mock('hooks/useSafeNavigate', () => ({
-	useSafeNavigate: (): { safeNavigate: jest.Mock } => ({
-		safeNavigate: jest.fn(),
+vi.mock('hooks/useSafeNavigate', () => ({
+	useSafeNavigate: (): { safeNavigate: vi.Mock } => ({
+		safeNavigate: vi.fn(),
 	}),
 }));
 
-jest.mock('react-router-dom-v5-compat', () => ({
-	...jest.requireActual('react-router-dom-v5-compat'),
-	useSearchParams: jest.fn(),
-	useNavigationType: jest.fn(() => 'PUSH'),
+vi.mock('react-router-dom-v5-compat', async () => ({
+	...(await vi.importActual('react-router-dom-v5-compat')),
+	useSearchParams: vi.fn(),
+	useNavigationType: vi.fn(() => 'PUSH'),
 }));
 
 describe('placeWidgetAtBottom', () => {
@@ -304,9 +304,9 @@ describe('getDefaultWidgetData', () => {
 describe('Stacking bar in new panel', () => {
 	it('New panel should have stack bar - true by default', () => {
 		// Mock useSearchParams to return the expected values
-		(useSearchParams as jest.Mock).mockReturnValue([
+		(useSearchParams as vi.Mock).mockReturnValue([
 			new URLSearchParams(MOCK_SEARCH_PARAMS),
-			jest.fn(),
+			vi.fn(),
 		]);
 
 		const { container, getByText } = render(
@@ -343,15 +343,15 @@ describe('Stacking bar in new panel', () => {
 const STACKING_STATE_ATTR = 'data-stacking-state';
 
 describe('when switching to BAR panel type', () => {
-	jest.setTimeout(10000);
+	vi.setTimeout(10000);
 
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 
 		// Mock useSearchParams to return the expected values
-		(useSearchParams as jest.Mock).mockReturnValue([
+		(useSearchParams as vi.Mock).mockReturnValue([
 			new URLSearchParams(MOCK_SEARCH_PARAMS),
-			jest.fn(),
+			vi.fn(),
 		]);
 	});
 

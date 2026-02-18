@@ -19,7 +19,7 @@ import { SuccessResponseV2 } from 'types/api';
 import { GetSpanPercentilesResponseDataProps } from 'types/api/trace/getSpanPercentiles';
 
 import SpanDetailsDrawer from '../SpanDetailsDrawer';
-import {
+import { vi } from 'vitest';
 	expectedAfterFilterExpression,
 	expectedBeforeFilterExpression,
 	expectedSpanFilterExpression,
@@ -34,32 +34,32 @@ import {
 } from './mockData';
 
 // Get typed mocks
-const mockGetSpanPercentiles = jest.mocked(getSpanPercentiles);
-const mockGetUserPreference = jest.mocked(getUserPreference);
-const mockSafeNavigate = jest.fn();
+const mockGetSpanPercentiles = vi.mocked(getSpanPercentiles);
+const mockGetUserPreference = vi.mocked(getUserPreference);
+const mockSafeNavigate = vi.fn();
 
 // Mock external dependencies
-jest.mock('react-router-dom', () => ({
-	...jest.requireActual('react-router-dom'),
+vi.mock('react-router-dom', async () => ({
+	...(await vi.importActual('react-router-dom')),
 	useLocation: (): { pathname: string; search: string } => ({
 		pathname: `${ROUTES.TRACE_DETAIL}`,
 		search: 'trace_id=test-trace-id',
 	}),
 }));
 
-jest.mock('@signozhq/button', () => ({
+vi.mock('@signozhq/button', () => ({
 	Button: ({ children }: { children: React.ReactNode }): JSX.Element => (
 		<div>{children}</div>
 	),
 }));
 
-jest.mock('hooks/useSafeNavigate', () => ({
-	useSafeNavigate: (): { safeNavigate: jest.MockedFunction<() => void> } => ({
+vi.mock('hooks/useSafeNavigate', () => ({
+	useSafeNavigate: (): { safeNavigate: vi.MockedFunction<() => void> } => ({
 		safeNavigate: mockSafeNavigate,
 	}),
 }));
 
-const mockUpdateAllQueriesOperators = jest.fn().mockReturnValue({
+const mockUpdateAllQueriesOperators = vi.fn().mockReturnValue({
 	builder: {
 		queryData: [
 			{
@@ -81,9 +81,9 @@ const mockUpdateAllQueriesOperators = jest.fn().mockReturnValue({
 	queryType: 'builder',
 });
 
-jest.mock('hooks/queryBuilder/useQueryBuilder', () => ({
+vi.mock('hooks/queryBuilder/useQueryBuilder', () => ({
 	useQueryBuilder: (): {
-		updateAllQueriesOperators: jest.MockedFunction<() => any>;
+		updateAllQueriesOperators: vi.MockedFunction<() => any>;
 		currentQuery: any;
 	} => ({
 		updateAllQueriesOperators: mockUpdateAllQueriesOperators,
@@ -101,19 +101,19 @@ jest.mock('hooks/queryBuilder/useQueryBuilder', () => ({
 	}),
 }));
 
-const mockWindowOpen = jest.fn();
+const mockWindowOpen = vi.fn();
 Object.defineProperty(window, 'open', {
 	writable: true,
 	value: mockWindowOpen,
 });
 
 // Mock uplot to avoid rendering issues
-jest.mock('uplot', () => {
+vi.mock('uplot', () => {
 	const paths = {
-		spline: jest.fn(),
-		bars: jest.fn(),
+		spline: vi.fn(),
+		bars: vi.fn(),
 	};
-	const uplotMock = jest.fn(() => ({
+	const uplotMock = vi.fn(() => ({
 		paths,
 	}));
 	return {
@@ -122,15 +122,15 @@ jest.mock('uplot', () => {
 	};
 });
 
-jest.mock('lib/dashboard/getQueryResults', () => ({
-	GetMetricQueryRange: jest.fn(),
+vi.mock('lib/dashboard/getQueryResults', () => ({
+	GetMetricQueryRange: vi.fn(),
 }));
 
-jest.mock('lib/uPlotLib/utils/generateColor', () => ({
-	generateColor: jest.fn().mockReturnValue('#1f77b4'),
+vi.mock('lib/uPlotLib/utils/generateColor', () => ({
+	generateColor: vi.fn().mockReturnValue('#1f77b4'),
 }));
 
-jest.mock(
+vi.mock(
 	'container/SpanDetailsDrawer/Events/components/AttributeWithExpandablePopover',
 	() =>
 		// eslint-disable-next-line func-names, @typescript-eslint/explicit-function-return-type, react/display-name
@@ -164,18 +164,18 @@ jest.mock(
 );
 
 // Mock getSpanPercentiles API
-jest.mock('api/trace/getSpanPercentiles', () => ({
+vi.mock('api/trace/getSpanPercentiles', () => ({
 	__esModule: true,
-	default: jest.fn(),
+	default: vi.fn(),
 }));
 
 // Mock getUserPreference API
-jest.mock('api/v1/user/preferences/name/get', () => ({
+vi.mock('api/v1/user/preferences/name/get', () => ({
 	__esModule: true,
-	default: jest.fn(),
+	default: vi.fn(),
 }));
 
-jest.mock(
+vi.mock(
 	'components/OverlayScrollbar/OverlayScrollbar',
 	() =>
 		// eslint-disable-next-line func-names, @typescript-eslint/explicit-function-return-type, react/display-name
@@ -185,8 +185,8 @@ jest.mock(
 );
 
 // Mock Virtuoso to avoid complex virtualization
-jest.mock('react-virtuoso', () => ({
-	Virtuoso: jest.fn(
+vi.mock('react-virtuoso', () => ({
+	Virtuoso: vi.fn(
 		({
 			data,
 			itemContent,
@@ -206,7 +206,7 @@ jest.mock('react-virtuoso', () => ({
 }));
 
 // Mock RawLogView component
-jest.mock(
+vi.mock(
 	'components/Logs/RawLogView',
 	() =>
 		// eslint-disable-next-line func-names, @typescript-eslint/explicit-function-return-type, react/display-name
@@ -238,7 +238,7 @@ jest.mock(
 );
 
 // Mock PreferenceContextProvider
-jest.mock('providers/preferences/context/PreferenceContextProvider', () => ({
+vi.mock('providers/preferences/context/PreferenceContextProvider', () => ({
 	PreferenceContextProvider: ({
 		children,
 	}: {
@@ -272,10 +272,10 @@ const mockQueryBuilderContextValue = {
 	},
 	updateAllQueriesOperators: mockUpdateAllQueriesOperators,
 	panelType: 'list',
-	redirectWithQuery: jest.fn(),
-	handleRunQuery: jest.fn(),
-	handleStageQuery: jest.fn(),
-	resetQuery: jest.fn(),
+	redirectWithQuery: vi.fn(),
+	handleRunQuery: vi.fn(),
+	handleStageQuery: vi.fn(),
+	resetQuery: vi.fn(),
 };
 
 const renderSpanDetailsDrawer = (props = {}): void => {
@@ -283,7 +283,7 @@ const renderSpanDetailsDrawer = (props = {}): void => {
 		<QueryBuilderContext.Provider value={mockQueryBuilderContextValue as any}>
 			<SpanDetailsDrawer
 				isSpanDetailsDocked={false}
-				setIsSpanDetailsDocked={jest.fn()}
+				setIsSpanDetailsDocked={vi.fn()}
 				selectedSpan={mockSpan}
 				traceStartTime={1640995200000} // 2022-01-01 00:00:00 in milliseconds
 				traceEndTime={1640995260000} // 2022-01-01 00:01:00 in milliseconds
@@ -343,7 +343,7 @@ describe('SpanDetailsDrawer', () => {
 	let apiCallHistory: any = {};
 
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		apiCallHistory = {
 			span_logs: null,
 			before_logs: null,
@@ -357,7 +357,7 @@ describe('SpanDetailsDrawer', () => {
 		mockGetUserPreference.mockClear();
 
 		// Setup API call tracking
-		(GetMetricQueryRange as jest.Mock).mockImplementation((query) => {
+		(GetMetricQueryRange as vi.Mock).mockImplementation((query) => {
 			// Determine response based on v5 filter expressions
 			const filterExpression = (query as any)?.query?.builder?.queryData?.[0]
 				?.filter?.expression;
@@ -1094,12 +1094,12 @@ describe('SpanDetailsDrawer - Search Visibility User Flows', () => {
 	const SEARCH_PLACEHOLDER = 'Search for attribute...';
 
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockSafeNavigate.mockClear();
 		mockWindowOpen.mockClear();
 		mockUpdateAllQueriesOperators.mockClear();
 
-		(GetMetricQueryRange as jest.Mock).mockImplementation(() =>
+		(GetMetricQueryRange as vi.Mock).mockImplementation(() =>
 			Promise.resolve(mockEmptyLogsResponse),
 		);
 	});
@@ -1193,12 +1193,12 @@ describe('SpanDetailsDrawer - Search Visibility User Flows', () => {
 
 describe('SpanDetailsDrawer - Status Message Truncation User Flows', () => {
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockSafeNavigate.mockClear();
 		mockWindowOpen.mockClear();
 		mockUpdateAllQueriesOperators.mockClear();
 
-		(GetMetricQueryRange as jest.Mock).mockImplementation(() =>
+		(GetMetricQueryRange as vi.Mock).mockImplementation(() =>
 			Promise.resolve(mockEmptyLogsResponse),
 		);
 	});
@@ -1212,7 +1212,7 @@ describe('SpanDetailsDrawer - Status Message Truncation User Flows', () => {
 			<QueryBuilderContext.Provider value={mockQueryBuilderContextValue as any}>
 				<SpanDetailsDrawer
 					isSpanDetailsDocked={false}
-					setIsSpanDetailsDocked={jest.fn()}
+					setIsSpanDetailsDocked={vi.fn()}
 					selectedSpan={mockSpanWithLongStatusMessage}
 					traceStartTime={1640995200000}
 					traceEndTime={1640995260000}
@@ -1239,7 +1239,7 @@ describe('SpanDetailsDrawer - Status Message Truncation User Flows', () => {
 			<QueryBuilderContext.Provider value={mockQueryBuilderContextValue as any}>
 				<SpanDetailsDrawer
 					isSpanDetailsDocked={false}
-					setIsSpanDetailsDocked={jest.fn()}
+					setIsSpanDetailsDocked={vi.fn()}
 					selectedSpan={mockSpanWithLongStatusMessage}
 					traceStartTime={1640995200000}
 					traceEndTime={1640995260000}
@@ -1273,7 +1273,7 @@ describe('SpanDetailsDrawer - Status Message Truncation User Flows', () => {
 			<QueryBuilderContext.Provider value={mockQueryBuilderContextValue as any}>
 				<SpanDetailsDrawer
 					isSpanDetailsDocked={false}
-					setIsSpanDetailsDocked={jest.fn()}
+					setIsSpanDetailsDocked={vi.fn()}
 					selectedSpan={mockSpanWithShortStatusMessage}
 					traceStartTime={1640995200000}
 					traceEndTime={1640995260000}

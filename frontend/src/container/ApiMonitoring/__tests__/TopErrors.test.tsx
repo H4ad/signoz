@@ -6,13 +6,14 @@ import { DataSource } from 'types/common/queryBuilder';
 
 import TopErrors from '../Explorer/Domains/DomainDetails/TopErrors';
 import { getTopErrorsQueryPayload } from '../utils';
+import { vi } from 'vitest';
 
 // Mock the EndPointsDropDown component to avoid issues
-jest.mock(
+vi.mock(
 	'../Explorer/Domains/DomainDetails/components/EndPointsDropDown',
 	() => ({
 		__esModule: true,
-		default: jest.fn().mockImplementation(
+		default: vi.fn().mockImplementation(
 			({ setSelectedEndPointName }): JSX.Element => (
 				<div data-testid="endpoints-dropdown-mock">
 					<select
@@ -29,8 +30,8 @@ jest.mock(
 	}),
 );
 
-jest.mock('components/CeleryTask/useNavigateToExplorer', () => ({
-	useNavigateToExplorer: jest.fn(),
+vi.mock('components/CeleryTask/useNavigateToExplorer', () => ({
+	useNavigateToExplorer: vi.fn(),
 }));
 
 describe('TopErrors', () => {
@@ -66,10 +67,10 @@ describe('TopErrors', () => {
 	};
 
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 
 		// Mock useNavigateToExplorer
-		(useNavigateToExplorer as jest.Mock).mockReturnValue(jest.fn());
+		(useNavigateToExplorer as vi.Mock).mockReturnValue(vi.fn());
 
 		// Mock V5 API endpoint for top errors
 		server.use(
@@ -182,8 +183,8 @@ describe('TopErrors', () => {
 	});
 
 	it('handles row click correctly', async () => {
-		const navigateMock = jest.fn();
-		(useNavigateToExplorer as jest.Mock).mockReturnValue(navigateMock);
+		const navigateMock = vi.fn();
+		(useNavigateToExplorer as vi.Mock).mockReturnValue(navigateMock);
 
 		// eslint-disable-next-line react/jsx-props-no-spreading
 		const { container } = render(<TopErrors {...mockProps} />);

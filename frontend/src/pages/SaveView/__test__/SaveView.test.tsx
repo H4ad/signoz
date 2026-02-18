@@ -8,19 +8,20 @@ import { rest } from 'msw';
 import { fireEvent, render, screen, waitFor, within } from 'tests/test-utils';
 
 import SaveView from '..';
+import { vi } from 'vitest';
 
-const handleExplorerTabChangeTest = jest.fn();
-jest.mock('hooks/useHandleExplorerTabChange', () => ({
+const handleExplorerTabChangeTest = vi.fn();
+vi.mock('hooks/useHandleExplorerTabChange', () => ({
 	useHandleExplorerTabChange: () => ({
 		handleExplorerTabChange: handleExplorerTabChangeTest,
 	}),
 }));
 
-jest.mock('react-router-dom', () => {
-	const ROUTES = jest.requireActual('constants/routes').default;
+vi.mock('react-router-dom', async () => {
+	const ROUTES = (await vi.importActual('constants/routes')).default;
 	return {
-		...jest.requireActual('react-router-dom'),
-		useLocation: jest.fn().mockReturnValue({
+		...(await vi.importActual('react-router-dom')),
+		useLocation: vi.fn().mockReturnValue({
 			pathname: ROUTES.TRACES_SAVE_VIEWS,
 		}),
 	};

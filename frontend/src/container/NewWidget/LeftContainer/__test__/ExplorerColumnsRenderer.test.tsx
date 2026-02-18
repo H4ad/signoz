@@ -1,6 +1,7 @@
 /* eslint-disable sonarjs/no-duplicate-string */
 /* eslint-disable sonarjs/cognitive-complexity */
 /* eslint-disable react/jsx-props-no-spreading */
+import { vi } from 'vitest';
 import React from 'react';
 import { DropResult } from 'react-beautiful-dnd';
 import { QueryClient, QueryClientProvider } from 'react-query';
@@ -15,14 +16,14 @@ import { DataSource } from 'types/common/queryBuilder';
 import ExplorerColumnsRenderer from '../ExplorerColumnsRenderer';
 
 // Mock hooks
-jest.mock('hooks/queryBuilder/useQueryBuilder');
-jest.mock('hooks/querySuggestions/useGetQueryKeySuggestions');
+vi.mock('hooks/queryBuilder/useQueryBuilder');
+vi.mock('hooks/querySuggestions/useGetQueryKeySuggestions');
 
 // Mock react-beautiful-dnd
 let onDragEndMock: ((result: DropResult) => void) | undefined;
 
-jest.mock('react-beautiful-dnd', () => ({
-	DragDropContext: jest.fn(
+vi.mock('react-beautiful-dnd', () => ({
+	DragDropContext: vi.fn(
 		({
 			children,
 			onDragEnd,
@@ -34,19 +35,19 @@ jest.mock('react-beautiful-dnd', () => ({
 			return children;
 		},
 	),
-	Droppable: jest.fn(
+	Droppable: vi.fn(
 		({ children }: { children: (provided: any) => React.ReactNode }) =>
 			children({
 				draggableProps: { style: {} },
-				innerRef: jest.fn(),
+				innerRef: vi.fn(),
 				placeholder: null,
 			}),
 	),
-	Draggable: jest.fn(
+	Draggable: vi.fn(
 		({ children }: { children: (provided: any) => React.ReactNode }) =>
 			children({
 				draggableProps: { style: {} },
-				innerRef: jest.fn(),
+				innerRef: vi.fn(),
 				dragHandleProps: {},
 			}),
 	),
@@ -72,15 +73,15 @@ const createWrapper = (): React.FC<{ children: React.ReactNode }> => {
 };
 
 describe('ExplorerColumnsRenderer', () => {
-	const mockSetSelectedLogFields = jest.fn();
-	const mockSetSelectedTracesFields = jest.fn();
+	const mockSetSelectedLogFields = vi.fn();
+	const mockSetSelectedTracesFields = vi.fn();
 	const Wrapper = createWrapper();
 
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		// Reset mock implementations for useQueryBuilder and useGetQueryKeySuggestions before each test
 		// to ensure a clean state for each test case unless explicitly overridden.
-		(useQueryBuilder as jest.Mock).mockReturnValue({
+		(useQueryBuilder as ReturnType<typeof vi.fn>).mockReturnValue({
 			currentQuery: {
 				builder: {
 					queryData: [
@@ -92,7 +93,7 @@ describe('ExplorerColumnsRenderer', () => {
 				},
 			},
 		});
-		(useGetQueryKeySuggestions as jest.Mock).mockReturnValue({
+		(useGetQueryKeySuggestions as ReturnType<typeof vi.fn>).mockReturnValue({
 			data: {
 				data: {
 					data: {
@@ -128,7 +129,7 @@ describe('ExplorerColumnsRenderer', () => {
 	});
 
 	it('displays error message when data fetching fails', () => {
-		(useGetQueryKeySuggestions as jest.Mock).mockReturnValueOnce({
+		(useGetQueryKeySuggestions as ReturnType<typeof vi.fn>).mockReturnValueOnce({
 			data: undefined,
 			isLoading: false,
 			isError: true,
@@ -308,7 +309,7 @@ describe('ExplorerColumnsRenderer', () => {
 
 	describe('Trace Data Source', () => {
 		beforeEach(() => {
-			(useQueryBuilder as jest.Mock).mockReturnValue({
+			(useQueryBuilder as ReturnType<typeof vi.fn>).mockReturnValue({
 				currentQuery: {
 					builder: {
 						queryData: [
@@ -321,7 +322,7 @@ describe('ExplorerColumnsRenderer', () => {
 				},
 			});
 
-			(useGetQueryKeySuggestions as jest.Mock).mockReturnValue({
+			(useGetQueryKeySuggestions as ReturnType<typeof vi.fn>).mockReturnValue({
 				data: {
 					data: {
 						data: {
@@ -452,7 +453,7 @@ describe('ExplorerColumnsRenderer', () => {
 	});
 
 	it('does not show isRoot or isEntryPoint in add column dropdown (traces, dashboard table panel)', async () => {
-		(useQueryBuilder as jest.Mock).mockReturnValue({
+		(useQueryBuilder as ReturnType<typeof vi.fn>).mockReturnValue({
 			currentQuery: {
 				builder: {
 					queryData: [
@@ -464,7 +465,7 @@ describe('ExplorerColumnsRenderer', () => {
 				},
 			},
 		});
-		(useGetQueryKeySuggestions as jest.Mock).mockReturnValue({
+		(useGetQueryKeySuggestions as ReturnType<typeof vi.fn>).mockReturnValue({
 			data: {
 				data: {
 					data: {

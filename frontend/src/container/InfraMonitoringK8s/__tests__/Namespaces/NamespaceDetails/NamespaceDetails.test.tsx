@@ -10,6 +10,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { fireEvent, render, screen } from '@testing-library/react';
 import NamespaceDetails from 'container/InfraMonitoringK8s/Namespaces/NamespaceDetails/NamespaceDetails';
 import store from 'store';
+import { vi } from 'vitest';
 
 const queryClient = new QueryClient();
 
@@ -20,7 +21,7 @@ describe('NamespaceDetails', () => {
 			k8s_cluster_name: 'test-cluster',
 		},
 	} as any;
-	const mockOnClose = jest.fn();
+	const mockOnClose = vi.fn();
 
 	it('should render modal with relevant metadata', () => {
 		render(

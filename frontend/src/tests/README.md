@@ -2,7 +2,7 @@
 
 #### Tech Stack
 - React Testing Library (RTL)
-- Jest (runner, assertions, mocking)
+- Vitest (runner, assertions, mocking)
 - MSW (Mock Service Worker) for HTTP
 - TypeScript (type-safe tests)
 - JSDOM (browser-like env)
@@ -39,7 +39,7 @@ describe('MyComponent', () => {
 - Import from `tests/test-utils` only.
 - Prefer `userEvent` for real interactions; use `fireEvent` only for low-level events (scroll/resize/setting `scrollTop`).
 - Use MSW to mock network calls; large JSON goes in `mocks-server/__mockdata__`.
-- Keep tests type-safe (`jest.MockedFunction<T>`, avoid `any`).
+  - Keep tests type-safe (`Mock` from 'vitest', avoid `any`).
 - Prefer accessible queries (`getByRole`, `findByRole`) before text and `data-testid`.
 - Pin time only when asserting relative dates; avoid global fake timers otherwise.
 
@@ -64,8 +64,10 @@ server.use(
 
 Mock hooks minimally at module level:
 ```ts
-jest.mock('hooks/queryBuilder/useQueryBuilder', () => ({
-  useQueryBuilder: jest.fn(),
+import { vi } from 'vitest';
+
+vi.mock('hooks/queryBuilder/useQueryBuilder', () => ({
+  useQueryBuilder: vi.fn(),
 }));
 ```
 
@@ -89,5 +91,5 @@ render(<Page />, undefined, { initialRoute: '/logs-explorer?panelType=list' });
 ```
 
 #### Notes
-- Global mocks configured in Jest: `uplot` → `__mocks__/uplotMock.ts`.
+- Global mocks configured for Vitest: `uplot` → `__mocks__/uplotMock.ts`.
 - If a test needs custom behavior (e.g., different API response), override with `server.use(...)` locally.

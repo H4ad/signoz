@@ -5,22 +5,23 @@ import { INITIAL_ADVANCED_OPTIONS_STATE } from 'container/CreateAlertV2/context/
 import { TIMEZONE_DATA } from '../constants';
 import EditCustomSchedule from '../EvaluationCadence/EditCustomSchedule';
 import { createMockAlertContextState } from './testUtils';
+import { vi } from 'vitest';
 
-const mockSetAdvancedOptions = jest.fn();
-jest.spyOn(alertState, 'useCreateAlertState').mockReturnValue(
+const mockSetAdvancedOptions = vi.fn();
+vi.spyOn(alertState, 'useCreateAlertState').mockReturnValue(
 	createMockAlertContextState({
 		setAdvancedOptions: mockSetAdvancedOptions,
 	}),
 );
 
-const mockSetIsEvaluationCadenceDetailsVisible = jest.fn();
-const mockSetIsPreviewVisible = jest.fn();
+const mockSetIsEvaluationCadenceDetailsVisible = vi.fn();
+const mockSetIsPreviewVisible = vi.fn();
 
 const EDIT_CUSTOM_SCHEDULE_TEST_ID = '.edit-custom-schedule';
 
 describe('EditCustomSchedule', () => {
 	it('should render the correct display text for custom mode with daily occurrence', () => {
-		jest.spyOn(alertState, 'useCreateAlertState').mockReturnValueOnce(
+		vi.spyOn(alertState, 'useCreateAlertState').mockReturnValueOnce(
 			createMockAlertContextState({
 				advancedOptions: {
 					...INITIAL_ADVANCED_OPTIONS_STATE,
@@ -54,7 +55,7 @@ describe('EditCustomSchedule', () => {
 	});
 
 	it('should render the correct display text for custom mode with weekly occurrence', () => {
-		jest.spyOn(alertState, 'useCreateAlertState').mockReturnValueOnce(
+		vi.spyOn(alertState, 'useCreateAlertState').mockReturnValueOnce(
 			createMockAlertContextState({
 				advancedOptions: {
 					...INITIAL_ADVANCED_OPTIONS_STATE,
@@ -90,7 +91,7 @@ describe('EditCustomSchedule', () => {
 	});
 
 	it('should render the correct display text for custom mode with monthly occurrence', () => {
-		jest.spyOn(alertState, 'useCreateAlertState').mockReturnValueOnce(
+		vi.spyOn(alertState, 'useCreateAlertState').mockReturnValueOnce(
 			createMockAlertContextState({
 				advancedOptions: {
 					...INITIAL_ADVANCED_OPTIONS_STATE,

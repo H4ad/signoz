@@ -8,9 +8,9 @@ const MOCK_DATE_STRING_SPANS_MONTHS = '2024-01-31T00:30:00Z';
 const FREQ_DAILY = 'FREQ=DAILY';
 const TEN_THIRTY_TIME = '10:30:00';
 const NINE_AM_TIME = '09:00:00';
-jest.mock('dayjs', () => {
-	const originalDayjs = jest.requireActual('dayjs');
-	const mockDayjs = jest.fn((date?: string | Date) => {
+vi.mock('dayjs', async () => {
+	const originalDayjs = await vi.importActual('dayjs');
+	const mockDayjs = vi.fn((date?: string | Date) => {
 		if (date) {
 			return originalDayjs(date);
 		}
@@ -29,6 +29,7 @@ import { rrulestr } from 'rrule';
 
 import { RollingWindowTimeframes } from '../types';
 import {
+import { vi } from 'vitest';
 	buildAlertScheduleFromCustomSchedule,
 	buildAlertScheduleFromRRule,
 	getCumulativeWindowTimeframeText,
@@ -39,12 +40,12 @@ import {
 	isValidRRule,
 } from '../utils';
 
-jest.mock('rrule', () => ({
-	rrulestr: jest.fn(),
+vi.mock('rrule', () => ({
+	rrulestr: vi.fn(),
 }));
 
-jest.mock('components/CustomTimePicker/timezoneUtils', () => ({
-	generateTimezoneData: jest.fn().mockReturnValue([
+vi.mock('components/CustomTimePicker/timezoneUtils', () => ({
+	generateTimezoneData: vi.fn().mockReturnValue([
 		{ name: 'UTC', value: 'UTC', offset: '+00:00' },
 		{ name: 'America/New_York', value: 'America/New_York', offset: '-05:00' },
 		{ name: 'Europe/London', value: 'Europe/London', offset: '+00:00' },
@@ -67,7 +68,7 @@ const formatDate = (date: Date): string =>
 
 describe('utils', () => {
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	});
 
 	describe('getEvaluationWindowTypeText', () => {
@@ -218,7 +219,7 @@ describe('utils', () => {
 
 	describe('buildAlertScheduleFromRRule', () => {
 		const mockRRule = {
-			all: jest.fn((callback) => {
+			all: vi.fn((callback) => {
 				const dates = [
 					new Date(MOCK_DATE_STRING),
 					new Date('2024-01-16T10:30:00Z'),
@@ -229,7 +230,7 @@ describe('utils', () => {
 		};
 
 		beforeEach(() => {
-			(rrulestr as jest.Mock).mockReturnValue(mockRRule);
+			(rrulestr as vi.Mock).mockReturnValue(mockRRule);
 		});
 
 		it('should return null for empty rrule string', () => {
@@ -283,7 +284,7 @@ describe('utils', () => {
 		});
 
 		it('should return null on error', () => {
-			(rrulestr as jest.Mock).mockImplementation(() => {
+			(rrulestr as vi.Mock).mockImplementation(() => {
 				throw new Error('Invalid rrule');
 			});
 
@@ -487,10 +488,10 @@ describe('utils', () => {
 		});
 
 		it('should skip february 29th in a non-leap year', async () => {
-			jest.resetModules(); // clear previous mocks
+			vi.resetModules(); // clear previous mocks
 
-			jest.doMock('dayjs', () => {
-				const originalDayjs = jest.requireActual('dayjs');
+			vi.doMock('dayjs', async () => {
+				const originalDayjs = await vi.importActual('dayjs');
 				const mockDayjs = (date?: string | Date): Dayjs => {
 					if (date) {
 						return originalDayjs(date);
@@ -596,10 +597,10 @@ describe('utils', () => {
 		});
 
 		it('daily occurrences should span across months correctly', async () => {
-			jest.resetModules(); // clear previous mocks
+			vi.resetModules(); // clear previous mocks
 
-			jest.doMock('dayjs', () => {
-				const originalDayjs = jest.requireActual('dayjs');
+			vi.doMock('dayjs', async () => {
+				const originalDayjs = await vi.importActual('dayjs');
 				const mockDayjs = (date?: string | Date): Dayjs => {
 					if (date) {
 						return originalDayjs(date);
@@ -636,7 +637,7 @@ describe('utils', () => {
 
 	describe('isValidRRule', () => {
 		beforeEach(() => {
-			(rrulestr as jest.Mock).mockReturnValue({});
+			(rrulestr as vi.Mock).mockReturnValue({});
 		});
 
 		it('should return true for valid rrule', () => {
@@ -650,7 +651,7 @@ describe('utils', () => {
 		});
 
 		it('should return false for invalid rrule', () => {
-			(rrulestr as jest.Mock).mockImplementation(() => {
+			(rrulestr as vi.Mock).mockImplementation(() => {
 				throw new Error('Invalid rrule');
 			});
 

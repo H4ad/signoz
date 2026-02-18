@@ -1,15 +1,16 @@
 import { render, screen } from '@testing-library/react';
 
 import HostsListControls from '../HostsListControls';
+import { vi } from 'vitest';
 
-jest.mock('container/QueryBuilder/filters/QueryBuilderSearch', () => ({
+vi.mock('container/QueryBuilder/filters/QueryBuilderSearch', () => ({
 	__esModule: true,
 	default: (): JSX.Element => (
 		<div data-testid="query-builder-search">Search</div>
 	),
 }));
 
-jest.mock('container/TopNav/DateTimeSelectionV2', () => ({
+vi.mock('container/TopNav/DateTimeSelectionV2', () => ({
 	__esModule: true,
 	default: (): JSX.Element => (
 		<div data-testid="date-time-selection">Date Time</div>
@@ -17,7 +18,7 @@ jest.mock('container/TopNav/DateTimeSelectionV2', () => ({
 }));
 
 describe('HostsListControls', () => {
-	const mockHandleFiltersChange = jest.fn();
+	const mockHandleFiltersChange = vi.fn();
 	const mockFilters = {
 		items: [],
 		op: 'AND',

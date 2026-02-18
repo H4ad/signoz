@@ -1,9 +1,10 @@
 import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 import { server } from 'mocks-server/server';
-import { rest, RestRequest } from 'msw'; // Import RestRequest for req.json() typing
+import { http, HttpResponse } from 'msw'; // Import RestRequest for req.json() typing
 
 import { UpdateServiceConfigPayload } from '../types';
 import { accountsResponse, CLOUD_ACCOUNT_ID, initialBuckets } from './mockData';
+import { vi } from 'vitest';
 import {
 	assertGenericModalElements,
 	assertS3SyncSpecificElements,
@@ -11,10 +12,10 @@ import {
 } from './utils';
 
 // --- MOCKS ---
-jest.mock('hooks/useUrlQuery', () => ({
+vi.mock('hooks/useUrlQuery', () => ({
 	__esModule: true,
-	default: jest.fn(() => ({
-		get: jest.fn((paramName: string) => {
+	default: vi.fn(() => ({
+		get: vi.fn((paramName: string) => {
 			if (paramName === 'cloudAccountId') {
 				return CLOUD_ACCOUNT_ID;
 			}
@@ -25,15 +26,14 @@ jest.mock('hooks/useUrlQuery', () => ({
 
 // --- TEST SUITE ---
 describe('ConfigureServiceModal for S3 Sync service', () => {
-	jest.setTimeout(10000);
 	beforeEach(() => {
 		server.use(
-			rest.get(
-				'http://localhost/api/v1/cloud-integrations/aws/accounts',
-				(req, res, ctx) => res(ctx.json(accountsResponse)),
+			http.get(
+				'/api/v1/cloud-integrations/aws/accounts',
+				() => HttpResponse.json(accountsResponse),
 			),
 		);
-	});
+	}, 10000);
 
 	it('should render with logs collection switch and bucket selectors (no buckets initially selected)', async () => {
 		act(() => {
@@ -85,9 +85,9 @@ describe('ConfigureServiceModal for S3 Sync service', () => {
 
 		// Override POST handler specifically for this test to capture payload
 		server.use(
-			rest.post(mockUpdateConfigUrl, async (req: RestRequest, res, ctx) => {
-				capturedPayload = await req.json();
-				return res(ctx.status(200), ctx.json({ message: 'Config updated' }));
+			http.post(mockUpdateConfigUrl, async (req) => {
+				capturedPayload = await req.request.json<UpdateServiceConfigPayload>();
+				return HttpResponse.json({ message: 'Config updated' });
 			}),
 		);
 		act(() => {

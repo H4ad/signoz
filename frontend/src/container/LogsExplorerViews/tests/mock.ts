@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import {
 	initialQueriesMap,
 	initialQueryBuilderFormValues,
@@ -99,7 +100,7 @@ export const mockQueryBuilderContextValue = {
 			],
 		},
 	},
-	setSupersetQuery: jest.fn(),
+	setSupersetQuery: vi.fn(),
 	supersetQuery: {
 		...initialQueriesMap.logs,
 		builder: {

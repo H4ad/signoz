@@ -1,5 +1,6 @@
 import { Timezone } from 'components/CustomTimePicker/timezoneUtils';
 import { Alerts } from 'types/api/alerts/getTriggered';
+import { vi } from 'vitest';
 
 export function createAlert(overrides: Partial<Alerts> = {}): Alerts {
 	return {
@@ -43,11 +44,11 @@ export function useMockTimezone(): {
 	return {
 		timezone: mockTimezone,
 		browserTimezone: mockTimezone,
-		updateTimezone: jest.fn(),
-		formatTimezoneAdjustedTimestamp: jest
+		updateTimezone: vi.fn(),
+		formatTimezoneAdjustedTimestamp: vi
 			.fn()
 			.mockImplementation((date: string) => new Date(date).toISOString()),
 		isAdaptationEnabled: true,
-		setIsAdaptationEnabled: jest.fn(),
+		setIsAdaptationEnabled: vi.fn(),
 	};
 }

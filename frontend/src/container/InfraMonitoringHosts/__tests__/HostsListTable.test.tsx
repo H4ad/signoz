@@ -2,6 +2,7 @@
 import { render, screen } from '@testing-library/react';
 
 import HostsListTable from '../HostsListTable';
+import { vi } from 'vitest';
 
 const EMPTY_STATE_CONTAINER_CLASS = '.hosts-empty-state-container';
 
@@ -23,10 +24,10 @@ describe('HostsListTable', () => {
 			},
 		},
 	};
-	const mockOnHostClick = jest.fn();
-	const mockSetCurrentPage = jest.fn();
-	const mockSetOrderBy = jest.fn();
-	const mockSetPageSize = jest.fn();
+	const mockOnHostClick = vi.fn();
+	const mockSetCurrentPage = vi.fn();
+	const mockSetOrderBy = vi.fn();
+	const mockSetPageSize = vi.fn();
 	const mockProps = {
 		isLoading: false,
 		isError: false,

@@ -10,36 +10,37 @@ import useUrlQuery from 'hooks/useUrlQuery';
 import GetMinMax from 'lib/getMinMax';
 
 import ShareURLModal from '../ShareURLModal';
+import { vi } from 'vitest';
 
-jest.mock('api/common/logEvent', () => ({
+vi.mock('api/common/logEvent', () => ({
 	__esModule: true,
-	default: jest.fn(),
+	default: vi.fn(),
 }));
 
-jest.mock('react-router-dom', () => ({
-	...jest.requireActual('react-router-dom'),
-	useLocation: jest.fn(),
-	matchPath: jest.fn(),
+vi.mock('react-router-dom', async () => ({
+	...(await vi.importActual('react-router-dom')),
+	useLocation: vi.fn(),
+	matchPath: vi.fn(),
 }));
 
-jest.mock('hooks/useUrlQuery', () => ({
+vi.mock('hooks/useUrlQuery', () => ({
 	__esModule: true,
-	default: jest.fn(),
+	default: vi.fn(),
 }));
 
-jest.mock('react-redux', () => ({
-	...jest.requireActual('react-redux'),
-	useSelector: jest.fn(),
+vi.mock('react-redux', async () => ({
+	...(await vi.importActual('react-redux')),
+	useSelector: vi.fn(),
 }));
 
-jest.mock('lib/getMinMax', () => ({
+vi.mock('lib/getMinMax', () => ({
 	__esModule: true,
-	default: jest.fn(),
+	default: vi.fn(),
 }));
 
-jest.mock('react-use', () => ({
-	...jest.requireActual('react-use'),
-	useCopyToClipboard: jest.fn(),
+vi.mock('react-use', async () => ({
+	...(await vi.importActual('react-use')),
+	useCopyToClipboard: vi.fn(),
 }));
 
 // Mock window.location
@@ -52,29 +53,29 @@ Object.defineProperty(window, 'location', {
 	writable: true,
 });
 
-const mockLogEvent = logEvent as jest.Mock;
-const mockUseLocation = useLocation as jest.Mock;
-const mockUseUrlQuery = useUrlQuery as jest.Mock;
-const mockUseSelector = useSelector as jest.Mock;
-const mockGetMinMax = GetMinMax as jest.Mock;
-const mockUseCopyToClipboard = useCopyToClipboard as jest.Mock;
-const mockMatchPath = matchPath as jest.Mock;
+const mockLogEvent = logEvent as vi.Mock;
+const mockUseLocation = useLocation as vi.Mock;
+const mockUseUrlQuery = useUrlQuery as vi.Mock;
+const mockUseSelector = useSelector as vi.Mock;
+const mockGetMinMax = GetMinMax as vi.Mock;
+const mockUseCopyToClipboard = useCopyToClipboard as vi.Mock;
+const mockMatchPath = matchPath as vi.Mock;
 
 const mockUrlQuery = {
-	get: jest.fn(),
-	set: jest.fn(),
-	delete: jest.fn(),
-	toString: jest.fn(() => 'param=value'),
+	get: vi.fn(),
+	set: vi.fn(),
+	delete: vi.fn(),
+	toString: vi.fn(() => 'param=value'),
 };
 
-const mockHandleCopyToClipboard = jest.fn();
+const mockHandleCopyToClipboard = vi.fn();
 
 const TEST_PATH = '/test-path';
 const ENABLE_ABSOLUTE_TIME_TEXT = 'Enable absolute time';
 
 describe('ShareURLModal', () => {
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 
 		mockUseLocation.mockReturnValue({
 			pathname: TEST_PATH,

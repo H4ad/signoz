@@ -5,18 +5,19 @@ import { PANEL_TYPES } from 'constants/queryBuilder';
 import { render, screen } from 'tests/test-utils';
 
 import Threshold from '../Threshold';
+import { vi } from 'vitest';
 
 // Mock the getColumnUnit function
-jest.mock('lib/query/createTableColumnsFromQuery', () => ({
-	getColumnUnit: jest.fn(
+vi.mock('lib/query/createTableColumnsFromQuery', () => ({
+	getColumnUnit: vi.fn(
 		(option: string, columnUnits: Record<string, string>) =>
 			columnUnits[option] || 'percent',
 	),
 }));
 
 // Mock the unitOptions function
-jest.mock('container/NewWidget/utils', () => ({
-	unitOptions: jest.fn(() => [
+vi.mock('container/NewWidget/utils', () => ({
+	unitOptions: vi.fn(() => [
 		{ value: 'none', label: 'None' },
 		{ value: 'percent', label: 'Percent' },
 		{ value: 'ms', label: 'Milliseconds' },
@@ -40,7 +41,7 @@ const defaultProps = {
 	thresholdTableOptions: 'cpu_usage',
 	columnUnits: { cpu_usage: 'percent', memory_usage: 'bytes' },
 	yAxisUnit: 'percent',
-	moveThreshold: jest.fn(),
+	moveThreshold: vi.fn(),
 };
 
 const renderThreshold = (props = {}): void => {

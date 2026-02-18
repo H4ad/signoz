@@ -9,6 +9,7 @@ import { ContextLinksData } from 'types/api/dashboard/getAll';
 import '@testing-library/jest-dom';
 
 import ContextLinks from '../index';
+import { vi } from 'vitest';
 
 // Mock data for testing
 const MOCK_EMPTY_CONTEXT_LINKS: ContextLinksData = {
@@ -48,7 +49,7 @@ const renderWithProviders = (
 describe('ContextLinks Component', () => {
 	describe('Component Rendering & Initial State', () => {
 		it('should render correctly with existing context links', () => {
-			const mockSetContextLinks = jest.fn();
+			const mockSetContextLinks = vi.fn();
 
 			renderWithProviders(
 				<ContextLinks
@@ -79,7 +80,7 @@ describe('ContextLinks Component', () => {
 		});
 
 		it('should show "Context Link" add button', () => {
-			const mockSetContextLinks = jest.fn();
+			const mockSetContextLinks = vi.fn();
 
 			renderWithProviders(
 				<ContextLinks
@@ -98,7 +99,7 @@ describe('ContextLinks Component', () => {
 
 	describe('Add Context Link Functionality', () => {
 		it('should show "Add a context link" title in modal when adding new link', () => {
-			const mockSetContextLinks = jest.fn();
+			const mockSetContextLinks = vi.fn();
 
 			renderWithProviders(
 				<ContextLinks
@@ -120,7 +121,7 @@ describe('ContextLinks Component', () => {
 		});
 
 		it('should call setContextLinks when saving new context link', async () => {
-			const mockSetContextLinks = jest.fn();
+			const mockSetContextLinks = vi.fn();
 
 			renderWithProviders(
 				<ContextLinks
@@ -173,7 +174,7 @@ describe('ContextLinks Component', () => {
 		});
 
 		it('should close modal when cancel button is clicked', async () => {
-			const mockSetContextLinks = jest.fn();
+			const mockSetContextLinks = vi.fn();
 
 			renderWithProviders(
 				<ContextLinks
@@ -200,7 +201,7 @@ describe('ContextLinks Component', () => {
 		});
 
 		it('should not call setContextLinks when cancel button is clicked', async () => {
-			const mockSetContextLinks = jest.fn();
+			const mockSetContextLinks = vi.fn();
 
 			renderWithProviders(
 				<ContextLinks
@@ -227,7 +228,7 @@ describe('ContextLinks Component', () => {
 		});
 
 		it('should show form fields in the modal', async () => {
-			const mockSetContextLinks = jest.fn();
+			const mockSetContextLinks = vi.fn();
 
 			renderWithProviders(
 				<ContextLinks
@@ -256,7 +257,7 @@ describe('ContextLinks Component', () => {
 		});
 
 		it('should validate form fields before saving', async () => {
-			const mockSetContextLinks = jest.fn();
+			const mockSetContextLinks = vi.fn();
 
 			renderWithProviders(
 				<ContextLinks
@@ -283,7 +284,7 @@ describe('ContextLinks Component', () => {
 		});
 
 		it('should pre-populate form with existing data when editing a context link', async () => {
-			const mockSetContextLinks = jest.fn();
+			const mockSetContextLinks = vi.fn();
 
 			renderWithProviders(
 				<ContextLinks
@@ -320,7 +321,7 @@ describe('ContextLinks Component', () => {
 
 	describe('URL and Query Parameter Functionality', () => {
 		it('should parse URL with query parameters and display them in parameter table', async () => {
-			const mockSetContextLinks = jest.fn();
+			const mockSetContextLinks = vi.fn();
 
 			renderWithProviders(
 				<ContextLinks
@@ -357,7 +358,7 @@ describe('ContextLinks Component', () => {
 		});
 
 		it('should add new URL parameter when "Add URL parameter" button is clicked', async () => {
-			const mockSetContextLinks = jest.fn();
+			const mockSetContextLinks = vi.fn();
 
 			renderWithProviders(
 				<ContextLinks
@@ -393,7 +394,7 @@ describe('ContextLinks Component', () => {
 		});
 
 		it('should update URL when parameter values are changed', async () => {
-			const mockSetContextLinks = jest.fn();
+			const mockSetContextLinks = vi.fn();
 
 			renderWithProviders(
 				<ContextLinks
@@ -427,7 +428,7 @@ describe('ContextLinks Component', () => {
 		});
 
 		it('should delete URL parameter when delete button is clicked', async () => {
-			const mockSetContextLinks = jest.fn();
+			const mockSetContextLinks = vi.fn();
 
 			renderWithProviders(
 				<ContextLinks
@@ -476,7 +477,7 @@ describe('ContextLinks Component', () => {
 		});
 
 		it('should handle multiple parameters and maintain URL synchronization', async () => {
-			const mockSetContextLinks = jest.fn();
+			const mockSetContextLinks = vi.fn();
 
 			renderWithProviders(
 				<ContextLinks
@@ -526,7 +527,7 @@ describe('ContextLinks Component', () => {
 		});
 
 		it('should validate URL format and show appropriate error messages', async () => {
-			const mockSetContextLinks = jest.fn();
+			const mockSetContextLinks = vi.fn();
 
 			renderWithProviders(
 				<ContextLinks
@@ -561,7 +562,7 @@ describe('ContextLinks Component', () => {
 		});
 
 		it('should handle special characters in parameter keys and values correctly', async () => {
-			const mockSetContextLinks = jest.fn();
+			const mockSetContextLinks = vi.fn();
 
 			renderWithProviders(
 				<ContextLinks
@@ -595,7 +596,7 @@ describe('ContextLinks Component', () => {
 		});
 
 		it('should support template variables in URL and parameters', async () => {
-			const mockSetContextLinks = jest.fn();
+			const mockSetContextLinks = vi.fn();
 
 			renderWithProviders(
 				<ContextLinks

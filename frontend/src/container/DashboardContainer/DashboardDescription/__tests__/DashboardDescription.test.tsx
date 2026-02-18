@@ -1,34 +1,39 @@
 /* eslint-disable sonarjs/no-identical-functions */
+import { vi } from 'vitest';
 import { MemoryRouter, useLocation } from 'react-router-dom';
 import { getNonIntegrationDashboardById } from 'mocks-server/__mockdata__/dashboards';
 import { server } from 'mocks-server/server';
 import { rest } from 'msw';
 import { DashboardProvider } from 'providers/Dashboard/Dashboard';
 import { fireEvent, render, screen, waitFor } from 'tests/test-utils';
+import type { Mock } from 'vitest';
 
 import DashboardDescription from '..';
 
 interface MockSafeNavigateReturn {
-	safeNavigate: jest.MockedFunction<(url: string) => void>;
+	safeNavigate: Mock<(url: string) => void>;
 }
 
 const DASHBOARD_TEST_ID = 'dashboard-title';
 const DASHBOARD_TITLE_TEXT = 'thor';
 const DASHBOARD_PATH = '/dashboard/4';
 
-const mockSafeNavigate = jest.fn();
+const mockSafeNavigate = vi.fn();
 
-jest.mock('react-router-dom', () => ({
-	...jest.requireActual('react-router-dom'),
-	useLocation: jest.fn(),
-	useRouteMatch: jest.fn().mockReturnValue({
-		params: {
-			dashboardId: 4,
-		},
-	}),
-}));
+vi.mock('react-router-dom', async () => {
+	const actual = await vi.importActual('react-router-dom');
+	return {
+		...actual,
+		useLocation: vi.fn(),
+		useRouteMatch: vi.fn().mockReturnValue({
+			params: {
+				dashboardId: 4,
+			},
+		}),
+	};
+});
 
-jest.mock(
+vi.mock(
 	'container/TopNav/DateTimeSelectionV2/index.tsx',
 	() =>
 		function MockDateTimeSelection(): JSX.Element {
@@ -36,7 +41,7 @@ jest.mock(
 		},
 );
 
-jest.mock('hooks/useSafeNavigate', () => ({
+vi.mock('hooks/useSafeNavigate', () => ({
 	useSafeNavigate: (): MockSafeNavigateReturn => ({
 		safeNavigate: mockSafeNavigate,
 	}),
@@ -52,7 +57,7 @@ describe('Dashboard landing page actions header tests', () => {
 			pathname: `${process.env.FRONTEND_API_ENDPOINT}${DASHBOARD_PATH}`,
 			search: '',
 		};
-		(useLocation as jest.Mock).mockReturnValue(mockLocation);
+		(useLocation as Mock).mockReturnValue(mockLocation);
 		const { getByTestId } = render(
 			<MemoryRouter initialEntries={[DASHBOARD_PATH]}>
 				<DashboardProvider>
@@ -88,7 +93,7 @@ describe('Dashboard landing page actions header tests', () => {
 			pathname: `${process.env.FRONTEND_API_ENDPOINT}${DASHBOARD_PATH}`,
 			search: '',
 		};
-		(useLocation as jest.Mock).mockReturnValue(mockLocation);
+		(useLocation as Mock).mockReturnValue(mockLocation);
 		server.use(
 			rest.get('http://localhost/api/v1/dashboards/4', (_, res, ctx) =>
 				res(ctx.status(200), ctx.json(getNonIntegrationDashboardById)),
@@ -131,7 +136,7 @@ describe('Dashboard landing page actions header tests', () => {
 			search: '?variables=%7B%22var1%22%3A%22value1%22%7D&otherParam=test',
 		};
 
-		(useLocation as jest.Mock).mockReturnValue(mockLocation);
+		(useLocation as Mock).mockReturnValue(mockLocation);
 
 		const { getByText } = render(
 			<MemoryRouter initialEntries={[dashboardUrlWithVariables]}>

@@ -7,6 +7,7 @@ import { rest } from 'msw';
 import { act, fireEvent, render, screen, waitFor } from 'tests/test-utils';
 
 import APIKeys from './APIKeys';
+import { vi } from 'vitest';
 
 const apiKeysURL = 'http://localhost/api/v1/pats';
 
@@ -22,7 +23,7 @@ describe('APIKeys component', () => {
 	});
 
 	afterEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	});
 
 	it('renders APIKeys component without crashing', () => {

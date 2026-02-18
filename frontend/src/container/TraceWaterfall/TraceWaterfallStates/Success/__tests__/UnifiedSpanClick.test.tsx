@@ -3,27 +3,30 @@ import { render, screen, userEvent, waitFor } from 'tests/test-utils';
 import { Span } from 'types/api/trace/getTraceV2';
 
 import Success from '../Success';
+import { vi } from 'vitest';
 
 // Mock the required hooks with proper typing
-const mockSafeNavigate = jest.fn() as jest.MockedFunction<
+const mockSafeNavigate = vi.fn() as vi.MockedFunction<
 	(params: { search: string }) => void
 >;
 const mockUrlQuery = new URLSearchParams();
 
-jest.mock('hooks/useSafeNavigate', () => ({
+vi.mock('hooks/useSafeNavigate', () => ({
 	useSafeNavigate: (): { safeNavigate: typeof mockSafeNavigate } => ({
 		safeNavigate: mockSafeNavigate,
 	}),
 }));
 
-jest.mock('hooks/useUrlQuery', () => (): URLSearchParams => mockUrlQuery);
+vi.mock('hooks/useUrlQuery', () => ({
+	default: (): URLSearchParams => mockUrlQuery
+}));
 
 // App provider is already handled by test-utils
 
 // React Router is already globally mocked
 
 // Mock complex external dependencies that cause provider issues
-jest.mock('components/SpanHoverCard/SpanHoverCard', () => {
+vi.mock('components/SpanHoverCard/SpanHoverCard', () => {
 	function SpanHoverCard({
 		children,
 	}: {
@@ -32,52 +35,62 @@ jest.mock('components/SpanHoverCard/SpanHoverCard', () => {
 		return <div>{children}</div>;
 	}
 	SpanHoverCard.displayName = 'SpanHoverCard';
-	return SpanHoverCard;
+	return {
+		default: SpanHoverCard,
+	};
 });
 
 // Mock the Filters component that's causing React Query issues
-jest.mock('../Filters/Filters', () => {
+vi.mock('../Filters/Filters', () => {
 	function Filters(): null {
 		return null;
 	}
 	Filters.displayName = 'Filters';
-	return Filters;
+	return {
+		default: Filters,
+	};
 });
 
 // Mock other potential dependencies
-jest.mock(
+vi.mock(
 	'container/TraceWaterfall/AddSpanToFunnelModal/AddSpanToFunnelModal',
 	() => {
 		function AddSpanToFunnelModal(): null {
 			return null;
 		}
 		AddSpanToFunnelModal.displayName = 'AddSpanToFunnelModal';
-		return AddSpanToFunnelModal;
+		return {
+			default: AddSpanToFunnelModal,
+		};
 	},
 );
 
-jest.mock('container/TraceWaterfall/SpanLineActionButtons', () => {
+vi.mock('container/TraceWaterfall/SpanLineActionButtons', () => {
 	function SpanLineActionButtons(): null {
 		return null;
 	}
 	SpanLineActionButtons.displayName = 'SpanLineActionButtons';
-	return SpanLineActionButtons;
+	return {
+		default: SpanLineActionButtons,
+	};
 });
 
-jest.mock('components/HttpStatusBadge/HttpStatusBadge', () => {
+vi.mock('components/HttpStatusBadge/HttpStatusBadge', () => {
 	function HttpStatusBadge(): null {
 		return null;
 	}
 	HttpStatusBadge.displayName = 'HttpStatusBadge';
-	return HttpStatusBadge;
+	return {
+		default: HttpStatusBadge,
+	};
 });
 
 // Mock other utilities that might cause issues
-jest.mock('lib/uPlotLib/utils/generateColor', () => ({
+vi.mock('lib/uPlotLib/utils/generateColor', () => ({
 	generateColor: (): string => '#1890ff',
 }));
 
-jest.mock('container/TraceDetail/utils', () => ({
+vi.mock('container/TraceDetail/utils', () => ({
 	convertTimeToRelevantUnit: (
 		value: number,
 	): { time: number; timeUnitName: string } => ({
@@ -86,12 +99,12 @@ jest.mock('container/TraceDetail/utils', () => ({
 	}),
 }));
 
-jest.mock('utils/toFixed', () => ({
+vi.mock('utils/toFixed', () => ({
 	toFixed: (value: number, decimals: number): string => value.toFixed(decimals),
 }));
 
 // Create a simplified mock TableV3 that renders the actual column components
-jest.mock('components/TableV3/TableV3', () => ({
+vi.mock('components/TableV3/TableV3', () => ({
 	TableV3: ({
 		columns,
 		data,
@@ -206,8 +219,8 @@ function TestComponent(): JSX.Element {
 			traceMetadata={mockTraceMetadata}
 			interestedSpanId={{ spanId: '', isUncollapsed: false }}
 			uncollapsedNodes={mockSpans.map((s) => s.spanId)}
-			setInterestedSpanId={jest.fn()}
-			setTraceFlamegraphStatsWidth={jest.fn()}
+			setInterestedSpanId={vi.fn()}
+			setTraceFlamegraphStatsWidth={vi.fn()}
 			selectedSpan={selectedSpan}
 			setSelectedSpan={setSelectedSpan}
 		/>
@@ -224,7 +237,7 @@ describe('Span Click User Flows', () => {
 	const SECOND_SPAN_DURATION_TEST_ID = 'cell-1-span-2';
 
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		// Clear all URL parameters
 		Array.from(mockUrlQuery.keys()).forEach((key) => mockUrlQuery.delete(key));
 	});
@@ -238,10 +251,10 @@ describe('Span Click User Flows', () => {
 				traceMetadata={mockTraceMetadata}
 				interestedSpanId={{ spanId: '', isUncollapsed: false }}
 				uncollapsedNodes={mockSpans.map((s) => s.spanId)}
-				setInterestedSpanId={jest.fn()}
-				setTraceFlamegraphStatsWidth={jest.fn()}
+				setInterestedSpanId={vi.fn()}
+				setTraceFlamegraphStatsWidth={vi.fn()}
 				selectedSpan={undefined}
-				setSelectedSpan={jest.fn()}
+				setSelectedSpan={vi.fn()}
 			/>,
 			undefined,
 			{ initialRoute: '/trace' },
@@ -416,10 +429,10 @@ describe('Span Click User Flows', () => {
 				traceMetadata={mockTraceMetadata}
 				interestedSpanId={{ spanId: '', isUncollapsed: false }}
 				uncollapsedNodes={mockSpans.map((s) => s.spanId)}
-				setInterestedSpanId={jest.fn()}
-				setTraceFlamegraphStatsWidth={jest.fn()}
+				setInterestedSpanId={vi.fn()}
+				setTraceFlamegraphStatsWidth={vi.fn()}
 				selectedSpan={undefined}
-				setSelectedSpan={jest.fn()}
+				setSelectedSpan={vi.fn()}
 			/>,
 			undefined,
 			{ initialRoute: '/trace' },

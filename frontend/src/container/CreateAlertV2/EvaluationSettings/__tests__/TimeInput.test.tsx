@@ -2,12 +2,13 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import TimeInput from '../TimeInput/TimeInput';
+import { vi } from 'vitest';
 
 describe('TimeInput', () => {
-	const mockOnChange = jest.fn();
+	const mockOnChange = vi.fn();
 
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	});
 
 	it('should render with default value', () => {

@@ -8,6 +8,8 @@ import useVariablesFromUrl, {
 	LocalStoreDashboardVariables,
 } from '../useVariablesFromUrl';
 
+vi.unmock('react-router-dom');
+
 describe('useVariablesFromUrl', () => {
 	it('should initialize with empty variables when no URL params exist', () => {
 		const history = createMemoryHistory({

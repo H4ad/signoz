@@ -1,5 +1,6 @@
 /* eslint-disable sonarjs/no-duplicate-string */
 /* eslint-disable react/jsx-props-no-spreading */
+import { vi } from 'vitest';
 import { Provider } from 'react-redux';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -15,7 +16,7 @@ import {
 	TimeAggregationOptions,
 } from '../types';
 
-const mockResizeObserver = jest.fn();
+const mockResizeObserver = vi.fn();
 mockResizeObserver.mockImplementation(() => ({
 	observe: (): void => undefined,
 	unobserve: (): void => undefined,
@@ -48,11 +49,11 @@ describe('GraphView', () => {
 		metricType: MetricType.GAUGE,
 		spaceAggregationSeriesMap: new Map(),
 		inspectionStep: InspectionStep.COMPLETED,
-		setPopoverOptions: jest.fn(),
+		setPopoverOptions: vi.fn(),
 		popoverOptions: null,
-		setShowExpandedView: jest.fn(),
-		setExpandedViewOptions: jest.fn(),
-		resetInspection: jest.fn(),
+		setShowExpandedView: vi.fn(),
+		setExpandedViewOptions: vi.fn(),
+		resetInspection: vi.fn(),
 		showExpandedView: false,
 		metricInspectionOptions: {
 			timeAggregationInterval: 60,
@@ -68,7 +69,7 @@ describe('GraphView', () => {
 	};
 
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	});
 
 	it('renders graph view by default', () => {

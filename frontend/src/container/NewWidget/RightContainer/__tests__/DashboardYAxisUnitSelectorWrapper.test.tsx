@@ -3,13 +3,14 @@ import { UniversalYAxisUnit } from 'components/YAxisUnitSelector/types';
 import * as getYAxisUnitHooks from 'hooks/useGetYAxisUnit';
 
 import DashboardYAxisUnitSelectorWrapper from '../DashboardYAxisUnitSelectorWrapper';
+import { vi } from 'vitest';
 
 describe('YAxisUnitSelectorV2', () => {
-	const mockUseGetYAxisUnit = jest.spyOn(getYAxisUnitHooks, 'default');
-	const onSelect = jest.fn();
+	const mockUseGetYAxisUnit = vi.spyOn(getYAxisUnitHooks, 'default');
+	const onSelect = vi.fn();
 
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockUseGetYAxisUnit.mockReturnValue({
 			yAxisUnit: UniversalYAxisUnit.BYTES,
 			isLoading: false,

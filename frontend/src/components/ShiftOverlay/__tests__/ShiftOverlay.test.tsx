@@ -4,8 +4,9 @@ import '@testing-library/jest-dom';
 
 import type { CmdAction } from '../ShiftOverlay';
 import { ShiftOverlay } from '../ShiftOverlay';
+import { vi } from 'vitest';
 
-jest.mock('../formatShortcut', () => ({
+vi.mock('../formatShortcut', () => ({
 	formatShortcut: (shortcut: string[]): string => shortcut.join('+'),
 }));
 
@@ -15,7 +16,7 @@ const baseActions: CmdAction[] = [
 		name: 'Go to Traces',
 		section: 'navigation',
 		shortcut: ['Shift', 'T'],
-		perform: jest.fn(),
+		perform: vi.fn(),
 	},
 	{
 		id: '2',
@@ -23,20 +24,20 @@ const baseActions: CmdAction[] = [
 		section: 'navigation',
 		shortcut: ['Shift', 'M'],
 		roles: ['ADMIN'], // ✅ now UserRole[]
-		perform: jest.fn(),
+		perform: vi.fn(),
 	},
 	{
 		id: '3',
 		name: 'Create Alert',
 		section: 'actions',
 		shortcut: ['A'],
-		perform: jest.fn(),
+		perform: vi.fn(),
 	},
 	{
 		id: '4',
 		name: 'Go to Logs',
 		section: 'navigation',
-		perform: jest.fn(),
+		perform: vi.fn(),
 	},
 ];
 
@@ -58,7 +59,7 @@ describe('ShiftOverlay', () => {
 						id: 'x',
 						name: 'Create Alert',
 						section: 'actions',
-						perform: jest.fn(),
+						perform: vi.fn(),
 					},
 				]}
 				userRole="ADMIN"

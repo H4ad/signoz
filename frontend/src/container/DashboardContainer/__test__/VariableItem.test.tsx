@@ -6,10 +6,11 @@ import configureStore from 'redux-mock-store';
 import { IDashboardVariable } from 'types/api/dashboard/getAll';
 
 import VariableItem from '../DashboardSettings/DashboardVariableSettings/VariableItem/VariableItem';
+import { vi } from 'vitest';
 
 // Mock dependencies
-jest.mock('api/dashboard/variables/dashboardVariablesQuery');
-jest.mock('hooks/dynamicVariables/useGetFieldValues', () => ({
+vi.mock('api/dashboard/variables/dashboardVariablesQuery');
+vi.mock('hooks/dynamicVariables/useGetFieldValues', () => ({
 	useGetFieldValues: (): any => ({
 		data: {
 			payload: {
@@ -20,7 +21,7 @@ jest.mock('hooks/dynamicVariables/useGetFieldValues', () => ({
 		error: null,
 	}),
 }));
-jest.mock('components/Editor', () => {
+vi.mock('components/Editor', () => {
 	function MockEditor({
 		value,
 		onChange,
@@ -61,10 +62,10 @@ function TestWrapper({ children }: { children: React.ReactNode }): JSX.Element {
 TestWrapper.displayName = 'TestWrapper';
 
 describe('VariableItem Component - Creation Flow', () => {
-	const mockOnSave = jest.fn();
-	const mockOnCancel = jest.fn();
-	const mockValidateName = jest.fn();
-	const mockValidateAttributeKey = jest.fn();
+	const mockOnSave = vi.fn();
+	const mockOnCancel = vi.fn();
+	const mockValidateName = vi.fn();
+	const mockValidateAttributeKey = vi.fn();
 	// Constants to avoid string duplication
 	const VARIABLE_NAME_PLACEHOLDER = 'Unique name of the variable';
 	const VARIABLE_DESCRIPTION_PLACEHOLDER =
@@ -83,7 +84,7 @@ describe('VariableItem Component - Creation Flow', () => {
 	};
 
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockValidateName.mockReturnValue(true);
 	});
 

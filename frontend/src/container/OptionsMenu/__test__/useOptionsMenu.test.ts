@@ -7,31 +7,32 @@ import { usePreferenceContext } from 'providers/preferences/context/PreferenceCo
 import { DataSource } from 'types/common/queryBuilder';
 
 import useOptionsMenu from '../useOptionsMenu';
+import { vi } from 'vitest';
 
 // Mock all dependencies
-jest.mock('hooks/useNotifications');
-jest.mock('providers/preferences/context/PreferenceContextProvider');
-jest.mock('hooks/useUrlQueryData');
-jest.mock('hooks/querySuggestions/useGetQueryKeySuggestions');
-jest.mock('react-query', () => ({
-	...jest.requireActual('react-query'),
-	useQueries: jest.fn(),
+vi.mock('hooks/useNotifications');
+vi.mock('providers/preferences/context/PreferenceContextProvider');
+vi.mock('hooks/useUrlQueryData');
+vi.mock('hooks/querySuggestions/useGetQueryKeySuggestions');
+vi.mock('react-query', async () => ({
+	...(await vi.importActual('react-query')),
+	useQueries: vi.fn(),
 }));
 
 describe('useOptionsMenu', () => {
-	const mockNotifications = { error: jest.fn(), success: jest.fn() };
-	const mockUpdateColumns = jest.fn();
-	const mockUpdateFormatting = jest.fn();
-	const mockRedirectWithQuery = jest.fn();
+	const mockNotifications = { error: vi.fn(), success: vi.fn() };
+	const mockUpdateColumns = vi.fn();
+	const mockUpdateFormatting = vi.fn();
+	const mockRedirectWithQuery = vi.fn();
 
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 
-		(useNotifications as jest.Mock).mockReturnValue({
+		(useNotifications as vi.Mock).mockReturnValue({
 			notifications: mockNotifications,
 		});
 
-		(usePreferenceContext as jest.Mock).mockReturnValue({
+		(usePreferenceContext as vi.Mock).mockReturnValue({
 			traces: {
 				preferences: {
 					columns: [],
@@ -58,17 +59,17 @@ describe('useOptionsMenu', () => {
 			},
 		});
 
-		(useUrlQueryData as jest.Mock).mockReturnValue({
+		(useUrlQueryData as vi.Mock).mockReturnValue({
 			query: null,
 			redirectWithQuery: mockRedirectWithQuery,
 		});
 
-		(useQueries as jest.Mock).mockReturnValue([]);
+		(useQueries as vi.Mock).mockReturnValue([]);
 	});
 
 	it('does not show isRoot or isEntryPoint in column options when dataSource is TRACES', () => {
 		// Mock the query key suggestions to return data including isRoot and isEntryPoint
-		(useGetQueryKeySuggestions as jest.Mock).mockReturnValue({
+		(useGetQueryKeySuggestions as vi.Mock).mockReturnValue({
 			data: {
 				data: {
 					data: {
@@ -129,7 +130,7 @@ describe('useOptionsMenu', () => {
 
 	it('does not show body in column options when dataSource is METRICS', () => {
 		// Mock the query key suggestions to return data including body
-		(useGetQueryKeySuggestions as jest.Mock).mockReturnValue({
+		(useGetQueryKeySuggestions as vi.Mock).mockReturnValue({
 			data: {
 				data: {
 					data: {
@@ -182,7 +183,7 @@ describe('useOptionsMenu', () => {
 
 	it('does not show body in column options when dataSource is LOGS', () => {
 		// Mock the query key suggestions to return data including body
-		(useGetQueryKeySuggestions as jest.Mock).mockReturnValue({
+		(useGetQueryKeySuggestions as vi.Mock).mockReturnValue({
 			data: {
 				data: {
 					data: {

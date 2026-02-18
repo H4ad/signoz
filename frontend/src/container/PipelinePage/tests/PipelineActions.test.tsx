@@ -7,6 +7,7 @@ import store from 'store';
 
 import { pipelineMockData } from '../mocks/pipeline';
 import PipelineActions from '../PipelineListsView/TableComponents/PipelineActions';
+import { vi } from 'vitest';
 
 describe('PipelinePage container test', () => {
 	it('should render PipelineActions section', () => {
@@ -16,8 +17,8 @@ describe('PipelinePage container test', () => {
 					<I18nextProvider i18n={i18n}>
 						<PipelineActions
 							pipeline={pipelineMockData[0]}
-							editAction={jest.fn()}
-							deleteAction={jest.fn()}
+							editAction={vi.fn()}
+							deleteAction={vi.fn()}
 						/>
 					</I18nextProvider>
 				</Provider>

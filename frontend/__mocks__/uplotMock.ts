@@ -1,36 +1,37 @@
+import { vi } from 'vitest';
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 // Mock for uplot library used in tests
 export interface MockUPlotInstance {
-	setData: jest.Mock;
-	setSize: jest.Mock;
-	destroy: jest.Mock;
-	redraw: jest.Mock;
-	setSeries: jest.Mock;
+	setData: vi.Mock;
+	setSize: vi.Mock;
+	destroy: vi.Mock;
+	redraw: vi.Mock;
+	setSeries: vi.Mock;
 }
 
 export interface MockUPlotPaths {
-	spline: jest.Mock;
-	bars: jest.Mock;
+	spline: vi.Mock;
+	bars: vi.Mock;
 }
 
 // Create mock instance methods
 const createMockUPlotInstance = (): MockUPlotInstance => ({
-	setData: jest.fn(),
-	setSize: jest.fn(),
-	destroy: jest.fn(),
-	redraw: jest.fn(),
-	setSeries: jest.fn(),
+	setData: vi.fn(),
+	setSize: vi.fn(),
+	destroy: vi.fn(),
+	redraw: vi.fn(),
+	setSeries: vi.fn(),
 });
 
 // Create mock paths
 const mockPaths: MockUPlotPaths = {
-	spline: jest.fn(),
-	bars: jest.fn(),
+	spline: vi.fn(),
+	bars: vi.fn(),
 };
 
 // Mock static methods
-const mockTzDate = jest.fn(
+const mockTzDate = vi.fn(
 	(date: Date, _timezone: string) => new Date(date.getTime()),
 );
 

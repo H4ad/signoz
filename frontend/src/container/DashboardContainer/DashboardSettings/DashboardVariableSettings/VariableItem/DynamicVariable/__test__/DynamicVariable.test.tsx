@@ -3,22 +3,23 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { useGetFieldKeys } from 'hooks/dynamicVariables/useGetFieldKeys';
 
 import DynamicVariable from '../DynamicVariable';
+import { vi } from 'vitest';
 
 // Mock scrollIntoView since it's not available in JSDOM
-window.HTMLElement.prototype.scrollIntoView = jest.fn();
+window.HTMLElement.prototype.scrollIntoView = vi.fn();
 
 // Mock dependencies
-jest.mock('hooks/dynamicVariables/useGetFieldKeys', () => ({
-	useGetFieldKeys: jest.fn(),
+vi.mock('hooks/dynamicVariables/useGetFieldKeys', () => ({
+	useGetFieldKeys: vi.fn(),
 }));
 
-jest.mock('hooks/useDebounce', () => ({
+vi.mock('hooks/useDebounce', () => ({
 	__esModule: true,
 	default: (value: any): any => value, // Return the same value without debouncing for testing
 }));
 
 describe('DynamicVariable Component', () => {
-	const mockSetDynamicVariablesSelectedValue = jest.fn();
+	const mockSetDynamicVariablesSelectedValue = vi.fn();
 	const ATTRIBUTE_PLACEHOLDER = 'Select a field';
 	const LOADING_TEXT = 'Refreshing values...';
 	const DEFAULT_PROPS = {
@@ -40,14 +41,14 @@ describe('DynamicVariable Component', () => {
 	};
 
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 
 		// Default mock implementation
-		(useGetFieldKeys as jest.Mock).mockReturnValue({
+		(useGetFieldKeys as vi.Mock).mockReturnValue({
 			data: mockFieldKeysResponse,
 			error: null,
 			isLoading: false,
-			refetch: jest.fn(),
+			refetch: vi.fn(),
 		});
 	});
 
@@ -86,11 +87,11 @@ describe('DynamicVariable Component', () => {
 	});
 
 	it('shows loading state when fetching data', () => {
-		(useGetFieldKeys as jest.Mock).mockReturnValue({
+		(useGetFieldKeys as vi.Mock).mockReturnValue({
 			data: null,
 			error: null,
 			isLoading: true,
-			refetch: jest.fn(),
+			refetch: vi.fn(),
 		});
 
 		render(<DynamicVariable {...DEFAULT_PROPS} />);
@@ -106,11 +107,11 @@ describe('DynamicVariable Component', () => {
 	it('shows error message when API fails', () => {
 		const errorMessage = 'Failed to fetch field keys';
 
-		(useGetFieldKeys as jest.Mock).mockReturnValue({
+		(useGetFieldKeys as vi.Mock).mockReturnValue({
 			data: null,
 			error: { message: errorMessage },
 			isLoading: false,
-			refetch: jest.fn(),
+			refetch: vi.fn(),
 		});
 
 		render(<DynamicVariable {...DEFAULT_PROPS} />);
@@ -189,9 +190,9 @@ describe('DynamicVariable Component', () => {
 	});
 
 	it('calls setDynamicVariablesSelectedValue when source is selected', () => {
-		const mockRefetch = jest.fn();
+		const mockRefetch = vi.fn();
 
-		(useGetFieldKeys as jest.Mock).mockReturnValue({
+		(useGetFieldKeys as vi.Mock).mockReturnValue({
 			data: mockFieldKeysResponse,
 			error: null,
 			isLoading: false,
@@ -268,11 +269,11 @@ describe('DynamicVariable Component', () => {
 	});
 
 	it('triggers API call when complete is false and search text changes', async () => {
-		const mockRefetch = jest.fn();
+		const mockRefetch = vi.fn();
 
 		// Set up the mock to indicate that data is not complete
 		// and needs to be fetched from the server
-		(useGetFieldKeys as jest.Mock).mockReturnValue({
+		(useGetFieldKeys as vi.Mock).mockReturnValue({
 			data: {
 				data: {
 					keys: {
@@ -328,9 +329,9 @@ describe('DynamicVariable Component', () => {
 	});
 
 	it('triggers refetch when attributeSource changes', async () => {
-		const mockRefetch = jest.fn();
+		const mockRefetch = vi.fn();
 
-		(useGetFieldKeys as jest.Mock).mockReturnValue({
+		(useGetFieldKeys as vi.Mock).mockReturnValue({
 			data: mockFieldKeysResponse,
 			error: null,
 			isLoading: false,
@@ -358,9 +359,9 @@ describe('DynamicVariable Component', () => {
 	});
 
 	it('shows retry button when error occurs', () => {
-		const mockRefetch = jest.fn();
+		const mockRefetch = vi.fn();
 
-		(useGetFieldKeys as jest.Mock).mockReturnValue({
+		(useGetFieldKeys as vi.Mock).mockReturnValue({
 			data: null,
 			error: { message: 'Failed to fetch field keys' },
 			isLoading: false,

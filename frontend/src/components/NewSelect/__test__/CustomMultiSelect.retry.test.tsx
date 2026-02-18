@@ -8,9 +8,10 @@ import {
 } from '@testing-library/react';
 
 import CustomMultiSelect from '../CustomMultiSelect';
+import { vi } from 'vitest';
 
 // Mock scrollIntoView which isn't available in JSDOM
-window.HTMLElement.prototype.scrollIntoView = jest.fn();
+window.HTMLElement.prototype.scrollIntoView = vi.fn();
 
 // Helper function to render with VirtuosoMockContext
 const renderWithVirtuoso = (component: React.ReactElement): RenderResult =>
@@ -34,11 +35,11 @@ const RETRY_BUTTON_SELECTOR = '.navigation-icons .anticon-reload';
 
 describe('CustomMultiSelect - Retry Functionality', () => {
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	});
 
 	it('should show retry button when 5xx error occurs and error message is displayed', async () => {
-		const mockOnRetry = jest.fn();
+		const mockOnRetry = vi.fn();
 		const errorMessage = 'Internal Server Error (500)';
 
 		renderWithVirtuoso(
@@ -66,7 +67,7 @@ describe('CustomMultiSelect - Retry Functionality', () => {
 	});
 
 	it('should show retry button when 4xx error occurs and error message is displayed (current behavior)', async () => {
-		const mockOnRetry = jest.fn();
+		const mockOnRetry = vi.fn();
 		const errorMessage = 'Bad Request (400)';
 
 		renderWithVirtuoso(
@@ -93,7 +94,7 @@ describe('CustomMultiSelect - Retry Functionality', () => {
 	});
 
 	it('should call onRetry function when retry button is clicked', async () => {
-		const mockOnRetry = jest.fn();
+		const mockOnRetry = vi.fn();
 		const errorMessage = 'Internal Server Error (500)';
 
 		renderWithVirtuoso(

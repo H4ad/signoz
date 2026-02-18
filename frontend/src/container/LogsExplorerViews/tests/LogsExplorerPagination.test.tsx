@@ -1,4 +1,6 @@
 import React from 'react';
+import { vi } from 'vitest';
+import type { Mock } from 'vitest';
 import { VirtuosoMockContext } from 'react-virtuoso';
 import { ENVIRONMENT } from 'constants/env';
 import { initialQueriesMap, PANEL_TYPES } from 'constants/queryBuilder';
@@ -31,9 +33,9 @@ let mockGlobalTimeState: {
 } | null = null;
 
 // Mock UpdateTimeInterval to update the mock state that useSelector will use
-jest.mock('store/actions', () => {
-	const originalModule = jest.requireActual('store/actions');
-	const GetMinMax = jest.requireActual('lib/getMinMax').default;
+vi.mock('store/actions', async () => {
+	const originalModule = await vi.importActual<any>('store/actions');
+	const GetMinMax = (await vi.importActual<any>('lib/getMinMax')).default;
 
 	return {
 		...originalModule,
@@ -58,19 +60,19 @@ jest.mock('store/actions', () => {
 	};
 });
 
-jest.mock('react-router-dom-v5-compat', () => ({
-	...jest.requireActual('react-router-dom-v5-compat'),
-	useSearchParams: jest.fn(() => {
+vi.mock('react-router-dom-v5-compat', async () => ({
+	...(await vi.importActual<any>('react-router-dom-v5-compat')),
+	useSearchParams: vi.fn(() => {
 		const searchParams = new URLSearchParams();
 
-		return [searchParams, jest.fn()];
+		return [searchParams, vi.fn()];
 	}),
 }));
 
 // Mock the Redux store's getState method to return updated global time
-const store = jest.requireActual('store').default;
+const store = await vi.importActual<any>('store').then((m) => m.default);
 const originalGetState = store.getState;
-const getStateSpy = jest.spyOn(store, 'getState');
+const getStateSpy = vi.spyOn(store, 'getState');
 
 getStateSpy.mockImplementation(() => {
 	const originalState = originalGetState();
@@ -89,29 +91,29 @@ getStateSpy.mockImplementation(() => {
 	return originalState;
 });
 
-jest.mock('react-router-dom', () => ({
-	...jest.requireActual('react-router-dom'),
+vi.mock('react-router-dom', async () => ({
+	...(await vi.importActual<any>('react-router-dom')),
 	useLocation: (): { search: string; pathname: string } => ({
 		pathname: ROUTES.LOGS_EXPLORER,
 		search:
-			'?compositeQuery=%257B%2522queryType%2522%253A%2522builder%2522%252C%2522builder%2522%253A%257B%2522queryData%2522%253A%255B%257B%2522dataSource%2522%253A%2522logs%2522%252C%2522queryName%2522%253A%2522A%2522%252C%2522aggregateOperator%2522%253A%2522noop%2522%252C%2522aggregateAttribute%2522%253A%257B%2522id%2522%253A%2522------%2522%252C%2522dataType%2522%253A%2522%2522%252C%2522key%2522%253A%2522%2522%252C%2522isColumn%2522%253Afalse%252C%2522type%2522%253A%2522%2522%252C%2522isJSON%2522%253Afalse%257D%252C%2522timeAggregation%2522%253A%2522rate%2522%252C%2522spaceAggregation%2522%253A%2522sum%2522%252C%2522functions%2522%253A%255B%255D%252C%2522filters%2522%253A%257B%2522items%2522%253A%255B%255D%252C%2522op%2522%253A%2522AND%2522%257D%252C%2522expression%2522%253A%2522A%2522%252C%2522disabled%2522%253Afalse%252C%2522stepInterval%2522%253A60%252C%2522having%2522%253A%255B%255D%252C%2522limit%2522%253Anull%252C%2522orderBy%2522%253A%255B%257B%2522columnName%2522%253A%2522timestamp%2522%252C%2522order%2522%253A%2522desc%2522%257D%255D%252C%2522groupBy%2522%253A%255B%255D%252C%2522legend%2522%253A%2522%2522%252C%2522reduceTo%2522%253A%2522avg%2522%257D%255D%252C%2522queryFormulas%2522%253A%255B%255D%257D%252C%2522promql%2522%253A%255B%257B%2522name%2522%253A%2522A%2522%252C%2522query%2522%253A%2522%2522%252C%2522legend%2522%253A%2522%2522%252C%2522disabled%2522%253Afalse%257D%255D%252C%2522clickhouse_sql%2522%253A%255B%257B%2522name%2522%253A%2522A%2522%252C%2522legend%2522%253A%2522%2522%252C%2522disabled%2522%253Afalse%252C%2522query%2522%253A%2522%2522%257D%255D%252C%2522id%2522%253A%25220d764438-8023-44b9-9bab-2f05012eca7b%2522%257D&options=%7B%22selectColumns%22%3A%5B%7B%22key%22%3A%22timestamp%22%2C%22dataType%22%3A%22string%22%2C%22type%22%3A%22tag%22%2C%22isColumn%22%3Atrue%2C%22isJSON%22%3Afalse%2C%22id%22%3A%22timestamp--string--tag--true%22%2C%22isIndexed%22%3Afalse%7D%2C%7B%22key%22%3A%22body%22%2C%22dataType%22%3A%22string%22%2C%22type%22%3A%22tag%22%2C%22isColumn%22%3Atrue%2C%22isJSON%22%3Afalse%2C%22id%22%3A%22body--string--tag--true%22%2C%22isIndexed%22%3Afalse%7D%5D%2C%22maxLines%22%3A2%2C%22format%22%3A%22raw%22%2C%22fontSize%22%3A%22small%22%2C%22version%22%3A1%7D',
+			'?compositeQuery=%257B%2522queryType%2522%253A%2522builder%2522%252C%2522builder%2522%253A%257B%2522queryData%2522%253A%255B%257B%2522dataSource%2522%253A%2522logs%2522%252C%2522queryName%2522%253A%2522A%2522%252C%2522aggregateOperator%2522%253A%2522noop%2522%252C%2522aggregateAttribute%2522%253A%257B%2522id%2522%253A%2522------%2522%252C%2522dataType%2522%253A%2522%2522%252C%2522key%2522%253A%2522%2522%252C%2522isColumn%2522%253Afalse%252C%2522type%2522%253A%2522%2522%252C%2522isJSON%2522%253Afalse%257D%252C%2522timeAggregation%2522%253A%2522rate%2522%252C%2522spaceAggregation%2522%253A%2522sum%2522%252C%2522functions%2522%253A%255B%255D%252C%2522filters%2522%253A%257B%2522items%2522%253A%255B%255D%252C%2522op%2522%253A%2522AND%2522%257D%252C%2522expression%2522%253A%2522A%2522%252C%2522disabled%2522%253Afalse%252C%2522stepInterval%2522%253A60%252C%2522having%2522%253A%255B%255D%252C%2522limit%2522%253Anull%252C%2522orderBy%2522%253A%255B%257B%2522columnName%2522%253A%2522timestamp%2522%252C%2522order%2522%253A%2522desc%2522%257D%255D%252C%2522groupBy%2522%253A%255B%255D%252C%2522legend%2522%253A%2522%2522%252C%2522reduceTo%2522%253A%2522avg%2522%257D%255D%252C%2522queryFormulas%2522%253A%255B%255D%257D%252C%2522promql%2522%253A%255B%257B%2522name%2522%253A%2522A%2522%252C%2522query%2522%253A%2522%2522%252C%2522legend%2522%253A%2522%2522%252C%2522disabled%2522%253Afalse%257D%255D%252C%2522clickhouse_sql%2522%253A%255B%257B%2522name%2522%253A%2522A%2522%252C%2522legend%2522%253A%2522%2522%252C%2522disabled%2522%253Afalse%252C%2522query%2522%253A%2522%2522%257D%255D%252C%2522id%2522%253A%25220d764438-8023-44b9-9bab-2f05012eca7b%2522%257D&options=%7B%22selectColumns%22%3A%5B%7B%22key%22%3A%22timestamp%22%2C%22dataType%22%3A%22string%22%2C%22type%22%3A%22tag%22%2C%22isColumn%22%3Atrue%2C%22isJSON%22%3Afalse%2C%22id%22%3A%22timestamp--string--tag--true%22%2C%22isIndexed%22%3Afalse%7D%2C%7B%22key%22%3A%22body%22%2C%22dataType%22%3A%22string%22%2C%22type%22%3A%22tag%22...
 	}),
 }));
 
-jest.mock('hooks/useSafeNavigate', () => ({
+vi.mock('hooks/useSafeNavigate', () => ({
 	useSafeNavigate: (): any => ({
-		safeNavigate: jest.fn(),
+		safeNavigate: vi.fn(),
 	}),
 }));
 
-jest.mock(
+vi.mock(
 	'container/TopNav/DateTimeSelectionV2/index.tsx',
 	() =>
 		function MockDateTimeSelection(): JSX.Element {
 			return <div>MockDateTimeSelection</div>;
 		},
 );
-jest.mock(
+vi.mock(
 	'container/LogsExplorerChart',
 	() =>
 		function MockLogsExplorerChart(): JSX.Element {
@@ -119,21 +121,21 @@ jest.mock(
 		},
 );
 
-jest.mock(
+vi.mock(
 	'container/QueryBuilder/filters/QueryBuilderSearchV2/QueryBuilderSearchV2',
 	() =>
 		function MockQueryBuilderSearchV2(): JSX.Element {
 			return <div>MockQueryBuilderSearchV2</div>;
 		},
 );
-jest.mock(
+vi.mock(
 	'container/ExplorerOptions/ExplorerOptionWrapper',
 	() =>
 		function MockExplorerOptionWrapper(): JSX.Element {
 			return <div>MockExplorerOptionWrapper</div>;
 		},
 );
-jest.mock(
+vi.mock(
 	'components/QuickFilters/QuickFilters',
 	() =>
 		function MockQuickFilters(): JSX.Element {
@@ -141,7 +143,7 @@ jest.mock(
 		},
 );
 
-jest.mock(
+vi.mock(
 	'components/OverlayScrollbar/OverlayScrollbar',
 	() =>
 		function MockOverlayScrollbar({
@@ -152,6 +154,7 @@ jest.mock(
 			return <div>{children}</div>;
 		},
 );
+    // Duplicate mocks removed — single set of vi.mock calls appears above
 
 // --- Test Utilities ---
 
@@ -227,7 +230,7 @@ describe.skip('LogsExplorerViews Pagination', () => {
 
 	beforeEach(() => {
 		// Use real timers for test setup, especially for server delays
-		jest.useRealTimers();
+		vi.useRealTimers();
 		// Reset captured payloads array before each test
 		capturedPayloads = [];
 		// Reset mock call count for consistent test behavior
@@ -238,9 +241,9 @@ describe.skip('LogsExplorerViews Pagination', () => {
 
 	afterAll((): void => {
 		// Use fake timers after the tests are done.
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		// Explicitly set the fake system time if needed by other tests
-		jest.setSystemTime(new Date('2023-10-20'));
+		vi.setSystemTime(new Date('2023-10-20'));
 		// Clean up mock state completely
 		mockGlobalTimeState = null;
 	});
@@ -399,7 +402,7 @@ function LogsExplorerWithMockContext({
 			isDefaultQuery: (): boolean => false,
 			currentQuery,
 			stagedQuery,
-			setSupersetQuery: jest.fn(),
+			setSupersetQuery: vi.fn(),
 			supersetQuery: initialQueriesMap.logs,
 			initialDataSource: null,
 			panelType: PANEL_TYPES.LIST,
@@ -456,7 +459,7 @@ describe('Logs Explorer -> stage and run query', () => {
 
 	beforeEach(() => {
 		// Use real timers for test setup, especially for server delays
-		jest.useRealTimers();
+		vi.useRealTimers();
 		// Reset captured payloads array before each test
 		capturedPayloads = [];
 		// Reset mock call count for consistent test behavior

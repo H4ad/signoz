@@ -1,20 +1,22 @@
+import { vi } from 'vitest';
+import * as reactRouterDom from 'react-router-dom';
 import ROUTES from 'constants/routes';
 import AlertChannels from 'container/AllAlertChannels';
 import { act, fireEvent, render, screen, waitFor } from 'tests/test-utils';
 
-const successNotification = jest.fn();
-jest.mock('hooks/useNotifications', () => ({
+const successNotification = vi.fn();
+vi.mock('hooks/useNotifications', () => ({
 	__esModule: true,
-	useNotifications: jest.fn(() => ({
+	useNotifications: vi.fn(() => ({
 		notifications: {
 			success: successNotification,
-			error: jest.fn(),
+			error: vi.fn(),
 		},
 	})),
 }));
 
-jest.mock('react-router-dom', () => ({
-	...jest.requireActual('react-router-dom'),
+vi.mock('react-router-dom', () => ({
+	...reactRouterDom,
 	useLocation: (): { pathname: string } => ({
 		pathname: `${process.env.FRONTEND_API_ENDPOINT}${ROUTES.ALL_CHANNELS}`,
 	}),
@@ -22,16 +24,16 @@ jest.mock('react-router-dom', () => ({
 
 describe('Alert Channels Settings List page', () => {
 	beforeEach(async () => {
-		jest.useFakeTimers();
-		jest.setSystemTime(new Date('2023-10-20'));
+		vi.useFakeTimers();
+		vi.setSystemTime(new Date('2023-10-20'));
 		render(<AlertChannels />);
 		await waitFor(() =>
 			expect(screen.getByText('sending_channels_note')).toBeInTheDocument(),
 		);
 	});
 	afterEach(() => {
-		jest.restoreAllMocks();
-		jest.useRealTimers();
+		vi.restoreAllMocks();
+		vi.useRealTimers();
 	});
 	describe('Should display the Alert Channels page properly', () => {
 		it('Should check if "The alerts will be sent to all the configured channels." is visible ', () => {

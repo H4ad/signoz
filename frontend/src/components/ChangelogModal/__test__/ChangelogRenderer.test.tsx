@@ -7,11 +7,12 @@ import {
 	ChangelogSchema,
 	DeploymentType,
 } from 'types/api/changelog/getChangelogByVersion';
+import { vi } from 'vitest';
 
 import ChangelogRenderer from '../components/ChangelogRenderer';
 
 // Mock react-markdown to just render children as plain text
-jest.mock(
+vi.mock(
 	'react-markdown',
 	() =>
 		function ReactMarkdown({ children }: any) {

@@ -3,9 +3,10 @@ import * as alertState from 'container/CreateAlertV2/context';
 
 import AdvancedOptions from '../AdvancedOptions';
 import { createMockAlertContextState } from './testUtils';
+import { vi } from 'vitest';
 
-const mockSetAdvancedOptions = jest.fn();
-jest.spyOn(alertState, 'useCreateAlertState').mockReturnValue(
+const mockSetAdvancedOptions = vi.fn();
+vi.spyOn(alertState, 'useCreateAlertState').mockReturnValue(
 	createMockAlertContextState({
 		setAdvancedOptions: mockSetAdvancedOptions,
 	}),

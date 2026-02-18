@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { UseQueryResult } from 'react-query';
 import { renderHook } from '@testing-library/react';
 import { Temporality } from 'api/metricsExplorer/getMetricDetails';
@@ -101,23 +102,21 @@ const MOCK_METRIC_METADATA: MetricMetadata = {
 
 describe('useGetMetrics', () => {
 	beforeEach(() => {
-		jest
-			.spyOn(useGetMultipleMetricsHook, 'useGetMultipleMetrics')
-			.mockReturnValue([
-				({
-					isLoading: false,
-					isError: false,
+		vi.spyOn(useGetMultipleMetricsHook, 'useGetMultipleMetrics').mockReturnValue([
+			({
+				isLoading: false,
+				isError: false,
+				data: {
+					httpStatusCode: 200,
 					data: {
-						httpStatusCode: 200,
-						data: {
-							status: 'success',
-							data: MOCK_METRIC_METADATA,
-						},
+						status: 'success',
+						data: MOCK_METRIC_METADATA,
 					},
-				} as Partial<
-					UseQueryResult<SuccessResponseV2<MetricMetadataResponse>, Error>
-				>) as UseQueryResult<SuccessResponseV2<MetricMetadataResponse>, Error>,
-			]);
+				},
+			} as Partial<
+				UseQueryResult<SuccessResponseV2<MetricMetadataResponse>, Error>
+			>) as UseQueryResult<SuccessResponseV2<MetricMetadataResponse>, Error>,
+		]);
 	});
 
 	it('should return the correct metrics data', () => {
@@ -130,16 +129,14 @@ describe('useGetMetrics', () => {
 	});
 
 	it('should return array of undefined values of correct length when metrics data is not yet loaded', () => {
-		jest
-			.spyOn(useGetMultipleMetricsHook, 'useGetMultipleMetrics')
-			.mockReturnValue([
-				({
-					isLoading: true,
-					isError: false,
-				} as Partial<
-					UseQueryResult<SuccessResponseV2<MetricMetadataResponse>, Error>
-				>) as UseQueryResult<SuccessResponseV2<MetricMetadataResponse>, Error>,
-			]);
+		vi.spyOn(useGetMultipleMetricsHook, 'useGetMultipleMetrics').mockReturnValue([
+			({
+				isLoading: true,
+				isError: false,
+			} as Partial<
+				UseQueryResult<SuccessResponseV2<MetricMetadataResponse>, Error>
+			>) as UseQueryResult<SuccessResponseV2<MetricMetadataResponse>, Error>,
+		]);
 		const { result } = renderHook(() => useGetMetrics(['metric1']));
 		expect(result.current.metrics).toHaveLength(1);
 		expect(result.current.metrics[0]).toBeUndefined();

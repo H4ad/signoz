@@ -3,9 +3,10 @@ import { UniversalYAxisUnit } from 'components/YAxisUnitSelector/types';
 
 import EvaluationWindowDetails from '../EvaluationWindowPopover/EvaluationWindowDetails';
 import { createMockEvaluationWindowState } from './testUtils';
+import { vi } from 'vitest';
 
 const mockEvaluationWindowState = createMockEvaluationWindowState();
-const mockSetEvaluationWindow = jest.fn();
+const mockSetEvaluationWindow = vi.fn();
 
 describe('EvaluationWindowDetails', () => {
 	it('should render the evaluation window details for rolling mode with custom timeframe', () => {

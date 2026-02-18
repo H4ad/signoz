@@ -11,28 +11,29 @@ import { server } from 'mocks-server/server';
 import { rest } from 'msw';
 import { DashboardProvider } from 'providers/Dashboard/Dashboard';
 import { fireEvent, render, waitFor } from 'tests/test-utils';
+import { vi } from 'vitest';
 
-jest.mock('container/DashboardContainer/DashboardDescription/utils', () => ({
-	sanitizeDashboardData: jest.fn((data) => data),
-	downloadObjectAsJson: jest.fn(),
+vi.mock('container/DashboardContainer/DashboardDescription/utils', () => ({
+	sanitizeDashboardData: vi.fn((data) => data),
+	downloadObjectAsJson: vi.fn(),
 }));
 
-jest.mock('react-router-dom', () => ({
-	...jest.requireActual('react-router-dom'),
-	useLocation: jest.fn(),
-	useRouteMatch: jest.fn().mockReturnValue({
+vi.mock('react-router-dom', async () => ({
+	...(await vi.importActual('react-router-dom')),
+	useLocation: vi.fn(),
+	useRouteMatch: vi.fn().mockReturnValue({
 		params: {
 			dashboardId: 4,
 		},
 	}),
 }));
 
-const mockWindowOpen = jest.fn();
+const mockWindowOpen = vi.fn();
 window.open = mockWindowOpen;
 
-jest.mock('hooks/useSafeNavigate', () => ({
+vi.mock('hooks/useSafeNavigate', () => ({
 	useSafeNavigate: (): any => ({
-		safeNavigate: jest.fn(),
+		safeNavigate: vi.fn(),
 	}),
 }));
 
@@ -43,7 +44,7 @@ describe('dashboard list page', () => {
 			pathname: `${process.env.FRONTEND_API_ENDPOINT}/${ROUTES.ALL_DASHBOARD}/`,
 			search: `columnKey=asgard&order=stones&page=1`,
 		};
-		(useLocation as jest.Mock).mockReturnValue(mockLocation);
+		(useLocation as vi.Mock).mockReturnValue(mockLocation);
 		const { getByText, getByTestId } = render(
 			<MemoryRouter
 				initialEntries={['/dashbords?columnKey=asgard&order=stones&page=1']}
@@ -67,7 +68,7 @@ describe('dashboard list page', () => {
 			pathname: `${process.env.FRONTEND_API_ENDPOINT}/${ROUTES.ALL_DASHBOARD}/`,
 			search: `columnKey=createdAt&order=descend&page=1`,
 		};
-		(useLocation as jest.Mock).mockReturnValue(mockLocation);
+		(useLocation as vi.Mock).mockReturnValue(mockLocation);
 		const { getByText, getByTestId } = render(
 			<MemoryRouter
 				initialEntries={['/dashbords?columnKey=createdAt&order=descend&page=1']}
@@ -129,7 +130,7 @@ describe('dashboard list page', () => {
 			pathname: `${process.env.FRONTEND_API_ENDPOINT}/${ROUTES.ALL_DASHBOARD}/`,
 			search: `columnKey=createdAt&order=descend&page=1&search=tho`,
 		};
-		(useLocation as jest.Mock).mockReturnValue(mockLocation);
+		(useLocation as vi.Mock).mockReturnValue(mockLocation);
 		const { getByText, getByTestId, queryByText } = render(
 			<MemoryRouter
 				initialEntries={[
@@ -158,7 +159,7 @@ describe('dashboard list page', () => {
 			pathname: `${process.env.FRONTEND_API_ENDPOINT}/${ROUTES.ALL_DASHBOARD}/`,
 			search: `columnKey=createdAt&order=descend&page=1&search=someRandomString`,
 		};
-		(useLocation as jest.Mock).mockReturnValue(mockLocation);
+		(useLocation as vi.Mock).mockReturnValue(mockLocation);
 		const { getByText } = render(
 			<MemoryRouter
 				initialEntries={[
@@ -185,7 +186,7 @@ describe('dashboard list page', () => {
 			pathname: `${process.env.FRONTEND_API_ENDPOINT}/${ROUTES.ALL_DASHBOARD}/`,
 			search: `columnKey=createdAt&order=descend&page=1`,
 		};
-		(useLocation as jest.Mock).mockReturnValue(mockLocation);
+		(useLocation as vi.Mock).mockReturnValue(mockLocation);
 		server.use(
 			rest.get('http://localhost/api/v1/dashboards', (_, res, ctx) =>
 				res(ctx.status(200), ctx.json(dashboardEmptyState)),

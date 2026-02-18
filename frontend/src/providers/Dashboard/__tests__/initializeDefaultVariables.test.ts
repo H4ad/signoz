@@ -2,18 +2,19 @@ import { ALL_SELECTED_VALUE } from 'components/NewSelect/utils';
 import { IDashboardVariable } from 'types/api/dashboard/getAll';
 
 import { initializeDefaultVariables } from '../initializeDefaultVariables';
+import { vi } from 'vitest';
 
 describe('initializeDefaultVariables', () => {
-	let mockGetUrlVariables: jest.Mock;
-	let mockUpdateUrlVariable: jest.Mock;
+	let mockGetUrlVariables: vi.Mock;
+	let mockUpdateUrlVariable: vi.Mock;
 
 	beforeEach(() => {
-		mockGetUrlVariables = jest.fn();
-		mockUpdateUrlVariable = jest.fn();
+		mockGetUrlVariables = vi.fn();
+		mockUpdateUrlVariable = vi.fn();
 	});
 
 	afterEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	});
 
 	const createMockVariable = (

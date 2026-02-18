@@ -6,6 +6,7 @@ import MockQueryClientProvider from 'providers/test/MockQueryClientProvider';
 
 import LeftToolbarActions from '../LeftToolbarActions';
 import RightToolbarActions from '../RightToolbarActions';
+import { vi } from 'vitest';
 
 describe('ToolbarActions', () => {
 	const mockHandleFilterVisibilityChange = (): void => {};
@@ -35,7 +36,7 @@ describe('ToolbarActions', () => {
 	};
 
 	it('LeftToolbarActions - renders correctly with default props', async () => {
-		const handleChangeSelectedView = jest.fn();
+		const handleChangeSelectedView = vi.fn();
 		const { queryByTestId } = render(
 			<LeftToolbarActions
 				items={defaultItems}
@@ -59,7 +60,7 @@ describe('ToolbarActions', () => {
 	});
 
 	it('renders - clickhouse view and test view switching', async () => {
-		const handleChangeSelectedView = jest.fn();
+		const handleChangeSelectedView = vi.fn();
 		const clickhouseItems = {
 			...defaultItems,
 			list: { ...defaultItems.list, show: false },
@@ -90,7 +91,7 @@ describe('ToolbarActions', () => {
 	});
 
 	it('RightToolbarActions - render correctly with props', async () => {
-		const onStageRunQuery = jest.fn();
+		const onStageRunQuery = vi.fn();
 		const { queryByText } = render(
 			<MockQueryClientProvider>
 				<RightToolbarActions onStageRunQuery={onStageRunQuery} />,

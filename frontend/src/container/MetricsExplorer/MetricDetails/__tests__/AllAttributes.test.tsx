@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import * as reactUseHooks from 'react-use';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { MetricType } from 'api/metricsExplorer/getMetricsList';
@@ -7,14 +8,14 @@ import { MetricDetailsAttribute } from '../../../../api/metricsExplorer/getMetri
 import ROUTES from '../../../../constants/routes';
 import AllAttributes, { AllAttributesValue } from '../AllAttributes';
 
-jest.mock('react-router-dom', () => ({
-	...jest.requireActual('react-router-dom'),
+vi.mock('react-router-dom', async () => ({
+	...(await vi.importActual<any>('react-router-dom')),
 	useLocation: (): { pathname: string } => ({
 		pathname: `${ROUTES.METRICS_EXPLORER}`,
 	}),
 }));
-const mockHandleExplorerTabChange = jest.fn();
-jest
+const mockHandleExplorerTabChange = vi.fn();
+vi
 	.spyOn(useHandleExplorerTabChange, 'useHandleExplorerTabChange')
 	.mockReturnValue({
 		handleExplorerTabChange: mockHandleExplorerTabChange,
@@ -35,8 +36,8 @@ const mockAttributes: MetricDetailsAttribute[] = [
 	},
 ];
 
-const mockUseCopyToClipboard = jest.fn();
-jest
+const mockUseCopyToClipboard = vi.fn();
+vi
 	.spyOn(reactUseHooks, 'useCopyToClipboard')
 	.mockReturnValue([{ value: 'value1' }, mockUseCopyToClipboard] as any);
 
@@ -128,7 +129,7 @@ describe('AllAttributes', () => {
 });
 
 describe('AllAttributesValue', () => {
-	const mockGoToMetricsExploreWithAppliedAttribute = jest.fn();
+	const mockGoToMetricsExploreWithAppliedAttribute = vi.fn();
 
 	it('renders all attribute values', () => {
 		render(

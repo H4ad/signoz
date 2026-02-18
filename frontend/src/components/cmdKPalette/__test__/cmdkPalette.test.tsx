@@ -9,13 +9,14 @@ import { render, screen, userEvent } from 'tests/test-utils';
 import '@testing-library/jest-dom/extend-expect';
 
 import { CmdKPalette } from '../cmdKPalette';
+import { vi } from 'vitest';
 
 const HOME_LABEL = 'Go to Home';
 
 beforeAll(() => {
 	Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', {
 		configurable: true,
-		value: jest.fn(),
+		value: vi.fn(),
 	});
 });
 
@@ -27,14 +28,14 @@ afterAll(() => {
 });
 
 // mock history.push / replace / go / location
-jest.mock('lib/history', () => {
+vi.mock('lib/history', () => {
 	const location = { pathname: '/', search: '', hash: '' };
 
 	const stack: { pathname: string; search: string }[] = [
 		{ pathname: '/', search: '' },
 	];
 
-	const push = jest.fn((path: string) => {
+	const push = vi.fn((path: string) => {
 		const [rawPath, rawQuery] = path.split('?');
 		const pathname = rawPath || '/';
 		const search = path.includes('?') ? `?${rawQuery || ''}` : '';
@@ -46,7 +47,7 @@ jest.mock('lib/history', () => {
 		return undefined;
 	});
 
-	const replace = jest.fn((path: string) => {
+	const replace = vi.fn((path: string) => {
 		const [rawPath, rawQuery] = path.split('?');
 		const pathname = rawPath || '/';
 		const search = path.includes('?') ? `?${rawQuery || ''}` : '';
@@ -62,8 +63,8 @@ jest.mock('lib/history', () => {
 		return undefined;
 	});
 
-	const listen = jest.fn();
-	const go = jest.fn((n: number) => {
+	const listen = vi.fn();
+	const go = vi.fn((n: number) => {
 		if (n < 0 && stack.length > 1) {
 			stack.pop();
 		}
@@ -97,58 +98,58 @@ class ResizeObserver {
 (global as any).ResizeObserver = ResizeObserver;
 
 // mock cmdK provider hook (open state + setter)
-const mockSetOpen = jest.fn();
-jest.mock('providers/cmdKProvider', (): unknown => ({
+const mockSetOpen = vi.fn();
+vi.mock('providers/cmdKProvider', (): unknown => ({
 	useCmdK: (): {
 		open: boolean;
-		setOpen: jest.Mock;
-		openCmdK: jest.Mock;
-		closeCmdK: jest.Mock;
+		setOpen: vi.Mock;
+		openCmdK: vi.Mock;
+		closeCmdK: vi.Mock;
 	} => ({
 		open: true,
 		setOpen: mockSetOpen,
-		openCmdK: jest.fn(),
-		closeCmdK: jest.fn(),
+		openCmdK: vi.fn(),
+		closeCmdK: vi.fn(),
 	}),
 }));
 
 // mock notifications hook
-jest.mock('hooks/useNotifications', (): unknown => ({
+vi.mock('hooks/useNotifications', (): unknown => ({
 	useNotifications: (): { notifications: [] } => ({ notifications: [] }),
 }));
 
 // mock theme hook
-jest.mock('hooks/useDarkMode', (): unknown => ({
+vi.mock('hooks/useDarkMode', (): unknown => ({
 	useThemeMode: (): {
-		setAutoSwitch: jest.Mock;
-		setTheme: jest.Mock;
+		setAutoSwitch: vi.Mock;
+		setTheme: vi.Mock;
 		theme: string;
 	} => ({
-		setAutoSwitch: jest.fn(),
-		setTheme: jest.fn(),
+		setAutoSwitch: vi.fn(),
+		setTheme: vi.fn(),
 		theme: 'dark',
 	}),
 }));
 
 // mock updateUserPreference API and react-query mutation
-jest.mock('api/v1/user/preferences/name/update', (): jest.Mock => jest.fn());
-jest.mock('react-query', (): unknown => {
-	const actual = jest.requireActual('react-query');
+vi.mock('api/v1/user/preferences/name/update', (): vi.Mock => vi.fn());
+vi.mock('react-query', async (): Promise<unknown> => {
+	const actual = await vi.importActual('react-query');
 	return {
 		...actual,
-		useMutation: (): { mutate: jest.Mock } => ({ mutate: jest.fn() }),
+		useMutation: (): { mutate: vi.Mock } => ({ mutate: vi.fn() }),
 	};
 });
 
 // mock other side-effecty modules
-jest.mock('api/common/logEvent', () => jest.fn());
-jest.mock('api/browser/localstorage/set', () => jest.fn());
-jest.mock('utils/error', () => ({ showErrorNotification: jest.fn() }));
+vi.mock('api/common/logEvent', () => vi.fn());
+vi.mock('api/browser/localstorage/set', () => vi.fn());
+vi.mock('utils/error', () => ({ showErrorNotification: vi.fn() }));
 
 // ---- Tests ----
 describe('CmdKPalette', () => {
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	});
 
 	test('renders navigation and settings groups and items', () => {

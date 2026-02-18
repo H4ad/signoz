@@ -5,17 +5,18 @@ import { DataSource } from 'types/common/queryBuilder';
 
 import { viewMockData } from '../__mock__/viewData';
 import MenuItemGenerator from '../MenuItemGenerator';
+import { vi } from 'vitest';
 
-jest.mock('react-router-dom', () => ({
-	...jest.requireActual('react-router-dom'),
+vi.mock('react-router-dom', async () => ({
+	...(await vi.importActual('react-router-dom')),
 	useLocation: (): { pathname: string } => ({
 		pathname: `${process.env.FRONTEND_API_ENDPOINT}${ROUTES.APPLICATION}/`,
 	}),
 }));
 
-jest.mock('antd/es/form/Form', () => ({
-	useForm: jest.fn().mockReturnValue({
-		onFinish: jest.fn(),
+vi.mock('antd/es/form/Form', () => ({
+	useForm: vi.fn().mockReturnValue({
+		onFinish: vi.fn(),
 	}),
 }));
 
@@ -28,7 +29,7 @@ describe('MenuItemGenerator', () => {
 					viewKey={viewMockData[0].id}
 					createdBy={viewMockData[0].createdBy}
 					uuid={viewMockData[0].id}
-					refetchAllView={jest.fn()}
+					refetchAllView={vi.fn()}
 					viewData={viewMockData}
 					sourcePage={DataSource.TRACES}
 				/>
@@ -46,7 +47,7 @@ describe('MenuItemGenerator', () => {
 					viewKey={viewMockData[0].id}
 					createdBy={viewMockData[0].createdBy}
 					uuid={viewMockData[0].id}
-					refetchAllView={jest.fn()}
+					refetchAllView={vi.fn()}
 					viewData={viewMockData}
 					sourcePage={DataSource.TRACES}
 				/>

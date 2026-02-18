@@ -10,6 +10,7 @@ import type { QueryKeyDataSuggestionsProps } from 'types/api/querySuggestions/ty
 import { DataSource } from 'types/common/queryBuilder';
 
 import QuerySearch from '../QuerySearch/QuerySearch';
+import { vi } from 'vitest';
 
 const CM_EDITOR_SELECTOR = '.cm-editor .cm-content';
 
@@ -84,18 +85,18 @@ beforeAll(() => {
 	Element.prototype.getBoundingClientRect = (): DOMRect => mockRect;
 });
 
-jest.mock('hooks/useDarkMode', () => ({
+vi.mock('hooks/useDarkMode', () => ({
 	useIsDarkMode: (): boolean => false,
 }));
 
-jest.mock('providers/Dashboard/Dashboard', () => ({
+vi.mock('providers/Dashboard/Dashboard', () => ({
 	useDashboard: (): { selectedDashboard: undefined } => ({
 		selectedDashboard: undefined,
 	}),
 }));
 
-jest.mock('hooks/queryBuilder/useQueryBuilder', () => {
-	const handleRunQuery = jest.fn();
+vi.mock('hooks/queryBuilder/useQueryBuilder', () => {
+	const handleRunQuery = vi.fn();
 	return {
 		__esModule: true,
 		useQueryBuilder: (): { handleRunQuery: () => void } => ({ handleRunQuery }),
@@ -103,16 +104,16 @@ jest.mock('hooks/queryBuilder/useQueryBuilder', () => {
 	};
 });
 
-jest.mock('api/querySuggestions/getKeySuggestions', () => ({
-	getKeySuggestions: jest.fn().mockResolvedValue({
+vi.mock('api/querySuggestions/getKeySuggestions', () => ({
+	getKeySuggestions: vi.fn().mockResolvedValue({
 		data: {
 			data: { keys: {} as Record<string, QueryKeyDataSuggestionsProps[]> },
 		},
 	}),
 }));
 
-jest.mock('api/querySuggestions/getValueSuggestion', () => ({
-	getValueSuggestions: jest.fn().mockResolvedValue({
+vi.mock('api/querySuggestions/getValueSuggestion', () => ({
+	getValueSuggestions: vi.fn().mockResolvedValue({
 		data: { data: { values: { stringValues: [], numberValues: [] } } },
 	}),
 }));
@@ -128,7 +129,7 @@ describe('QuerySearch (Integration with Real CodeMirror)', () => {
 	it('renders with placeholder', () => {
 		render(
 			<QuerySearch
-				onChange={jest.fn() as jest.MockedFunction<(v: string) => void>}
+				onChange={vi.fn() as vi.MockedFunction<(v: string) => void>}
 				queryData={initialQueriesMap.logs.builder.queryData[0]}
 				dataSource={DataSource.LOGS}
 			/>,
@@ -141,14 +142,14 @@ describe('QuerySearch (Integration with Real CodeMirror)', () => {
 
 	it('fetches key suggestions when typing a key (debounced)', async () => {
 		// Use real timers for CodeMirror integration tests
-		const mockedGetKeys = getKeySuggestions as jest.MockedFunction<
+		const mockedGetKeys = getKeySuggestions as vi.MockedFunction<
 			typeof getKeySuggestions
 		>;
 		mockedGetKeys.mockClear();
 
 		render(
 			<QuerySearch
-				onChange={jest.fn() as jest.MockedFunction<(v: string) => void>}
+				onChange={vi.fn() as vi.MockedFunction<(v: string) => void>}
 				queryData={initialQueriesMap.logs.builder.queryData[0]}
 				dataSource={DataSource.LOGS}
 			/>,
@@ -175,14 +176,14 @@ describe('QuerySearch (Integration with Real CodeMirror)', () => {
 
 	it('fetches value suggestions when editing value context', async () => {
 		// Use real timers for CodeMirror integration tests
-		const mockedGetValues = getValueSuggestions as jest.MockedFunction<
+		const mockedGetValues = getValueSuggestions as vi.MockedFunction<
 			typeof getValueSuggestions
 		>;
 		mockedGetValues.mockClear();
 
 		render(
 			<QuerySearch
-				onChange={jest.fn() as jest.MockedFunction<(v: string) => void>}
+				onChange={vi.fn() as vi.MockedFunction<(v: string) => void>}
 				queryData={initialQueriesMap.logs.builder.queryData[0]}
 				dataSource={DataSource.LOGS}
 			/>,
@@ -206,14 +207,14 @@ describe('QuerySearch (Integration with Real CodeMirror)', () => {
 
 	it('fetches key suggestions on mount for LOGS', async () => {
 		// Use real timers for CodeMirror integration tests
-		const mockedGetKeysOnMount = getKeySuggestions as jest.MockedFunction<
+		const mockedGetKeysOnMount = getKeySuggestions as vi.MockedFunction<
 			typeof getKeySuggestions
 		>;
 		mockedGetKeysOnMount.mockClear();
 
 		render(
 			<QuerySearch
-				onChange={jest.fn() as jest.MockedFunction<(v: string) => void>}
+				onChange={vi.fn() as vi.MockedFunction<(v: string) => void>}
 				queryData={initialQueriesMap.logs.builder.queryData[0]}
 				dataSource={DataSource.LOGS}
 			/>,
@@ -231,11 +232,11 @@ describe('QuerySearch (Integration with Real CodeMirror)', () => {
 	});
 
 	it('calls provided onRun on Mod-Enter', async () => {
-		const onRun = jest.fn() as jest.MockedFunction<(q: string) => void>;
+		const onRun = vi.fn() as vi.MockedFunction<(q: string) => void>;
 
 		render(
 			<QuerySearch
-				onChange={jest.fn() as jest.MockedFunction<(v: string) => void>}
+				onChange={vi.fn() as vi.MockedFunction<(v: string) => void>}
 				queryData={initialQueriesMap.logs.builder.queryData[0]}
 				dataSource={DataSource.LOGS}
 				onRun={onRun}
@@ -276,7 +277,7 @@ describe('QuerySearch (Integration with Real CodeMirror)', () => {
 
 		render(
 			<QuerySearch
-				onChange={jest.fn() as jest.MockedFunction<(v: string) => void>}
+				onChange={vi.fn() as vi.MockedFunction<(v: string) => void>}
 				queryData={queryDataWithExpression}
 				dataSource={DataSource.LOGS}
 			/>,
@@ -302,11 +303,11 @@ describe('QuerySearch (Integration with Real CodeMirror)', () => {
 	it('handles queryData.filter.expression changes without triggering onChange', async () => {
 		// Spy on CodeMirror's EditorView.dispatch, which is invoked when updateEditorValue
 		// applies a programmatic change to the editor.
-		const dispatchSpy = jest.spyOn(EditorView.prototype, 'dispatch');
+		const dispatchSpy = vi.spyOn(EditorView.prototype, 'dispatch');
 		const initialExpression = "service.name = 'frontend'";
 		const updatedExpression = "service.name = 'backend'";
 
-		const onChange = jest.fn() as jest.MockedFunction<(v: string) => void>;
+		const onChange = vi.fn() as vi.MockedFunction<(v: string) => void>;
 
 		const initialQueryData = {
 			...initialQueriesMap.logs.builder.queryData[0],

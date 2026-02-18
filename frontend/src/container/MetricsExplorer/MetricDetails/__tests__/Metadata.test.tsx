@@ -1,4 +1,5 @@
 /* eslint-disable sonarjs/no-duplicate-string */
+import { vi } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { Temporality } from 'api/metricsExplorer/getMetricDetails';
 import { MetricType } from 'api/metricsExplorer/getMetricsList';
@@ -13,8 +14,8 @@ import { SelectOption } from 'types/common/select';
 import Metadata from '../Metadata';
 
 // Mock antd select for testing
-jest.mock('antd', () => ({
-	...jest.requireActual('antd'),
+vi.mock('antd', async () => ({
+	...(await vi.importActual<any>('antd')),
 	Select: ({
 		children,
 		onChange,
@@ -42,7 +43,7 @@ jest.mock('antd', () => ({
 		</select>
 	),
 }));
-jest.mock(
+vi.mock(
 	'components/YAxisUnitSelector',
 	() =>
 		function MockYAxisUnitSelector({
@@ -65,24 +66,24 @@ jest.mock(
 		},
 );
 
-jest.mock('react-query', () => ({
-	...jest.requireActual('react-query'),
+vi.mock('react-query', async () => ({
+	...(await vi.importActual<any>('react-query')),
 	useQueryClient: (): { invalidateQueries: () => void } => ({
-		invalidateQueries: jest.fn(),
+		invalidateQueries: vi.fn(),
 	}),
 }));
 
-const mockUseUpdateMetricMetadata = jest.fn();
-jest
+const mockUseUpdateMetricMetadata = vi.fn();
+vi
 	.spyOn(useUpdateMetricMetadataHooks, 'useUpdateMetricMetadata')
 	.mockReturnValue({
 		mutate: mockUseUpdateMetricMetadata,
 		isLoading: false,
 	} as any);
 
-const mockErrorNotification = jest.fn();
-const mockSuccessNotification = jest.fn();
-jest.spyOn(useNotificationsHooks, 'useNotifications').mockReturnValue({
+const mockErrorNotification = vi.fn();
+const mockSuccessNotification = vi.fn();
+vi.spyOn(useNotificationsHooks, 'useNotifications').mockReturnValue({
 	notifications: {
 		error: mockErrorNotification,
 		success: mockSuccessNotification,
@@ -96,7 +97,7 @@ const mockMetricMetadata = {
 	unit: 'test_unit',
 	temporality: Temporality.DELTA,
 };
-const mockRefetchMetricDetails = jest.fn();
+const mockRefetchMetricDetails = vi.fn();
 
 describe('Metadata', () => {
 	it('should render the metadata properly', () => {

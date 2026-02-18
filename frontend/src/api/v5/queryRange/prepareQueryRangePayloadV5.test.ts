@@ -20,10 +20,11 @@ import { DataSource, ReduceOperators } from 'types/common/queryBuilder';
 import { DataTypes } from 'types/api/queryBuilder/queryAutocompleteResponse';
 
 import { prepareQueryRangePayloadV5 } from './prepareQueryRangePayloadV5';
+import { vi } from 'vitest';
 
-jest.mock('lib/getStartEndRangeTime', () => ({
+vi.mock('lib/getStartEndRangeTime', () => ({
 	__esModule: true,
-	default: jest.fn(() => ({ start: '100', end: '200' })),
+	default: vi.fn(() => ({ start: '100', end: '200' })),
 }));
 
 describe('prepareQueryRangePayloadV5', () => {
@@ -513,8 +514,8 @@ describe('prepareQueryRangePayloadV5', () => {
 	});
 
 	it('maps groupBy, order, having, aggregations and filter for logs builder query', () => {
-		const getStartEndRangeTime = jest.requireMock('lib/getStartEndRangeTime')
-			.default as jest.Mock;
+		const getStartEndRangeTime = vi.requireMock('lib/getStartEndRangeTime')
+			.default as vi.Mock;
 		getStartEndRangeTime.mockReturnValueOnce({
 			start: '1754623641',
 			end: '1754645241',

@@ -4,13 +4,13 @@ import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 
 // Import dependency building functions
-import {
+import { vi } from 'vitest';
 	buildDependencies,
 	buildDependencyGraph,
 } from '../DashboardVariablesSelection/util';
 
 // Mock scrollIntoView since it's not available in JSDOM
-window.HTMLElement.prototype.scrollIntoView = jest.fn();
+window.HTMLElement.prototype.scrollIntoView = vi.fn();
 
 function createMockStore(globalTime?: any): any {
 	return configureStore([])(() => ({
@@ -47,11 +47,11 @@ const mockDashboard = {
 };
 
 // Mock the dashboard provider with stable functions to prevent infinite loops
-const mockSetSelectedDashboard = jest.fn();
-const mockUpdateLocalStorageDashboardVariables = jest.fn();
-const mockSetVariablesToGetUpdated = jest.fn();
+const mockSetSelectedDashboard = vi.fn();
+const mockUpdateLocalStorageDashboardVariables = vi.fn();
+const mockSetVariablesToGetUpdated = vi.fn();
 
-jest.mock('providers/Dashboard/Dashboard', () => ({
+vi.mock('providers/Dashboard/Dashboard', () => ({
 	useDashboard: (): any => ({
 		selectedDashboard: mockDashboard,
 		setSelectedDashboard: mockSetSelectedDashboard,
@@ -79,7 +79,7 @@ TestWrapper.displayName = 'TestWrapper';
 
 describe('Dynamic Variables Integration Tests', () => {
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	});
 
 	describe('Variable Dependencies and Updates', () => {

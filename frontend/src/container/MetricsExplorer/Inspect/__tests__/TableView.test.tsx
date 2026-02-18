@@ -1,4 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
+import { vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { InspectMetricsSeries } from 'api/metricsExplorer/getInspectMetricsDetails';
 
@@ -47,8 +48,8 @@ describe('TableView', () => {
 	const defaultProps = {
 		inspectionStep: InspectionStep.COMPLETED,
 		inspectMetricsTimeSeries: mockTimeSeries,
-		setShowExpandedView: jest.fn(),
-		setExpandedViewOptions: jest.fn(),
+		setShowExpandedView: vi.fn(),
+		setExpandedViewOptions: vi.fn(),
 		metricInspectionOptions: {
 			timeAggregationInterval: 60,
 			timeAggregationOption: TimeAggregationOptions.MAX,
@@ -63,7 +64,7 @@ describe('TableView', () => {
 	};
 
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	});
 
 	it('renders table with correct columns', () => {

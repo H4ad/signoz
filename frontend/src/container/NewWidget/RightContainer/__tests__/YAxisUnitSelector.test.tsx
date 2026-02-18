@@ -2,11 +2,12 @@
 import { act } from 'react-dom/test-utils';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 
 import YAxisUnitSelector from '../YAxisUnitSelector';
 
 // Mock the dataFormatCategories to have predictable test data
-jest.mock('../dataFormatCategories', () => ({
+vi.mock('../dataFormatCategories', () => ({
 	flattenedCategories: [
 		{ id: 'seconds', name: 'seconds (s)' },
 		{ id: 'milliseconds', name: 'milliseconds (ms)' },
@@ -21,20 +22,20 @@ const MOCK_MILLISECONDS = 'milliseconds';
 describe('YAxisUnitSelector', () => {
 	const defaultProps = {
 		value: MOCK_SECONDS,
-		onSelect: jest.fn(),
+		onSelect: vi.fn(),
 		fieldLabel: 'Y Axis Unit',
-		handleClear: jest.fn(),
+		handleClear: vi.fn(),
 	};
 
 	let user: ReturnType<typeof userEvent.setup>;
 
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		user = userEvent.setup();
 	});
 
 	afterEach(() => {
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	});
 
 	describe('Rendering (Read) & (write)', () => {

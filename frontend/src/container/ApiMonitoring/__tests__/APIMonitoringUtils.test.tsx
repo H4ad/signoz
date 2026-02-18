@@ -18,6 +18,7 @@ import {
 	getTopErrorsCoRelationQueryFilters,
 } from '../utils';
 import { APIMonitoringColumnsMock } from './mock';
+import { vi } from 'vitest';
 
 // Mock or define DataTypes since it seems to be missing from imports
 const DataTypes = {
@@ -27,14 +28,13 @@ const DataTypes = {
 };
 
 // Mock the external utils dependencies that are used within our tested functions
-jest.mock('../utils', () => {
-	// Import the actual module to partial mock
-	const originalModule = jest.requireActual('../utils');
+// Use async mock factory and await importActual so original exports are available
+vi.mock('../utils', async () => {
+	const originalModule = await vi.importActual('../utils');
 
-	// Return a mocked version
 	return {
 		...originalModule,
-		// Just export the functions we're testing directly
+		// Ensure the tested named exports are present
 		extractPortAndEndpoint: originalModule.extractPortAndEndpoint,
 		getEndPointDetailsQueryPayload: originalModule.getEndPointDetailsQueryPayload,
 		getRateOverTimeWidgetData: originalModule.getRateOverTimeWidgetData,
@@ -391,7 +391,7 @@ describe('API Monitoring Utils', () => {
 		});
 
 		// eslint-disable-next-line sonarjs/no-duplicate-string
-		it('should handle undefined input', () => {
+		it('should handle undefined input', async () => {
 			// Arrange
 			const undefinedInput = undefined as any;
 
@@ -580,7 +580,7 @@ describe('API Monitoring Utils', () => {
 
 	describe('getFormattedEndPointStatusCodeChartData', () => {
 		afterEach(() => {
-			jest.resetAllMocks();
+			vi.resetAllMocks();
 		});
 
 		it('should format status code chart data correctly with sum aggregation', () => {
@@ -662,13 +662,12 @@ describe('API Monitoring Utils', () => {
 			expect(hasStatusCode500To599).toBe(true);
 		});
 
-		it('should handle undefined input', () => {
+		it('should handle undefined input', async () => {
 			// Setup a mock
-			jest
-				.spyOn(
-					jest.requireActual('../utils'),
-					'getFormattedEndPointStatusCodeChartData',
-				)
+			// Use Vitest spyOn and ensure we spy on the actual module
+			const actualUtils = await vi.importActual('../utils') as any;
+			vi
+				.spyOn(actualUtils, 'getFormattedEndPointStatusCodeChartData')
 				.mockReturnValue({
 					data: {
 						result: [],

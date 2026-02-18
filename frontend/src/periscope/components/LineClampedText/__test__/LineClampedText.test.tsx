@@ -1,11 +1,12 @@
 import { render, screen } from '@testing-library/react';
 
 import LineClampedText from '../LineClampedText';
+import { vi } from 'vitest';
 
 describe('LineClampedText', () => {
 	// Reset all mocks after each test
 	afterEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	});
 
 	it('renders string text correctly', () => {

@@ -1,24 +1,25 @@
 import * as appContextHooks from 'providers/App/App';
 import * as timezoneHooks from 'providers/Timezone';
 import { LicenseEvent } from 'types/api/licensesV3/getActive';
+import { Mock, vi } from 'vitest';
 
 const setupCommonMocks = (): void => {
-	const createMockObserver = (): {
-		observe: jest.Mock;
-		unobserve: jest.Mock;
-		disconnect: jest.Mock;
-	} => ({
-		observe: jest.fn(),
-		unobserve: jest.fn(),
-		disconnect: jest.fn(),
-	});
+	global.IntersectionObserver = vi.fn(class {
+		observe = vi.fn();
+		unobserve = vi.fn();
+		disconnect = vi.fn();
+	} as any);
+	global.ResizeObserver = vi.fn(
+		class {
+			observe = vi.fn();
+			unobserve = vi.fn();
+			disconnect = vi.fn();
+		},
+	);
 
-	global.IntersectionObserver = jest.fn().mockImplementation(createMockObserver);
-	global.ResizeObserver = jest.fn().mockImplementation(createMockObserver);
-
-	jest.mock('react-redux', () => ({
-		...jest.requireActual('react-redux'),
-		useSelector: jest.fn(() => ({
+	vi.mock('react-redux', async () => ({
+		...(await vi.importActual('react-redux')),
+		useSelector: vi.fn(() => ({
 			globalTime: {
 				selectedTime: {
 					startTime: 1713734400000,
@@ -30,42 +31,42 @@ const setupCommonMocks = (): void => {
 		})),
 	}));
 
-	jest.mock('uplot', () => ({
+	vi.mock('uplot', () => ({
 		paths: {
-			spline: jest.fn(),
-			bars: jest.fn(),
+			spline: vi.fn(),
+			bars: vi.fn(),
 		},
-		default: jest.fn(() => ({
+		default: vi.fn(() => ({
 			paths: {
-				spline: jest.fn(),
-				bars: jest.fn(),
+				spline: vi.fn(),
+				bars: vi.fn(),
 			},
 		})),
 	}));
 
-	jest.mock('react-router-dom-v5-compat', () => ({
-		...jest.requireActual('react-router-dom-v5-compat'),
-		useSearchParams: jest.fn().mockReturnValue([
+	vi.mock('react-router-dom-v5-compat', async () => ({
+		...(await vi.importActual('react-router-dom-v5-compat')),
+		useSearchParams: vi.fn().mockReturnValue([
 			{
-				get: jest.fn(),
-				entries: jest.fn(() => []),
-				set: jest.fn(),
+				get: vi.fn(),
+				entries: vi.fn(() => []),
+				set: vi.fn(),
 			},
-			jest.fn(),
+			vi.fn(),
 		]),
 		useNavigationType: (): any => 'PUSH',
 	}));
 
-	jest.mock('lib/getMinMax', () => ({
+	vi.mock('lib/getMinMax', () => ({
 		__esModule: true,
-		default: jest.fn().mockImplementation(() => ({
+		default: vi.fn().mockImplementation(() => ({
 			minTime: 1713734400000,
 			maxTime: 1713738000000,
 		})),
-		isValidShortHandDateTimeFormat: jest.fn().mockReturnValue(true),
+		isValidShortHandDateTimeFormat: vi.fn().mockReturnValue(true),
 	}));
 
-	jest.spyOn(appContextHooks, 'useAppContext').mockReturnValue({
+	vi.spyOn(appContextHooks, 'useAppContext').mockReturnValue({
 		user: {
 			role: 'admin',
 		},
@@ -89,7 +90,7 @@ const setupCommonMocks = (): void => {
 		},
 	} as any);
 
-	jest.spyOn(timezoneHooks, 'useTimezone').mockReturnValue({
+	vi.spyOn(timezoneHooks, 'useTimezone').mockReturnValue({
 		timezone: {
 			offset: 0,
 		},
@@ -98,9 +99,9 @@ const setupCommonMocks = (): void => {
 		},
 	} as any);
 
-	jest.mock('hooks/useSafeNavigate', () => ({
+	vi.mock('hooks/useSafeNavigate', () => ({
 		useSafeNavigate: (): any => ({
-			safeNavigate: jest.fn(),
+			safeNavigate: vi.fn(),
 		}),
 	}));
 };

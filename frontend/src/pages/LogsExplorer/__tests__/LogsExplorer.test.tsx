@@ -18,18 +18,19 @@ import { fireEvent, render, waitFor } from 'tests/test-utils';
 import { Query } from 'types/api/queryBuilder/queryBuilderData';
 
 import LogsExplorer from '../index';
+import { vi } from 'vitest';
 
 const queryRangeURL = 'http://localhost/api/v3/query_range';
 
-jest.mock('react-router-dom', () => ({
-	...jest.requireActual('react-router-dom'),
+vi.mock('react-router-dom', async () => ({
+	...(await vi.importActual('react-router-dom')),
 	useLocation: (): { pathname: string } => ({
 		pathname: `${ROUTES.LOGS_EXPLORER}`,
 	}),
 }));
 
 // mocking the graph components in this test as this should be handled separately
-jest.mock(
+vi.mock(
 	'container/TimeSeriesView/TimeSeriesView',
 	() =>
 		// eslint-disable-next-line func-names, @typescript-eslint/explicit-function-return-type, react/display-name
@@ -39,7 +40,7 @@ jest.mock(
 );
 
 const frequencyChartContent = 'Frequency chart content';
-jest.mock(
+vi.mock(
 	'container/LogsExplorerChart',
 	() =>
 		// eslint-disable-next-line func-names, @typescript-eslint/explicit-function-return-type, react/display-name
@@ -48,22 +49,22 @@ jest.mock(
 		},
 );
 
-jest.mock('constants/panelTypes', () => ({
+vi.mock('constants/panelTypes', () => ({
 	AVAILABLE_EXPORT_PANEL_TYPES: ['graph', 'table'],
 }));
 
-jest.mock('d3-interpolate', () => ({
-	interpolate: jest.fn(),
+vi.mock('d3-interpolate', () => ({
+	interpolate: vi.fn(),
 }));
 
-jest.mock('hooks/useSafeNavigate', () => ({
+vi.mock('hooks/useSafeNavigate', () => ({
 	useSafeNavigate: (): any => ({
-		safeNavigate: jest.fn(),
+		safeNavigate: vi.fn(),
 	}),
 }));
 
 // Mock usePreferenceSync
-jest.mock('providers/preferences/sync/usePreferenceSync', () => ({
+vi.mock('providers/preferences/sync/usePreferenceSync', () => ({
 	usePreferenceSync: (): any => ({
 		preferences: {
 			columns: [],
@@ -76,8 +77,8 @@ jest.mock('providers/preferences/sync/usePreferenceSync', () => ({
 		},
 		loading: false,
 		error: null,
-		updateColumns: jest.fn(),
-		updateFormatting: jest.fn(),
+		updateColumns: vi.fn(),
+		updateFormatting: vi.fn(),
 	}),
 }));
 
@@ -195,7 +196,7 @@ describe('Logs Explorer Tests', () => {
 								queryTraceOperator: [],
 							},
 						},
-						setSupersetQuery: jest.fn(),
+						setSupersetQuery: vi.fn(),
 						supersetQuery: initialQueriesMap.metrics,
 						stagedQuery: initialQueriesMap.metrics,
 						initialDataSource: null,

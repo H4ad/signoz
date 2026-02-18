@@ -1,4 +1,5 @@
 /* eslint-disable sonarjs/no-duplicate-string */
+import { vi } from 'vitest';
 import {
 	ApiMonitoringParams,
 	DEFAULT_PARAMS,
@@ -7,12 +8,12 @@ import {
 } from 'container/ApiMonitoring/queryParams';
 
 // Mock react-router-dom hooks
-jest.mock('react-router-dom', () => {
-	const originalModule = jest.requireActual('react-router-dom');
+vi.mock('react-router-dom', async () => {
+	const originalModule = await vi.importActual('react-router-dom');
 	return {
 		...originalModule,
-		useLocation: jest.fn(),
-		useHistory: jest.fn(),
+		useLocation: vi.fn(),
+		useHistory: vi.fn(),
 	};
 });
 
@@ -60,8 +61,8 @@ describe('API Monitoring Query Params', () => {
 	describe('setApiMonitoringParams', () => {
 		it('updates URL with new params (push mode)', () => {
 			const history = {
-				push: jest.fn(),
-				replace: jest.fn(),
+				push: vi.fn(),
+				replace: vi.fn(),
 			};
 			const search = '';
 			const newParams: Partial<ApiMonitoringParams> = {
@@ -90,8 +91,8 @@ describe('API Monitoring Query Params', () => {
 
 		it('updates URL with new params (replace mode)', () => {
 			const history = {
-				push: jest.fn(),
-				replace: jest.fn(),
+				push: vi.fn(),
+				replace: vi.fn(),
 			};
 			const search = '';
 			const newParams: Partial<ApiMonitoringParams> = {
@@ -109,8 +110,8 @@ describe('API Monitoring Query Params', () => {
 
 		it('merges new params with existing params', () => {
 			const history = {
-				push: jest.fn(),
-				replace: jest.fn(),
+				push: vi.fn(),
+				replace: vi.fn(),
 			};
 
 			// Start with some existing params
@@ -153,7 +154,7 @@ describe('API Monitoring Query Params', () => {
 	describe('useApiMonitoringParams hook without calling hook directly', () => {
 		// Instead of using the hook directly, We are testing the individual functions that make up the hook
 		// as the original hook contains react core hooks
-		const mockUseLocationAndHistory = (initialSearch = ''): any => {
+		const mockUseLocationAndHistory = async (initialSearch = ''): Promise<any> => {
 			// Create mock location object
 			const location = {
 				search: initialSearch,
@@ -164,11 +165,11 @@ describe('API Monitoring Query Params', () => {
 
 			// Create mock history object
 			const history = {
-				push: jest.fn((args) => {
+				push: vi.fn((args) => {
 					// Simulate updating the location search
 					location.search = args.search;
 				}),
-				replace: jest.fn((args) => {
+				replace: vi.fn((args) => {
 					location.search = args.search;
 				}),
 				length: 1,
@@ -176,11 +177,18 @@ describe('API Monitoring Query Params', () => {
 			};
 
 			// Set up mocks for useLocation and useHistory
-			const useLocationMock = jest.requireMock('react-router-dom').useLocation;
-			const useHistoryMock = jest.requireMock('react-router-dom').useHistory;
-
-			useLocationMock.mockReturnValue(location);
-			useHistoryMock.mockReturnValue(history);
+			vi.mock('react-router-dom', async () => {
+				return {
+					...(await vi.importActual('react-router-dom')),
+					useLocation: vi.fn().mockReturnValue(location),
+					useHistory: vi.fn().mockReturnValue(history),
+				}
+			})
+			// const useLocationMock = await vi.importActual('react-router-dom').useLocation;
+			// const useHistoryMock = await vi.importActual('react-router-dom').useHistory;
+			//
+			// useLocationMock.mockReturnValue(location);
+			// useHistoryMock.mockReturnValue(history);
 
 			return { location, history };
 		};
@@ -207,8 +215,8 @@ describe('API Monitoring Query Params', () => {
 			expect(result.selectedView).toBe(testParams.selectedView);
 		});
 
-		it('updates URL correctly with new params', () => {
-			const { location, history } = mockUseLocationAndHistory();
+		it('updates URL correctly with new params', async () => {
+			const { location, history } = await mockUseLocationAndHistory();
 
 			const newParams: Partial<ApiMonitoringParams> = {
 				selectedDomain: 'new-domain',
@@ -233,7 +241,7 @@ describe('API Monitoring Query Params', () => {
 			expect(decoded.showIP).toBe(newParams.showIP);
 		});
 
-		it('preserves existing params when updating', () => {
+		it('preserves existing params when updating', async () => {
 			// Create a search string with existing params
 			const initialParams: Partial<ApiMonitoringParams> = {
 				showIP: false,
@@ -248,7 +256,7 @@ describe('API Monitoring Query Params', () => {
 			const initialSearch = `?${urlParams.toString()}`;
 
 			// Set up mocks
-			const { location, history } = mockUseLocationAndHistory(initialSearch);
+			const { location, history } = await mockUseLocationAndHistory(initialSearch);
 
 			// Manually execute the core logic
 			setApiMonitoringParams(

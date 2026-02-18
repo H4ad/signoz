@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { QueryParams } from 'constants/query';
 
@@ -22,21 +23,21 @@ const mockDashboard2 = {
 const mockAlerts = [mockAlert1, mockAlert2];
 const mockDashboards = [mockDashboard1, mockDashboard2];
 
-const mockSafeNavigate = jest.fn();
-jest.mock('hooks/useSafeNavigate', () => ({
+const mockSafeNavigate = vi.fn();
+vi.mock('hooks/useSafeNavigate', () => ({
 	useSafeNavigate: (): any => ({
 		safeNavigate: mockSafeNavigate,
 	}),
 }));
 
-const mockSetQuery = jest.fn();
+const mockSetQuery = vi.fn();
 const mockUrlQuery = {
 	set: mockSetQuery,
-	toString: jest.fn(),
+	toString: vi.fn(),
 };
-jest.mock('hooks/useUrlQuery', () => ({
+vi.mock('hooks/useUrlQuery', () => ({
 	__esModule: true,
-	default: jest.fn(() => mockUrlQuery),
+	default: vi.fn(() => mockUrlQuery),
 }));
 
 describe('DashboardsAndAlertsPopover', () => {

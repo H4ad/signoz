@@ -3,13 +3,14 @@ import { renderHook } from '@testing-library/react';
 import { IDashboardVariables } from 'providers/Dashboard/store/dashboardVariablesStore';
 
 import useGetResolvedText from '../useGetResolvedText';
+import { vi } from 'vitest';
 
 // Create a mock function that we can modify per test
 let mockDashboardVariables: IDashboardVariables = {};
 
 // Mock the useDashboardVariables hook
-jest.mock('hooks/dashboard/useDashboardVariables', () => ({
-	useDashboardVariables: jest.fn(() => ({
+vi.mock('hooks/dashboard/useDashboardVariables', () => ({
+	useDashboardVariables: vi.fn(() => ({
 		dashboardVariables: mockDashboardVariables,
 	})),
 }));

@@ -10,16 +10,17 @@ import store from 'store';
 import { LicenseEvent } from 'types/api/licensesV3/getActive';
 
 import HostsList from '../HostsList';
+import { vi } from 'vitest';
 
-jest.mock('lib/getMinMax', () => ({
+vi.mock('lib/getMinMax', () => ({
 	__esModule: true,
-	default: jest.fn().mockImplementation(() => ({
+	default: vi.fn().mockImplementation(() => ({
 		minTime: 1713734400000,
 		maxTime: 1713738000000,
-		isValidShortHandDateTimeFormat: jest.fn().mockReturnValue(true),
+		isValidShortHandDateTimeFormat: vi.fn().mockReturnValue(true),
 	})),
 }));
-jest.mock('components/CustomTimePicker/CustomTimePicker', () => ({
+vi.mock('components/CustomTimePicker/CustomTimePicker', () => ({
 	__esModule: true,
 	default: ({ onSelect, selectedTime, selectedValue }: any): JSX.Element => (
 		<div data-testid="custom-time-picker">
@@ -32,49 +33,56 @@ jest.mock('components/CustomTimePicker/CustomTimePicker', () => ({
 
 const queryClient = new QueryClient();
 
-jest.mock('react-redux', () => ({
-	...jest.requireActual('react-redux'),
-	useSelector: (): any => ({
-		globalTime: {
-			selectedTime: {
-				startTime: 1713734400000,
-				endTime: 1713738000000,
-			},
-			maxTime: 1713738000000,
-			minTime: 1713734400000,
-		},
-	}),
-}));
-
-jest.mock('react-router-dom', () => {
-	const ROUTES = jest.requireActual('constants/routes').default;
+vi.mock('react-redux', async () => {
+	const actual = await vi.importActual('react-redux');
 	return {
-		...jest.requireActual('react-router-dom'),
-		useLocation: jest.fn().mockReturnValue({
+		...actual,
+		useSelector: (): any => ({
+			globalTime: {
+				selectedTime: {
+					startTime: 1713734400000,
+					endTime: 1713738000000,
+				},
+				maxTime: 1713738000000,
+				minTime: 1713734400000,
+			},
+		}),
+	};
+});
+
+vi.mock('react-router-dom', async () => {
+	const [actual, routesModule] = await Promise.all([
+		vi.importActual('react-router-dom'),
+		vi.importActual('constants/routes'),
+	]);
+	const ROUTES = (routesModule as any).default;
+	return {
+		...actual,
+		useLocation: vi.fn().mockReturnValue({
 			pathname: ROUTES.INFRASTRUCTURE_MONITORING_HOSTS,
 		}),
 	};
 });
-jest.mock('react-router-dom-v5-compat', () => {
-	const actual = jest.requireActual('react-router-dom-v5-compat');
+vi.mock('react-router-dom-v5-compat', async () => {
+	const actual = await vi.importActual('react-router-dom-v5-compat');
 	return {
 		...actual,
-		useSearchParams: jest
+		useSearchParams: vi
 			.fn()
 			.mockReturnValue([
-				{ get: jest.fn(), entries: jest.fn().mockReturnValue([]) },
-				jest.fn(),
+				{ get: vi.fn(), entries: vi.fn().mockReturnValue([]) },
+				vi.fn(),
 			]),
 		useNavigationType: (): any => 'PUSH',
 	};
 });
-jest.mock('hooks/useSafeNavigate', () => ({
+vi.mock('hooks/useSafeNavigate', () => ({
 	useSafeNavigate: (): any => ({
-		safeNavigate: jest.fn(),
+		safeNavigate: vi.fn(),
 	}),
 }));
 
-jest.spyOn(timezoneHooks, 'useTimezone').mockReturnValue({
+vi.spyOn(timezoneHooks, 'useTimezone').mockReturnValue({
 	timezone: {
 		offset: 0,
 	},
@@ -82,7 +90,7 @@ jest.spyOn(timezoneHooks, 'useTimezone').mockReturnValue({
 		offset: 0,
 	},
 } as any);
-jest.spyOn(useGetHostListHooks, 'useGetHostList').mockReturnValue({
+vi.spyOn(useGetHostListHooks, 'useGetHostList').mockReturnValue({
 	data: {
 		payload: {
 			data: {
@@ -103,7 +111,7 @@ jest.spyOn(useGetHostListHooks, 'useGetHostList').mockReturnValue({
 	isLoading: false,
 	isError: false,
 } as any);
-jest.spyOn(appContextHooks, 'useAppContext').mockReturnValue({
+vi.spyOn(appContextHooks, 'useAppContext').mockReturnValue({
 	user: {
 		role: 'admin',
 	},

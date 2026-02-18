@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { render, screen, userEvent, waitFor, within } from 'tests/test-utils';
 
 import OverflowInputToolTip from './OverflowInputToolTip';
@@ -41,7 +42,7 @@ function queryTooltipInner(): HTMLElement | null {
 
 describe('OverflowInputToolTip', () => {
 	beforeEach(() => {
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	});
 
 	test('shows tooltip when content overflows and input is clamped at maxAutoWidth', async () => {

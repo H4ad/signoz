@@ -13,6 +13,7 @@ import { IBuilderQuery } from 'types/api/queryBuilder/queryBuilderData';
 
 // ** Components
 import { HavingFilter } from '../HavingFilter';
+import { vi } from 'vitest';
 
 const valueWithAttributeAndOperator: IBuilderQuery = {
 	...initialQueryBuilderFormValuesMap.logs,
@@ -26,7 +27,7 @@ const valueWithAttributeAndOperator: IBuilderQuery = {
 
 describe('Having filter behaviour', () => {
 	test('Having filter render is rendered', () => {
-		const mockFn = jest.fn();
+		const mockFn = vi.fn();
 		const { unmount } = render(
 			<HavingFilter
 				query={initialQueryBuilderFormValuesMap.metrics}
@@ -45,7 +46,7 @@ describe('Having filter behaviour', () => {
 	});
 
 	test('Having render is disabled initially', () => {
-		const mockFn = jest.fn();
+		const mockFn = vi.fn();
 		const { unmount } = render(
 			<HavingFilter
 				query={initialQueryBuilderFormValuesMap.metrics}
@@ -62,7 +63,7 @@ describe('Having filter behaviour', () => {
 	});
 
 	test('Is having filter is enable', () => {
-		const mockFn = jest.fn();
+		const mockFn = vi.fn();
 		const { unmount } = render(
 			<HavingFilter
 				query={valueWithAttributeAndOperator}
@@ -79,7 +80,7 @@ describe('Having filter behaviour', () => {
 	});
 
 	test('Autocomplete in the having filter', async () => {
-		const onChange = jest.fn();
+		const onChange = vi.fn();
 		const user = userEvent.setup();
 
 		const constructedAttribute = 'SUM(bytes)';

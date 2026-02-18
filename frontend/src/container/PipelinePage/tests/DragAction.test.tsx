@@ -5,6 +5,7 @@ import { render } from '@testing-library/react';
 import DragAction from 'container/PipelinePage/PipelineListsView/TableComponents/DragAction';
 import i18n from 'ReactI18';
 import store from 'store';
+import { vi } from 'vitest';
 
 describe('PipelinePage container test', () => {
 	it('should render DragAction section', () => {
@@ -12,7 +13,7 @@ describe('PipelinePage container test', () => {
 			<MemoryRouter>
 				<Provider store={store}>
 					<I18nextProvider i18n={i18n}>
-						<DragAction isEnabled onChange={jest.fn()} />
+						<DragAction isEnabled onChange={vi.fn()} />
 					</I18nextProvider>
 				</Provider>
 			</MemoryRouter>,

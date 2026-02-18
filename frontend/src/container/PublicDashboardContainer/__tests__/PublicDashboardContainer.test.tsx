@@ -14,15 +14,16 @@ import { PublicDashboardDataProps } from 'types/api/dashboard/public/get';
 import { EQueryType } from 'types/common/dashboard';
 
 import PublicDashboardContainer from '../PublicDashboardContainer';
+import { vi } from 'vitest';
 
 // Mock dependencies
-jest.mock('hooks/useDarkMode', () => ({
-	useIsDarkMode: jest.fn(() => false),
+vi.mock('hooks/useDarkMode', () => ({
+	useIsDarkMode: vi.fn(() => false),
 }));
 
-jest.mock('lib/getMinMax', () => ({
+vi.mock('lib/getMinMax', () => ({
 	__esModule: true,
-	default: jest.fn((interval: string) => {
+	default: vi.fn((interval: string) => {
 		if (interval === '1h') {
 			return {
 				minTime: 1000000000000,
@@ -36,7 +37,7 @@ jest.mock('lib/getMinMax', () => ({
 	}),
 }));
 
-jest.mock('container/TopNav/DateTimeSelectionV2', () => ({
+vi.mock('container/TopNav/DateTimeSelectionV2', () => ({
 	__esModule: true,
 	default: ({
 		onTimeChange,
@@ -62,7 +63,7 @@ jest.mock('container/TopNav/DateTimeSelectionV2', () => ({
 	),
 }));
 
-jest.mock('../Panel', () => ({
+vi.mock('../Panel', () => ({
 	__esModule: true,
 	default: ({
 		widget,
@@ -81,7 +82,7 @@ jest.mock('../Panel', () => ({
 	),
 }));
 
-jest.mock('react-grid-layout', () => ({
+vi.mock('react-grid-layout', () => ({
 	__esModule: true,
 	default: ({
 		children,
@@ -106,19 +107,19 @@ jest.mock('react-grid-layout', () => ({
 }));
 
 // Mock dayjs
-jest.mock('dayjs', () => {
-	const actualDayjs = jest.requireActual('dayjs');
-	const mockUnix = jest.fn(() => 1000);
-	const mockUtcOffset = jest.fn(() => 0);
-	const mockTzMethod = jest.fn(() => ({
+vi.mock('dayjs', async () => {
+	const actualDayjs = await vi.importActual('dayjs');
+	const mockUnix = vi.fn(() => 1000);
+	const mockUtcOffset = vi.fn(() => 0);
+	const mockTzMethod = vi.fn(() => ({
 		utcOffset: mockUtcOffset,
 	}));
-	const mockSubtract = jest.fn(() => ({
-		subtract: jest.fn(),
+	const mockSubtract = vi.fn(() => ({
+		subtract: vi.fn(),
 		unix: mockUnix,
 		tz: mockTzMethod,
 	}));
-	const mockDayjs = jest.fn(() => ({
+	const mockDayjs = vi.fn(() => ({
 		subtract: mockSubtract,
 		unix: mockUnix,
 		tz: mockTzMethod,
@@ -128,14 +129,14 @@ jest.mock('dayjs', () => {
 			key
 		] = (actualDayjs as Record<string, unknown>)[key];
 	});
-	((mockDayjs as unknown) as { extend: jest.Mock }).extend = jest.fn();
-	((mockDayjs as unknown) as { tz: { guess: jest.Mock } }).tz = {
-		guess: jest.fn(() => 'UTC'),
+	((mockDayjs as unknown) as { extend: vi.Mock }).extend = vi.fn();
+	((mockDayjs as unknown) as { tz: { guess: vi.Mock } }).tz = {
+		guess: vi.fn(() => 'UTC'),
 	};
 	return mockDayjs;
 });
 
-const mockUseIsDarkMode = jest.mocked(useIsDarkMode);
+const mockUseIsDarkMode = vi.mocked(useIsDarkMode);
 
 // MSW setup
 beforeAll(() => {
@@ -241,7 +242,7 @@ const createMockData = (
 
 describe('Public Dashboard Container', () => {
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockUseIsDarkMode.mockReturnValue(false);
 
 		// Set up default MSW handler for widget query range API

@@ -8,13 +8,14 @@ import {
 import { TelemetryFieldKey } from 'types/api/v5/queryRange';
 
 import tracesLoaderConfig from '../configs/tracesLoaderConfig';
+import { vi } from 'vitest';
 
 // Mock localStorage
 const mockLocalStorage: Record<string, string> = {};
 
-jest.mock('api/browser/localstorage/get', () => ({
+vi.mock('api/browser/localstorage/get', () => ({
 	__esModule: true,
-	default: jest.fn((key: string) => mockLocalStorage[key] || null),
+	default: vi.fn((key: string) => mockLocalStorage[key] || null),
 }));
 
 describe('tracesLoaderConfig', () => {

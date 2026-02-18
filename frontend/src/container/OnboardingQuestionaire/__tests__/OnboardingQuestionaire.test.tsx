@@ -3,17 +3,18 @@ import { rest, server } from 'mocks-server/server';
 import { render, screen, userEvent, waitFor } from 'tests/test-utils';
 
 import OnboardingQuestionaire from '../index';
+import { vi } from 'vitest';
 
 // Mock dependencies
-jest.mock('api/common/logEvent', () => ({
+vi.mock('api/common/logEvent', () => ({
 	__esModule: true,
-	default: jest.fn(),
+	default: vi.fn(),
 }));
 
-jest.mock('lib/history', () => ({
+vi.mock('lib/history', () => ({
 	__esModule: true,
 	default: {
-		push: jest.fn(),
+		push: vi.fn(),
 		location: {
 			pathname: '/onboarding',
 			search: '',
@@ -39,7 +40,7 @@ const mockOrgPreferences = {
 
 describe('OnboardingQuestionaire Component', () => {
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 
 		server.use(
 			rest.get(ORG_PREFERENCES_ENDPOINT, (_, res, ctx) =>

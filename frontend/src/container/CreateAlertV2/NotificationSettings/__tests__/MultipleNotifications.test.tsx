@@ -10,13 +10,14 @@ import {
 import { createMockAlertContextState } from 'container/CreateAlertV2/EvaluationSettings/__tests__/testUtils';
 
 import MultipleNotifications from '../MultipleNotifications';
+import { vi } from 'vitest';
 
-jest.mock('uplot', () => {
+vi.mock('uplot', () => {
 	const paths = {
-		spline: jest.fn(),
-		bars: jest.fn(),
+		spline: vi.fn(),
+		bars: vi.fn(),
 	};
-	const uplotMock = jest.fn(() => ({
+	const uplotMock = vi.fn(() => ({
 		paths,
 	}));
 	return {
@@ -24,8 +25,8 @@ jest.mock('uplot', () => {
 		default: uplotMock,
 	};
 });
-jest.mock('hooks/queryBuilder/useQueryBuilder', () => ({
-	useQueryBuilder: jest.fn(),
+vi.mock('hooks/queryBuilder/useQueryBuilder', () => ({
+	useQueryBuilder: vi.fn(),
 }));
 
 const TEST_QUERY = 'test-query';
@@ -35,7 +36,7 @@ const TRUE = 'true';
 const FALSE = 'false';
 const COMBOBOX_ROLE = 'combobox';
 const ARIA_DISABLED_ATTR = 'aria-disabled';
-const mockSetNotificationSettings = jest.fn();
+const mockSetNotificationSettings = vi.fn();
 const mockUseQueryBuilder = {
 	currentQuery: {
 		builder: {
@@ -50,7 +51,7 @@ const mockUseQueryBuilder = {
 };
 
 const initialAlertThresholdState = createMockAlertContextState().thresholdState;
-jest.spyOn(createAlertContext, 'useCreateAlertState').mockReturnValue(
+vi.spyOn(createAlertContext, 'useCreateAlertState').mockReturnValue(
 	createMockAlertContextState({
 		thresholdState: {
 			...initialAlertThresholdState,
@@ -60,14 +61,14 @@ jest.spyOn(createAlertContext, 'useCreateAlertState').mockReturnValue(
 	}),
 );
 
-describe('MultipleNotifications', () => {
-	const { useQueryBuilder } = jest.requireMock(
+describe('MultipleNotifications', async () => {
+	const { useQueryBuilder } = await vi.importMock<typeof import('hooks/queryBuilder/useQueryBuilder')>(
 		'hooks/queryBuilder/useQueryBuilder',
 	);
 
 	beforeEach(() => {
-		jest.clearAllMocks();
-		useQueryBuilder.mockReturnValue(mockUseQueryBuilder);
+		vi.clearAllMocks();
+		useQueryBuilder.mockReturnValue(mockUseQueryBuilder as any);
 	});
 
 	it('should render the multiple notifications component with no grouping fields and disabled input by default', () => {
@@ -91,9 +92,9 @@ describe('MultipleNotifications', () => {
 						{
 							queryName: TEST_QUERY,
 							groupBy: TEST_GROUP_BY_FIELDS,
-						},
+						} as any,
 					],
-				},
+				} as any,
 			},
 		});
 		render(<MultipleNotifications />);
@@ -114,13 +115,13 @@ describe('MultipleNotifications', () => {
 					queryData: [
 						{
 							queryName: TEST_QUERY,
-							groupBy: TEST_GROUP_BY_FIELDS,
+							groupBy: TEST_GROUP_BY_FIELDS as any,
 						},
 					],
 				},
 			},
 		});
-		jest.spyOn(createAlertContext, 'useCreateAlertState').mockReturnValue(
+		vi.spyOn(createAlertContext, 'useCreateAlertState').mockReturnValue(
 			createMockAlertContextState({
 				thresholdState: {
 					...INITIAL_ALERT_THRESHOLD_STATE,
@@ -150,15 +151,15 @@ describe('MultipleNotifications', () => {
 					queryData: [
 						{
 							queryName: 'test-query-1',
-							groupBy: [{ key: 'http.status_code' }],
+							groupBy: [{ key: 'http.status_code', type: null }],
 						},
 						{
 							queryName: TEST_QUERY_2,
-							groupBy: [{ key: 'service' }],
+							groupBy: [{ key: 'service', type: null }],
 						},
 					],
 				},
-			},
+			} as any,
 		});
 
 		render(<MultipleNotifications />);
@@ -178,13 +179,13 @@ describe('MultipleNotifications', () => {
 					queryData: [
 						{
 							queryName: TEST_QUERY_2,
-							groupBy: [{ key: 'service' }],
-						},
+							groupBy: [{ key: 'service', type: null }],
+						} as any,
 					],
 				},
 			},
 		});
-		jest.spyOn(createAlertContext, 'useCreateAlertState').mockReturnValue(
+		vi.spyOn(createAlertContext, 'useCreateAlertState').mockReturnValue(
 			createMockAlertContextState({
 				notificationSettings: {
 					...INITIAL_NOTIFICATION_SETTINGS_STATE,
@@ -207,8 +208,8 @@ describe('MultipleNotifications', () => {
 					queryData: [
 						{
 							queryName: TEST_QUERY_2,
-							groupBy: [{ key: 'service' }],
-						},
+							groupBy: [{ key: 'service', type: null }],
+						} as any,
 					],
 				},
 			},
@@ -234,13 +235,13 @@ describe('MultipleNotifications', () => {
 					queryData: [
 						{
 							queryName: TEST_QUERY_2,
-							groupBy: [{ key: 'service' }],
-						},
+							groupBy: [{ key: 'service', type: null }],
+						} as any,
 					],
 				},
 			},
 		});
-		jest.spyOn(createAlertContext, 'useCreateAlertState').mockReturnValue(
+		vi.spyOn(createAlertContext, 'useCreateAlertState').mockReturnValue(
 			createMockAlertContextState({
 				notificationSettings: {
 					...INITIAL_NOTIFICATION_SETTINGS_STATE,

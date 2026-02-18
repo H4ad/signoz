@@ -1,4 +1,5 @@
 /* eslint-disable */
+import { vi } from 'vitest';
 import {
 	fireEvent,
 	render,
@@ -13,22 +14,22 @@ import { PANEL_TYPES } from 'constants/queryBuilder';
 import { DataSource, ReduceOperators } from 'types/common/queryBuilder';
 
 // Mocks: only what is required for this component to render and for us to assert handler calls
-const mockHandleChangeQueryData = jest.fn();
-const mockHandleSetQueryData = jest.fn();
+const mockHandleChangeQueryData = vi.fn();
+const mockHandleSetQueryData = vi.fn();
 
-jest.mock('hooks/queryBuilder/useQueryBuilderOperations', () => ({
+vi.mock('hooks/queryBuilder/useQueryBuilderOperations', () => ({
 	useQueryOperations: () => ({
 		handleChangeQueryData: mockHandleChangeQueryData,
 	}),
 }));
 
-jest.mock('hooks/queryBuilder/useQueryBuilder', () => ({
+vi.mock('hooks/queryBuilder/useQueryBuilder', () => ({
 	useQueryBuilder: () => ({
 		handleSetQueryData: mockHandleSetQueryData,
 	}),
 }));
 
-jest.mock('container/QueryBuilder/filters/GroupByFilter/GroupByFilter', () => ({
+vi.mock('container/QueryBuilder/filters/GroupByFilter/GroupByFilter', () => ({
 	GroupByFilter: ({ onChange }: any) => (
 		<button data-testid="groupby" onClick={() => onChange(['service.name'])}>
 			GroupByFilter
@@ -36,7 +37,7 @@ jest.mock('container/QueryBuilder/filters/GroupByFilter/GroupByFilter', () => ({
 	),
 }));
 
-jest.mock('container/QueryBuilder/filters/OrderByFilter/OrderByFilter', () => ({
+vi.mock('container/QueryBuilder/filters/OrderByFilter/OrderByFilter', () => ({
 	OrderByFilter: ({ onChange }: any) => (
 		<button
 			data-testid="orderby"
@@ -47,7 +48,7 @@ jest.mock('container/QueryBuilder/filters/OrderByFilter/OrderByFilter', () => ({
 	),
 }));
 
-jest.mock('../QueryV2/QueryAddOns/HavingFilter/HavingFilter', () => ({
+vi.mock('../QueryV2/QueryAddOns/HavingFilter/HavingFilter', () => ({
 	__esModule: true,
 	default: ({ onChange, onClose }: any) => (
 		<div>
@@ -78,7 +79,7 @@ function baseQuery(overrides: Partial<any> = {}): any {
 
 describe('QueryAddOns', () => {
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	});
 
 	it('VALUE panel: no sections auto-open when query has no active add-ons', () => {

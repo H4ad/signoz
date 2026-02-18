@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import dayjs from 'dayjs';
 import getStep, { DefaultStepSize, MaxDataPoints } from 'lib/getStep';
 

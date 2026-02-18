@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { MetricDetails as MetricDetailsType } from 'api/metricsExplorer/getMetricDetails';
 import { MetricType } from 'api/metricsExplorer/getMetricsList';
@@ -36,8 +37,8 @@ const mockMetricData: MetricDetailsType = {
 	timeSeriesActive: 0,
 	lastReceived: '',
 };
-const mockOpenInspectModal = jest.fn();
-const mockOnClose = jest.fn();
+const mockOpenInspectModal = vi.fn();
+const mockOnClose = vi.fn();
 
 const mockUseGetMetricDetailsData = {
 	data: {
@@ -49,42 +50,42 @@ const mockUseGetMetricDetailsData = {
 	isFetching: false,
 	isError: false,
 	error: null,
-	refetch: jest.fn(),
+	refetch: vi.fn(),
 };
 
-jest
+vi
 	.spyOn(useGetMetricDetails, 'useGetMetricDetails')
 	.mockReturnValue(mockUseGetMetricDetailsData as any);
 
-jest.spyOn(useUpdateMetricMetadata, 'useUpdateMetricMetadata').mockReturnValue({
-	mutate: jest.fn(),
+vi.spyOn(useUpdateMetricMetadata, 'useUpdateMetricMetadata').mockReturnValue({
+	mutate: vi.fn(),
 	isLoading: false,
 	isError: false,
 	error: null,
 } as any);
 
-const mockHandleExplorerTabChange = jest.fn();
-jest
+const mockHandleExplorerTabChange = vi.fn();
+vi
 	.spyOn(useHandleExplorerTabChange, 'useHandleExplorerTabChange')
 	.mockReturnValue({
 		handleExplorerTabChange: mockHandleExplorerTabChange,
 	});
 
-jest.mock('react-router-dom', () => ({
-	...jest.requireActual('react-router-dom'),
+vi.mock('react-router-dom', async () => ({
+	...(await vi.importActual<any>('react-router-dom')),
 	useLocation: (): { pathname: string } => ({
 		pathname: `${ROUTES.METRICS_EXPLORER}`,
 	}),
 }));
-jest.mock('hooks/useSafeNavigate', () => ({
+vi.mock('hooks/useSafeNavigate', () => ({
 	useSafeNavigate: (): any => ({
-		safeNavigate: jest.fn(),
+		safeNavigate: vi.fn(),
 	}),
 }));
-jest.mock('react-query', () => ({
-	...jest.requireActual('react-query'),
+vi.mock('react-query', async () => ({
+	...(await vi.importActual<any>('react-query')),
 	useQueryClient: (): { invalidateQueries: () => void } => ({
-		invalidateQueries: jest.fn(),
+		invalidateQueries: vi.fn(),
 	}),
 }));
 
@@ -108,7 +109,7 @@ describe('MetricDetails', () => {
 	});
 
 	it('renders the "open in explorer" and "inspect" buttons', () => {
-		jest.spyOn(useGetMetricDetails, 'useGetMetricDetails').mockReturnValueOnce({
+		vi.spyOn(useGetMetricDetails, 'useGetMetricDetails').mockReturnValueOnce({
 			...mockUseGetMetricDetailsData,
 			data: {
 				payload: {
@@ -143,7 +144,7 @@ describe('MetricDetails', () => {
 	});
 
 	it('should render error state when metric details are not found', () => {
-		jest.spyOn(useGetMetricDetails, 'useGetMetricDetails').mockReturnValue({
+		vi.spyOn(useGetMetricDetails, 'useGetMetricDetails').mockReturnValue({
 			...mockUseGetMetricDetailsData,
 			isError: true,
 			error: {
@@ -165,7 +166,7 @@ describe('MetricDetails', () => {
 	});
 
 	it('should render loading state when metric details are loading', () => {
-		jest.spyOn(useGetMetricDetails, 'useGetMetricDetails').mockReturnValue({
+		vi.spyOn(useGetMetricDetails, 'useGetMetricDetails').mockReturnValue({
 			...mockUseGetMetricDetailsData,
 			isLoading: true,
 		} as any);
@@ -184,7 +185,7 @@ describe('MetricDetails', () => {
 	});
 
 	it('should render all attributes section', () => {
-		jest
+		vi
 			.spyOn(useGetMetricDetails, 'useGetMetricDetails')
 			.mockReturnValue(mockUseGetMetricDetailsData as any);
 		render(
@@ -201,7 +202,7 @@ describe('MetricDetails', () => {
 	});
 
 	it('should not render all attributes section when relevant data is not present', () => {
-		jest.spyOn(useGetMetricDetails, 'useGetMetricDetails').mockReturnValue({
+		vi.spyOn(useGetMetricDetails, 'useGetMetricDetails').mockReturnValue({
 			...mockUseGetMetricDetailsData,
 			data: {
 				payload: {

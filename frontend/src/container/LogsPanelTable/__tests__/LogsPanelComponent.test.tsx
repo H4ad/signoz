@@ -11,6 +11,7 @@ import i18n from 'ReactI18';
 import { act, fireEvent, render, screen, waitFor } from 'tests/test-utils';
 import { QueryRangePayload } from 'types/api/metrics/getQueryRange';
 import { IBuilderQuery } from 'types/api/queryBuilder/queryBuilderData';
+import { vi } from 'vitest';
 
 // Constants
 const QUERY_RANGE_URL = `${ENVIRONMENT.baseURL}/api/v3/query_range`;
@@ -19,28 +20,28 @@ const MOCK_SEARCH_PARAMS =
 
 // Mocks
 
-jest.mock('components/OverlayScrollbar/OverlayScrollbar', () => ({
+vi.mock('components/OverlayScrollbar/OverlayScrollbar', () => ({
 	__esModule: true,
 	default: ({ children }: { children: React.ReactNode }): JSX.Element => (
 		<div>{children}</div>
 	),
 }));
 
-jest.mock('react-router-dom', () => ({
-	...jest.requireActual('react-router-dom'),
+vi.mock('react-router-dom', async () => ({
+	...(await vi.importActual('react-router-dom')),
 	useLocation: (): { pathname: string; search: string } => ({
 		pathname: '',
 		search: MOCK_SEARCH_PARAMS,
 	}),
 }));
 
-jest.mock('hooks/useSafeNavigate', () => ({
-	useSafeNavigate: (): { safeNavigate: jest.Mock } => ({
-		safeNavigate: jest.fn(),
+vi.mock('hooks/useSafeNavigate', () => ({
+	useSafeNavigate: (): { safeNavigate: vi.Mock } => ({
+		safeNavigate: vi.fn(),
 	}),
 }));
 
-jest.mock('container/TopNav/DateTimeSelectionV2/index.tsx', () => ({
+vi.mock('container/TopNav/DateTimeSelectionV2/index.tsx', () => ({
 	__esModule: true,
 	default: (): JSX.Element => <div>MockDateTimeSelection</div>,
 }));
@@ -57,23 +58,23 @@ const assertTimeRangeConsistency = (
 	expect(payload.end).toBe(initialTimeRange.end);
 };
 
-jest.mock('container/QueryBuilder', () => ({
+vi.mock('container/QueryBuilder', () => ({
 	QueryBuilder: function MockQuerySection(): JSX.Element {
 		return <div>MockQuerySection</div>;
 	},
 }));
 
-jest.setTimeout(20000);
+vi.setTimeout(20000);
 
 Object.defineProperty(globalThis, 'matchMedia', {
 	writable: true,
-	value: jest.fn().mockImplementation((query) => ({
+	value: vi.fn().mockImplementation((query) => ({
 		matches: true,
 		media: query,
 		addListener: (listener: (params: { matches: boolean }) => void): void => {
 			listener({ matches: true });
 		},
-		removeListener: jest.fn(),
+		removeListener: vi.fn(),
 	})),
 });
 

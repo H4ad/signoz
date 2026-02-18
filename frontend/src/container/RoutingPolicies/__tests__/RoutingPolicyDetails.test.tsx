@@ -2,6 +2,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import * as appHooks from 'providers/App/App';
 
 import RoutingPolicyDetails from '../RoutingPolicyDetails';
+import { vi } from 'vitest';
 import {
 	getAppContextMockState,
 	MOCK_CHANNEL_1,
@@ -9,13 +10,13 @@ import {
 	MOCK_ROUTING_POLICY_1,
 } from './testUtils';
 
-jest.spyOn(appHooks, 'useAppContext').mockReturnValue(getAppContextMockState());
+vi.spyOn(appHooks, 'useAppContext').mockReturnValue(getAppContextMockState());
 
-const mockHandlePolicyDetailsModalAction = jest.fn();
-const mockCloseModal = jest.fn();
+const mockHandlePolicyDetailsModalAction = vi.fn();
+const mockCloseModal = vi.fn();
 const mockChannels = [MOCK_CHANNEL_1, MOCK_CHANNEL_2];
 const mockRoutingPolicy = MOCK_ROUTING_POLICY_1;
-const mockRefreshChannels = jest.fn();
+const mockRefreshChannels = vi.fn();
 
 const NEW_NAME = 'New Name';
 const NEW_EXPRESSION = 'New Expression';
@@ -373,7 +374,7 @@ describe('RoutingPolicyDetails', () => {
 	});
 
 	it('should show admin message for non-admin users in empty state', () => {
-		jest
+		vi
 			.spyOn(appHooks, 'useAppContext')
 			.mockReturnValue(getAppContextMockState({ role: 'VIEWER' }));
 

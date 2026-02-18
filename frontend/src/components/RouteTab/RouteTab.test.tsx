@@ -4,6 +4,7 @@ import { fireEvent, render, screen } from 'tests/test-utils';
 
 import RouteTab from './index';
 import { RouteTabProps } from './types';
+import { vi } from 'vitest';
 
 function DummyComponent1(): JSX.Element {
 	return <div>Dummy Component 1</div>;
@@ -75,7 +76,7 @@ describe('RouteTab component', () => {
 	});
 
 	test('calls onChangeHandler on tab change', () => {
-		const onChangeHandler = jest.fn();
+		const onChangeHandler = vi.fn();
 		const history = createMemoryHistory();
 		render(
 			<Router history={history}>

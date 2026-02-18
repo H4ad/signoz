@@ -2,14 +2,15 @@
 import { initialQueriesMap } from 'constants/queryBuilder';
 import { getUPlotChartOptions } from 'lib/uPlotLib/getUplotChartOptions';
 import { LegendPosition } from 'types/api/dashboard/getAll';
+import { vi } from 'vitest';
 
 // Mock uPlot
-jest.mock('uplot', () => {
+vi.mock('uplot', () => {
 	const paths = {
-		spline: jest.fn(),
-		bars: jest.fn(),
+		spline: vi.fn(),
+		bars: vi.fn(),
 	};
-	const uplotMock = jest.fn(() => ({
+	const uplotMock = vi.fn(() => ({
 		paths,
 	}));
 	return {
@@ -19,15 +20,15 @@ jest.mock('uplot', () => {
 });
 
 // Mock dependencies
-jest.mock('container/PanelWrapper/enhancedLegend', () => ({
-	calculateEnhancedLegendConfig: jest.fn(() => ({
+vi.mock('container/PanelWrapper/enhancedLegend', () => ({
+	calculateEnhancedLegendConfig: vi.fn(() => ({
 		minHeight: 46,
 		maxHeight: 80,
 		calculatedHeight: 60,
 		showScrollbar: false,
 		requiredRows: 2,
 	})),
-	applyEnhancedLegendStyling: jest.fn(),
+	applyEnhancedLegendStyling: vi.fn(),
 }));
 
 const mockApiResponse = {
@@ -70,7 +71,7 @@ describe('Legend Scroll Position Preservation', () => {
 	let originalRequestAnimationFrame: typeof global.requestAnimationFrame;
 
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		originalRequestAnimationFrame = global.requestAnimationFrame;
 	});
 
@@ -79,7 +80,7 @@ describe('Legend Scroll Position Preservation', () => {
 	});
 
 	it('should set up scroll position tracking in ready hook', () => {
-		const mockSetScrollPosition = jest.fn();
+		const mockSetScrollPosition = vi.fn();
 		const options = getUPlotChartOptions({
 			...baseOptions,
 			setLegendScrollPosition: mockSetScrollPosition,
@@ -94,7 +95,7 @@ describe('Legend Scroll Position Preservation', () => {
 		legend.className = 'u-legend';
 		mockChart.root.appendChild(legend);
 
-		const addEventListenerSpy = jest.spyOn(legend, 'addEventListener');
+		const addEventListenerSpy = vi.spyOn(legend, 'addEventListener');
 
 		// Execute ready hook
 		if (options.hooks?.ready) {
@@ -111,7 +112,7 @@ describe('Legend Scroll Position Preservation', () => {
 
 	it('should restore scroll position when provided', () => {
 		const mockScrollPosition = { scrollTop: 50, scrollLeft: 10 };
-		const mockSetScrollPosition = jest.fn();
+		const mockSetScrollPosition = vi.fn();
 		const options = getUPlotChartOptions({
 			...baseOptions,
 			legendScrollPosition: mockScrollPosition,
@@ -130,7 +131,7 @@ describe('Legend Scroll Position Preservation', () => {
 		mockChart.root.appendChild(legend);
 
 		// Mock requestAnimationFrame
-		const mockRequestAnimationFrame = jest.fn((callback) => callback());
+		const mockRequestAnimationFrame = vi.fn((callback) => callback());
 		global.requestAnimationFrame = mockRequestAnimationFrame;
 
 		// Execute ready hook
@@ -154,11 +155,11 @@ describe('Legend Scroll Position Preservation', () => {
 	});
 
 	it('should work for both bottom and right legend positions', () => {
-		const mockSetScrollPosition = jest.fn();
+		const mockSetScrollPosition = vi.fn();
 		const mockScrollPosition = { scrollTop: 30, scrollLeft: 15 };
 
 		// Mock requestAnimationFrame for this test
-		const mockRequestAnimationFrame = jest.fn((callback) => callback());
+		const mockRequestAnimationFrame = vi.fn((callback) => callback());
 		global.requestAnimationFrame = mockRequestAnimationFrame;
 
 		// Test bottom legend position

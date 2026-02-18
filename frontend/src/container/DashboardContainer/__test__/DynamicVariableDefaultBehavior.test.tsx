@@ -16,14 +16,15 @@ import { getFieldValues } from 'api/dynamicVariables/getFieldValues';
 import { IDashboardVariable } from 'types/api/dashboard/getAll';
 
 import DynamicVariableSelection from '../DashboardVariablesSelection/DynamicVariableSelection';
+import { vi } from 'vitest';
 
 // Mock the getFieldValues API
-jest.mock('api/dynamicVariables/getFieldValues', () => ({
-	getFieldValues: jest.fn(),
+vi.mock('api/dynamicVariables/getFieldValues', () => ({
+	getFieldValues: vi.fn(),
 }));
 
 describe('Dynamic Variable Default Behavior', () => {
-	const mockOnValueUpdate = jest.fn();
+	const mockOnValueUpdate = vi.fn();
 	const mockApiResponse = {
 		httpStatusCode: 200,
 		data: {
@@ -44,8 +45,8 @@ describe('Dynamic Variable Default Behavior', () => {
 
 	beforeEach(() => {
 		// Mock scrollIntoView for JSDOM environment
-		window.HTMLElement.prototype.scrollIntoView = jest.fn();
-		jest.clearAllMocks();
+		window.HTMLElement.prototype.scrollIntoView = vi.fn();
+		vi.clearAllMocks();
 
 		// Create a new QueryClient for each test
 		queryClient = new QueryClient({
@@ -57,9 +58,9 @@ describe('Dynamic Variable Default Behavior', () => {
 		});
 
 		// Mock getFieldValues API to return our test data
-		(getFieldValues as jest.Mock).mockResolvedValue(mockApiResponse);
+		(getFieldValues as vi.Mock).mockResolvedValue(mockApiResponse);
 
-		jest.spyOn(ReactRedux, 'useSelector').mockReturnValue({
+		vi.spyOn(ReactRedux, 'useSelector').mockReturnValue({
 			minTime: '2023-01-01T00:00:00Z',
 			maxTime: '2023-01-02T00:00:00Z',
 		});

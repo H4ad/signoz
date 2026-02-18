@@ -6,6 +6,7 @@ setupCommonMocks();
 
 import JobDetails from 'container/InfraMonitoringK8s/Jobs/JobDetails/JobDetails';
 import { fireEvent, render, screen } from 'tests/test-utils';
+import { vi } from 'vitest';
 
 describe('JobDetails', () => {
 	const mockJob = {
@@ -14,7 +15,7 @@ describe('JobDetails', () => {
 			k8s_namespace_name: 'test-namespace',
 		},
 	} as any;
-	const mockOnClose = jest.fn();
+	const mockOnClose = vi.fn();
 
 	it('should render modal with relevant metadata', () => {
 		render(

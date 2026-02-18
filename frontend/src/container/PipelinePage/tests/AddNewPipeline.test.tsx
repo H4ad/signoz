@@ -4,19 +4,20 @@ import { PipelineData } from 'types/api/pipeline/def';
 
 import { pipelineMockData } from '../mocks/pipeline';
 import AddNewPipeline from '../PipelineListsView/AddNewPipeline';
+import { vi } from 'vitest';
 
 export function matchMedia(): void {
 	Object.defineProperty(window, 'matchMedia', {
 		writable: true,
-		value: jest.fn().mockImplementation((query) => ({
+		value: vi.fn().mockImplementation((query) => ({
 			matches: false,
 			media: query,
 			onchange: null,
-			addListener: jest.fn(),
-			removeListener: jest.fn(),
-			addEventListener: jest.fn(),
-			removeEventListener: jest.fn(),
-			dispatchEvent: jest.fn(),
+			addListener: vi.fn(),
+			removeListener: vi.fn(),
+			addEventListener: vi.fn(),
+			removeEventListener: vi.fn(),
+			dispatchEvent: vi.fn(),
 		})),
 	});
 }
@@ -25,7 +26,7 @@ beforeAll(() => {
 });
 
 function AddNewPipelineWrapper(): JSX.Element {
-	const setActionType = jest.fn();
+	const setActionType = vi.fn();
 	const selectedPipelineData = pipelineMockData[0];
 	const isActionType = 'add-pipeline';
 	const [pipelineForm] = Form.useForm<PipelineData>();
@@ -35,8 +36,8 @@ function AddNewPipelineWrapper(): JSX.Element {
 			isActionType={isActionType}
 			setActionType={setActionType}
 			selectedPipelineData={selectedPipelineData}
-			setShowSaveButton={jest.fn()}
-			setCurrPipelineData={jest.fn()}
+			setShowSaveButton={vi.fn()}
+			setCurrPipelineData={vi.fn()}
 			currPipelineData={pipelineMockData}
 			form={pipelineForm}
 		/>

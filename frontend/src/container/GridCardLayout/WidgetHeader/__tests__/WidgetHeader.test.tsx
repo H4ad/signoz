@@ -18,6 +18,7 @@ import { ROLES } from 'types/roles';
 
 import { MenuItemKeys } from '../contants';
 import WidgetHeader from '../index';
+import { vi } from 'vitest';
 
 const TEST_WIDGET_TITLE = 'Test Widget';
 const TABLE_WIDGET_TITLE = 'Table Widget';
@@ -82,24 +83,24 @@ const render = (ui: React.ReactElement): ReturnType<typeof rtlRender> =>
 		</MemoryRouter>,
 	);
 
-jest.mock('hooks/queryBuilder/useCreateAlerts', () => ({
+vi.mock('hooks/queryBuilder/useCreateAlerts', () => ({
 	__esModule: true,
-	default: jest.fn(() => jest.fn()),
+	default: vi.fn(() => vi.fn()),
 }));
 
-jest.mock('hooks/dashboard/useGetResolvedText', () => {
+vi.mock('hooks/dashboard/useGetResolvedText', () => {
 	// eslint-disable-next-line sonarjs/no-duplicate-string
 	const TEST_WIDGET_TITLE_RESOLVED = 'Test Widget Title';
 	return {
 		__esModule: true,
-		default: jest.fn(() => ({
+		default: vi.fn(() => ({
 			truncatedText: TEST_WIDGET_TITLE_RESOLVED,
 			fullText: TEST_WIDGET_TITLE_RESOLVED,
 		})),
 	};
 });
 
-jest.mock('lucide-react', () => ({
+vi.mock('lucide-react', () => ({
 	CircleX: (): JSX.Element => <svg data-testid="lucide-circle-x" />,
 	TriangleAlert: (): JSX.Element => <svg data-testid="lucide-triangle-alert" />,
 	X: (): JSX.Element => <svg data-testid="lucide-x" />,
@@ -107,10 +108,14 @@ jest.mock('lucide-react', () => ({
 		<svg data-testid="lucide-square-arrow-out-up-right" />
 	),
 }));
-jest.mock('antd', () => ({
-	...jest.requireActual('antd'),
-	Spin: (): JSX.Element => <div data-testid="antd-spin" />,
-}));
+
+vi.mock('antd', async () => {
+	const actual = await vi.importActual('antd');
+	return {
+		...actual,
+		Spin: (): JSX.Element => <div data-testid="antd-spin" />,
+	};
+});
 
 const mockWidget: Widgets = {
 	id: 'test-widget-id',
@@ -163,8 +168,8 @@ const mockQueryResponse = ({
 >;
 
 describe('WidgetHeader', () => {
-	const mockOnView = jest.fn();
-	const mockSetSearchTerm = jest.fn();
+	const mockOnView = vi.fn();
+	const mockSetSearchTerm = vi.fn();
 	const tableProcessedDataRef: MutableRefObject<RowData[]> = {
 		current: [
 			{
@@ -177,7 +182,7 @@ describe('WidgetHeader', () => {
 	};
 
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	});
 
 	it('renders widget header with title', () => {
@@ -490,11 +495,9 @@ describe('WidgetHeader', () => {
 		});
 
 		it('Create Alerts menu item is enabled and clickable', async () => {
-			const mockCreateAlertsHandler = jest.fn();
-			const useCreateAlerts = jest.requireMock(
-				'hooks/queryBuilder/useCreateAlerts',
-			).default;
-			useCreateAlerts.mockReturnValue(mockCreateAlertsHandler);
+			const mockCreateAlertsHandler = vi.fn();
+			const useCreateAlerts = await vi.importMock<any>('hooks/queryBuilder/useCreateAlerts');
+			useCreateAlerts.default.mockReturnValue(mockCreateAlertsHandler);
 
 			render(
 				<WidgetHeader
@@ -510,7 +513,7 @@ describe('WidgetHeader', () => {
 				/>,
 			);
 
-			expect(useCreateAlerts).toHaveBeenCalledWith(mockWidget, 'dashboardView');
+			expect(useCreateAlerts.default).toHaveBeenCalledWith(mockWidget, 'dashboardView');
 
 			const moreOptionsIcon = await screen.findByTestId(WIDGET_HEADER_OPTIONS_ID);
 			await userEvent.hover(moreOptionsIcon);

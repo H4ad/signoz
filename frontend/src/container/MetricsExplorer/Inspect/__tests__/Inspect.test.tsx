@@ -1,5 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 
+import { vi } from 'vitest';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import { render, screen } from '@testing-library/react';
@@ -29,7 +30,7 @@ const mockTimeSeries: InspectMetricsSeries[] = [
 	},
 ];
 
-jest.spyOn(appContextHooks, 'useAppContext').mockReturnValue({
+vi.spyOn(appContextHooks, 'useAppContext').mockReturnValue({
 	user: {
 		role: 'admin',
 	},
@@ -53,7 +54,7 @@ jest.spyOn(appContextHooks, 'useAppContext').mockReturnValue({
 	},
 } as any);
 
-jest.spyOn(useGetMetricDetailsHooks, 'useGetMetricDetails').mockReturnValue({
+vi.spyOn(useGetMetricDetailsHooks, 'useGetMetricDetails').mockReturnValue({
 	data: {
 		metricDetails: {
 			metricName: 'test_metric',
@@ -62,7 +63,7 @@ jest.spyOn(useGetMetricDetailsHooks, 'useGetMetricDetails').mockReturnValue({
 	},
 } as any);
 
-jest
+vi
 	.spyOn(useInspectMetricsHooks, 'useGetInspectMetricsDetails')
 	.mockReturnValue({
 		data: {
@@ -76,14 +77,14 @@ jest
 		isLoading: false,
 	} as any);
 
-jest.mock('react-router-dom', () => ({
-	...jest.requireActual('react-router-dom'),
+vi.mock('react-router-dom', async () => ({
+	...(await vi.importActual<any>('react-router-dom')),
 	useLocation: (): { pathname: string } => ({
 		pathname: `${ROUTES.METRICS_EXPLORER_BASE}`,
 	}),
 }));
 
-const mockResizeObserver = jest.fn();
+const mockResizeObserver = vi.fn();
 mockResizeObserver.mockImplementation(() => ({
 	observe: (): void => undefined,
 	unobserve: (): void => undefined,
@@ -100,13 +101,13 @@ describe('Inspect', () => {
 		metricType: MetricType.GAUGE,
 		spaceAggregationSeriesMap: new Map(),
 		inspectionStep: InspectionStep.COMPLETED,
-		resetInspection: jest.fn(),
+		resetInspection: vi.fn(),
 		isOpen: true,
-		onClose: jest.fn(),
+		onClose: vi.fn(),
 	};
 
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	});
 
 	it('renders all components', () => {
@@ -124,7 +125,7 @@ describe('Inspect', () => {
 	});
 
 	it('renders loading state', () => {
-		jest
+		vi
 			.spyOn(useInspectMetricsHooks, 'useGetInspectMetricsDetails')
 			.mockReturnValue({
 				data: {
@@ -148,7 +149,7 @@ describe('Inspect', () => {
 	});
 
 	it('renders empty state', () => {
-		jest
+		vi
 			.spyOn(useInspectMetricsHooks, 'useGetInspectMetricsDetails')
 			.mockReturnValue({
 				data: {
@@ -172,7 +173,7 @@ describe('Inspect', () => {
 	});
 
 	it('renders error state', () => {
-		jest
+		vi
 			.spyOn(useInspectMetricsHooks, 'useGetInspectMetricsDetails')
 			.mockReturnValue({
 				data: {
@@ -197,7 +198,7 @@ describe('Inspect', () => {
 	});
 
 	it('renders error state with 400 status code', () => {
-		jest
+		vi
 			.spyOn(useInspectMetricsHooks, 'useGetInspectMetricsDetails')
 			.mockReturnValue({
 				data: {

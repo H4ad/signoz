@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { getHttpStatusCode, isRetryableError } from '../errorUtils';
 
 // Mock APIError class

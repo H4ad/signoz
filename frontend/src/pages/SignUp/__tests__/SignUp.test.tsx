@@ -8,24 +8,25 @@ import { SignupResponse } from 'types/api/v1/register/post';
 import { Token } from 'types/api/v2/sessions/email_password/post';
 
 import SignUp from '../SignUp';
+import { vi } from 'vitest';
 
 // Mock dependencies - must be before imports
-jest.mock('AppRoutes/utils', () => ({
+vi.mock('AppRoutes/utils', () => ({
 	__esModule: true,
-	default: jest.fn(),
+	default: vi.fn(),
 }));
 
-const mockAfterLogin = jest.mocked(afterLogin);
+const mockAfterLogin = vi.mocked(afterLogin);
 
-jest.mock('api/common/logEvent', () => ({
+vi.mock('api/common/logEvent', () => ({
 	__esModule: true,
-	default: jest.fn(),
+	default: vi.fn(),
 }));
 
-jest.mock('lib/history', () => ({
+vi.mock('lib/history', () => ({
 	__esModule: true,
 	default: {
-		push: jest.fn(),
+		push: vi.fn(),
 		location: {
 			search: '',
 		},
@@ -66,7 +67,7 @@ const mockInviteDetails: InviteDetails = {
 
 describe('SignUp Component - Regular Signup', () => {
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockAfterLogin.mockClear();
 		window.history.pushState({}, '', '/signup');
 	});
@@ -293,7 +294,7 @@ describe('SignUp Component - Regular Signup', () => {
 
 describe('SignUp Component - Accept Invite', () => {
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		window.history.pushState({}, '', '/signup?token=invite-token-123');
 	});
 

@@ -2,6 +2,7 @@
 /* eslint-disable sonarjs/cognitive-complexity */
 
 import { Token } from 'antlr4';
+import { vi } from 'vitest';
 import TraceOperatorGrammarLexer from 'parser/TraceOperatorParser/TraceOperatorGrammarLexer';
 
 import {
@@ -186,11 +187,11 @@ describe('traceOperatorContextUtils', () => {
 	describe('getTraceOperatorContextAtCursor', () => {
 		beforeEach(() => {
 			// Reset console.error mock
-			jest.spyOn(console, 'error').mockImplementation(() => {});
+			vi.spyOn(console, 'error').mockImplementation(() => {});
 		});
 
 		afterEach(() => {
-			jest.restoreAllMocks();
+			vi.restoreAllMocks();
 		});
 
 		it('should return default context for empty query', () => {

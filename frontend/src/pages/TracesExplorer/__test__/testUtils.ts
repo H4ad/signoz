@@ -12,6 +12,7 @@ import { DataTypes } from 'types/api/queryBuilder/queryAutocompleteResponse';
 import { Query } from 'types/api/queryBuilder/queryBuilderData';
 
 import { AllTraceFilterKeyValue } from '../Filter/filterUtils';
+import { vi } from 'vitest';
 
 export const optionMenuReturn = {
 	options: {
@@ -62,7 +63,7 @@ export const optionMenuReturn = {
 		maxLines: 1,
 		format: 'list',
 	},
-	handleOptionsChange: jest.fn(),
+	handleOptionsChange: vi.fn(),
 	config: {
 		addColumn: {
 			isFetching: false,
@@ -160,10 +161,10 @@ export const compositeQuery: Query = {
 	},
 };
 
-export const redirectWithQueryBuilderData = jest.fn();
+export const redirectWithQueryBuilderData = vi.fn();
 
 export const qbProviderValue = {
-	isDefaultQuery: jest.fn(() => false),
+	isDefaultQuery: vi.fn(() => false),
 	currentQuery: {
 		...initialQueriesMap.traces,
 		builder: {
@@ -173,7 +174,7 @@ export const qbProviderValue = {
 	},
 	redirectWithQueryBuilderData,
 	panelType: PANEL_TYPES.LIST,
-	setSupersetQuery: jest.fn(),
+	setSupersetQuery: vi.fn(),
 	supersetQuery: initialQueriesMap.traces,
 	stagedQuery: initialQueriesMap.traces,
 	initialDataSource: null,

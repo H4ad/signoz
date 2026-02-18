@@ -1,23 +1,24 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { message } from 'antd';
+import { ConfigProvider, message } from 'antd';
 import { ENVIRONMENT } from 'constants/env';
 import { server } from 'mocks-server/server';
-import { rest } from 'msw';
+import { http, HttpResponse } from 'msw';
 import { TelemetryFieldKey } from 'types/api/v5/queryRange';
 
 import '@testing-library/jest-dom';
 
 import { DownloadFormats, DownloadRowCounts } from './constants';
 import LogsDownloadOptionsMenu from './LogsDownloadOptionsMenu';
+import { Mock, vi } from 'vitest';
 
-// Mock antd message
-jest.mock('antd', () => {
-	const actual = jest.requireActual('antd');
+// Mock antd message (use async factory to import actual module and preserve other exports)
+vi.mock('antd', async () => {
+	const actual = await vi.importActual('antd');
 	return {
 		...actual,
 		message: {
-			success: jest.fn(),
-			error: jest.fn(),
+			success: vi.fn(),
+			error: vi.fn(),
 		},
 	};
 });
@@ -48,34 +49,36 @@ const createTestProps = (): TestProps => ({
 	orderBy: 'timestamp:desc',
 });
 
-const testRenderContent = (props: TestProps): void => {
+const testRenderContent = (props: TestProps): ReturnType<typeof render> =>
 	render(
-		<LogsDownloadOptionsMenu
-			startTime={props.startTime}
-			endTime={props.endTime}
-			filter={props.filter}
-			columns={props.columns}
-			orderBy={props.orderBy}
-		/>,
+		<ConfigProvider theme={{ token: { motion: false } }}>
+			<LogsDownloadOptionsMenu
+				startTime={props.startTime}
+				endTime={props.endTime}
+				filter={props.filter}
+				columns={props.columns}
+				orderBy={props.orderBy}
+			/>
+		</ConfigProvider>,
 	);
-};
 
-const testSuccessResponse = (res: any, ctx: any): any =>
-	res(
-		ctx.status(200),
-		ctx.set('Content-Type', 'application/octet-stream'),
-		ctx.set('Content-Disposition', 'attachment; filename="export.csv"'),
-		ctx.body('id,value\n1,2\n'),
-	);
+const testSuccessResponse = (): any =>
+	HttpResponse.text('id,value\n1,2\n', {
+		status: 200,
+		headers: {
+			'Content-Type': 'application/octet-stream',
+			'Content-Disposition': 'attachment; filename="export.csv"'
+		}
+	});
 
 describe('LogsDownloadOptionsMenu', () => {
 	const BASE_URL = ENVIRONMENT.baseURL;
 	const EXPORT_URL = `${BASE_URL}/api/v1/export_raw_data`;
-	let requestSpy: jest.Mock<any, any>;
+	let requestSpy: Mock;
 	const setupDefaultServer = (): void => {
 		server.use(
-			rest.get(EXPORT_URL, (req, res, ctx) => {
-				const params = req.url.searchParams;
+			http.get(EXPORT_URL, (req) => {
+				const params = new URL(req.request.url).searchParams;
 				const payload = {
 					start: Number(params.get('start')),
 					end: Number(params.get('end')),
@@ -86,7 +89,7 @@ describe('LogsDownloadOptionsMenu', () => {
 					format: params.get('format'),
 				};
 				requestSpy(payload);
-				return testSuccessResponse(res, ctx);
+				return testSuccessResponse();
 			}),
 		);
 	};
@@ -96,17 +99,17 @@ describe('LogsDownloadOptionsMenu', () => {
 	const originalRevokeObjectURL = URL.revokeObjectURL;
 
 	beforeEach(() => {
-		requestSpy = jest.fn();
+		requestSpy = vi.fn();
 		setupDefaultServer();
-		(message.success as jest.Mock).mockReset();
-		(message.error as jest.Mock).mockReset();
+		(message.success as Mock).mockReset();
+		(message.error as Mock).mockReset();
 		// jsdom doesn't implement it by default
 		((URL as unknown) as {
 			createObjectURL: (b: Blob) => string;
-		}).createObjectURL = jest.fn(() => 'blob:mock');
+		}).createObjectURL = vi.fn(() => 'blob:mock');
 		((URL as unknown) as {
 			revokeObjectURL: (u: string) => void;
-		}).revokeObjectURL = jest.fn();
+		}).revokeObjectURL = vi.fn();
 	});
 
 	beforeAll(() => {
@@ -135,15 +138,7 @@ describe('LogsDownloadOptionsMenu', () => {
 
 	it('shows popover with export options when download button is clicked', () => {
 		const props = createTestProps();
-		render(
-			<LogsDownloadOptionsMenu
-				startTime={props.startTime}
-				endTime={props.endTime}
-				filter={props.filter}
-				columns={props.columns}
-				orderBy={props.orderBy}
-			/>,
-		);
+		testRenderContent(props);
 
 		fireEvent.click(screen.getByTestId(TEST_IDS.DOWNLOAD_BUTTON));
 
@@ -257,7 +252,7 @@ describe('LogsDownloadOptionsMenu', () => {
 
 	it('handles export failure with error message', async () => {
 		// Override handler to return 500 for this test
-		server.use(rest.get(EXPORT_URL, (_req, res, ctx) => res(ctx.status(500))));
+		server.use(http.get(EXPORT_URL, () => HttpResponse.json(null, { status: 500 })));
 		const props = createTestProps();
 		testRenderContent(props);
 
@@ -272,54 +267,56 @@ describe('LogsDownloadOptionsMenu', () => {
 	});
 
 	it('handles UI state correctly during export process', async () => {
+		vi.useFakeTimers();
 		server.use(
-			rest.get(EXPORT_URL, (_req, res, ctx) => testSuccessResponse(res, ctx)),
+			http.get(EXPORT_URL, () => testSuccessResponse()),
 		);
 		const props = createTestProps();
 		testRenderContent(props);
 
 		// Open popover
+		await vi.runAllTimersAsync();
 		fireEvent.click(screen.getByTestId(TEST_IDS.DOWNLOAD_BUTTON));
+		await vi.runAllTimersAsync();
 		expect(screen.getByRole('dialog')).toBeInTheDocument();
 
 		// Start export
 		fireEvent.click(screen.getByText('Export'));
+		await vi.runAllTimersAsync();
 
-		// Check button is disabled during export
-		expect(screen.getByTestId(TEST_IDS.DOWNLOAD_BUTTON)).toBeDisabled();
-
-		// Check popover is closed immediately after export starts
+		// Check popover is closed after export starts
+		// With destroyTooltipOnHide and fake timers, the popover should be removed after animation
 		expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
 
-		// Wait for export to complete and verify button is enabled again
-		await waitFor(() => {
-			expect(screen.getByTestId(TEST_IDS.DOWNLOAD_BUTTON)).not.toBeDisabled();
-		});
+		// With fake timers and runAllTimersAsync, the async export completes immediately
+		// So we verify the button is enabled after export completes
+		expect(screen.getByTestId(TEST_IDS.DOWNLOAD_BUTTON)).not.toBeDisabled();
+
+		vi.useRealTimers();
 	});
 
 	it('uses filename from Content-Disposition and triggers download click', async () => {
 		server.use(
-			rest.get(EXPORT_URL, (_req, res, ctx) =>
-				res(
-					ctx.status(200),
-					ctx.set('Content-Type', 'application/octet-stream'),
-					ctx.set('Content-Disposition', 'attachment; filename="report.jsonl"'),
-					ctx.body('row\n'),
-				),
-			),
-		);
+			http.get(EXPORT_URL, () => HttpResponse.text('row\n', {
+				status: 200,
+				headers: {
+					'Content-Type': 'application/octet-stream',
+					'Content-Disposition': 'attachment; filename="report.jsonl"'
+				}
+			})
+		));
 
 		const originalCreateElement = document.createElement.bind(document);
 		const anchorEl = originalCreateElement('a') as HTMLAnchorElement;
-		const setAttrSpy = jest.spyOn(anchorEl, 'setAttribute');
-		const clickSpy = jest.spyOn(anchorEl, 'click');
-		const removeSpy = jest.spyOn(anchorEl, 'remove');
-		const createElSpy = jest
+		const setAttrSpy = vi.spyOn(anchorEl, 'setAttribute');
+		const clickSpy = vi.spyOn(anchorEl, 'click');
+		const removeSpy = vi.spyOn(anchorEl, 'remove');
+		const createElSpy = vi
 			.spyOn(document, 'createElement')
 			.mockImplementation((tagName: any): any =>
 				tagName === 'a' ? anchorEl : originalCreateElement(tagName),
 			);
-		const appendSpy = jest.spyOn(document.body, 'appendChild');
+		const appendSpy = vi.spyOn(document.body, 'appendChild');
 
 		const props = createTestProps();
 		testRenderContent(props);

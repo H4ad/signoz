@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { buildAbsolutePath } from '../app';
 
 const BASE_PATH = '/some-base-path';

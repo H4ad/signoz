@@ -8,11 +8,12 @@ import configureStore from 'redux-mock-store';
 import { IDashboardVariable } from 'types/api/dashboard/getAll';
 
 import VariableItem from '../../../container/DashboardContainer/DashboardVariablesSelection/VariableItem';
+import { vi } from 'vitest';
 
 // Mock the dashboard variables query
-jest.mock('api/dashboard/variables/dashboardVariablesQuery', () => ({
+vi.mock('api/dashboard/variables/dashboardVariablesQuery', () => ({
 	__esModule: true,
-	default: jest.fn(() =>
+	default: vi.fn(() =>
 		Promise.resolve({
 			payload: {
 				variableValues: ['option1', 'option2', 'option3', 'option4'],
@@ -22,7 +23,7 @@ jest.mock('api/dashboard/variables/dashboardVariablesQuery', () => ({
 }));
 
 // Mock scrollIntoView which isn't available in JSDOM
-window.HTMLElement.prototype.scrollIntoView = jest.fn();
+window.HTMLElement.prototype.scrollIntoView = vi.fn();
 
 // Constants
 const TEST_VARIABLE_NAME = 'test_variable';
@@ -77,14 +78,14 @@ function TestWrapper({ children }: { children: React.ReactNode }): JSX.Element {
 
 describe('VariableItem Integration Tests', () => {
 	let user: ReturnType<typeof userEvent.setup>;
-	let mockOnValueUpdate: jest.Mock;
-	let mockSetVariablesToGetUpdated: jest.Mock;
+	let mockOnValueUpdate: vi.Mock;
+	let mockSetVariablesToGetUpdated: vi.Mock;
 
 	beforeEach(() => {
 		user = userEvent.setup();
-		mockOnValueUpdate = jest.fn();
-		mockSetVariablesToGetUpdated = jest.fn();
-		jest.clearAllMocks();
+		mockOnValueUpdate = vi.fn();
+		mockSetVariablesToGetUpdated = vi.fn();
+		vi.clearAllMocks();
 	});
 
 	// ===== 1. INTEGRATION WITH CUSTOMSELECT =====

@@ -8,14 +8,15 @@ import { render, screen, userEvent, waitFor } from 'tests/test-utils';
 import { IBuilderQuery } from '../../../../../types/api/queryBuilder/queryBuilderData';
 import { DataSource } from '../../../../../types/common/queryBuilder';
 import { GroupByFilter } from '../GroupByFilter';
+import { vi } from 'vitest';
 
 const BASE_URL = ENVIRONMENT.baseURL;
 const attributeKeysURL = `${BASE_URL}/api/v3/autocomplete/attribute_keys`;
 
 function setup(
 	overrides?: Partial<React.ComponentProps<typeof GroupByFilter>>,
-): { onChange: jest.Mock } {
-	const onChange = jest.fn();
+): { onChange: vi.Mock } {
+	const onChange = vi.fn();
 	const query = ({
 		dataSource: DataSource.METRICS,
 		aggregateAttribute: { key: 'service.name' },
@@ -45,7 +46,7 @@ describe('GroupByFilter', () => {
 		server.resetHandlers();
 		dataSourceCalls.length = 0;
 		callCount = 0;
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	});
 	afterAll(() => {
 		server.close();

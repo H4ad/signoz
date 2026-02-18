@@ -1,5 +1,6 @@
 /* eslint-disable sonarjs/no-duplicate-string */
 /* eslint-disable react/jsx-props-no-spreading */
+import { vi } from 'vitest';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import {
 	act,
@@ -38,7 +39,7 @@ describe('Span scope selector', () => {
 						dataSource: DataSource.TRACES,
 					}}
 					hideSpanScopeSelector={false}
-					onChange={jest.fn()}
+					onChange={vi.fn()}
 				/>
 			</QueryClientProvider>,
 		);
@@ -54,7 +55,7 @@ describe('Span scope selector', () => {
 						...initialQueryBuilderFormValues,
 						dataSource: DataSource.METRICS,
 					}}
-					onChange={jest.fn()}
+					onChange={vi.fn()}
 				/>
 			</QueryClientProvider>,
 		);
@@ -63,8 +64,8 @@ describe('Span scope selector', () => {
 	});
 });
 
-const mockOnChange = jest.fn();
-const mockHandleRunQuery = jest.fn();
+const mockOnChange = vi.fn();
+const mockHandleRunQuery = vi.fn();
 const defaultProps = {
 	query: {
 		...initialQueriesMap.traces.builder.queryData[0],
@@ -120,8 +121,8 @@ const mockAggregateKeysData = {
 	},
 };
 
-jest.mock('hooks/queryBuilder/useGetAggregateKeys', () => ({
-	useGetAggregateKeys: jest.fn(() => ({
+vi.mock('hooks/queryBuilder/useGetAggregateKeys', () => ({
+	useGetAggregateKeys: vi.fn(() => ({
 		data: mockAggregateKeysData,
 		isFetching: false,
 	})),
@@ -134,16 +135,16 @@ const mockAggregateValuesData = {
 	},
 };
 
-jest.mock('hooks/queryBuilder/useGetAggregateValues', () => ({
-	useGetAggregateValues: jest.fn(() => ({
+vi.mock('hooks/queryBuilder/useGetAggregateValues', () => ({
+	useGetAggregateValues: vi.fn(() => ({
 		data: mockAggregateValuesData,
 		isFetching: false,
 	})),
 }));
 
-jest.mock('hooks/useSafeNavigate', () => ({
+vi.mock('hooks/useSafeNavigate', () => ({
 	useSafeNavigate: (): any => ({
-		safeNavigate: jest.fn(),
+		safeNavigate: vi.fn(),
 	}),
 }));
 
@@ -161,7 +162,7 @@ const dashboardVariables = {
 	},
 };
 
-jest.mock('hooks/dashboard/useDashboardVariables', () => ({
+vi.mock('hooks/dashboard/useDashboardVariables', () => ({
 	useDashboardVariables: (): IUseDashboardVariablesReturn => ({
 		dashboardVariables: dashboardVariables,
 	}),
@@ -169,7 +170,7 @@ jest.mock('hooks/dashboard/useDashboardVariables', () => ({
 
 describe('Suggestion Key -> Operator -> Value Flow', () => {
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	});
 	it('should complete full flow from key selection to value', async () => {
 		const { container } = renderWithContext();
@@ -232,7 +233,7 @@ describe('Suggestion Key -> Operator -> Value Flow', () => {
 
 describe('Dynamic Variable Suggestions', () => {
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	});
 
 	it('should suggest dynamic variable when key matches a variable attribute', async () => {

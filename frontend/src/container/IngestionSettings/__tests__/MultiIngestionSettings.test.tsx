@@ -8,6 +8,8 @@ import {
 } from 'types/api/ingestionKeys/types';
 
 import MultiIngestionSettings from '../MultiIngestionSettings';
+import { vi } from 'vitest';
+import { http, HttpResponse } from 'msw';
 
 // Extend the existing types to include limits with proper structure
 interface TestIngestionKeyProps extends Omit<IngestionKeyProps, 'limits'> {
@@ -19,10 +21,9 @@ interface TestAllIngestionKeyProps extends Omit<AllIngestionKeyProps, 'data'> {
 }
 
 // Mock useHistory.push to capture navigation URL used by MultiIngestionSettings
-const mockPush = jest.fn() as jest.MockedFunction<(path: string) => void>;
-jest.mock('react-router-dom', () => {
-	// eslint-disable-next-line @typescript-eslint/no-var-requires
-	const actual = jest.requireActual('react-router-dom');
+const mockPush = vi.fn() as vi.MockedFunction<(path: string) => void>;
+vi.mock('react-router-dom', async () => {
+	const actual = await vi.importActual('react-router-dom');
 	return {
 		...actual,
 		useHistory: (): { push: typeof mockPush } => ({ push: mockPush }),
@@ -30,7 +31,7 @@ jest.mock('react-router-dom', () => {
 });
 
 // Mock deployments data hook to avoid unrelated network calls in this page
-jest.mock(
+vi.mock(
 	'hooks/CustomDomain/useGetDeploymentsData',
 	(): Record<string, unknown> => ({
 		useGetDeploymentsData: (): {
@@ -58,7 +59,7 @@ describe('MultiIngestionSettings Page', () => {
 	});
 
 	afterEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	});
 
 	it('renders MultiIngestionSettings page without crashing', () => {
@@ -111,8 +112,8 @@ describe('MultiIngestionSettings Page', () => {
 		};
 
 		server.use(
-			rest.get('*/workspaces/me/keys*', (_req, res, ctx) =>
-				res(ctx.status(200), ctx.json(response)),
+			http.get('*/workspaces/me/keys*', () =>
+				HttpResponse.json(response)
 			),
 		);
 

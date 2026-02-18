@@ -10,7 +10,7 @@ Adjust syntax based on this detection.
 
 **Type Safety Requirements:**
 - Use proper TypeScript interfaces for all mock data
-- Type all Jest mock functions with `jest.MockedFunction<T>`
+- Type all Jest mock functions with `Mock<T>` and import this interface from `import { Mock } from "vitest";`
 - Use generic types for React components and hooks
 - Define proper return types for mock functions
 - Use `as const` for literal types when needed
@@ -37,7 +37,7 @@ Write maintainable tests with descriptive names grouped in describe blocks
 - Domain-specific components
 - Error scenarios and edge cases
 
-**Global Mock Files Available (from jest.config.ts):**
+**Global Mock Files Available (from vite.config.ts):**
 - `uplot` → `__mocks__/uplotMock.ts`
 
 # Repo-specific Testing Conventions
@@ -64,9 +64,9 @@ Only mock `useLocation` / `useParams` if the test depends on them.
 Pattern:
 ```ts
 import useFoo from 'hooks/useFoo';
-jest.mock('hooks/useFoo');
-const mockUseFoo = jest.mocked(useFoo);
-mockUseFoo.mockReturnValue(/* minimal shape */ as any);
+vi.mock('hooks/useFoo');
+const mockUseFoo = await vi.importMocked('hooks/useFoo');
+mockUseFoo.default.mockReturnValue(/* minimal shape */ as any); // default is required when is export default
 ```
 Prefer helpers (`rqSuccess`, `rqLoading`, `rqError`) for React Query results.
 
@@ -75,7 +75,7 @@ Global MSW server runs automatically.
 Override per-test:
 ```ts
 server.use(
-  rest.get('*/api/v1/foo', (_req, res, ctx) => res(ctx.status(200), ctx.json({ ok: true })))
+  http.get('*/api/v1/foo', () => HttpResponse.json({ ok: true }))
 );
 ```
 Keep large responses in `mocks-server/__mockdata_`.
@@ -100,11 +100,11 @@ act(() => { fireEvent.scroll(scroller); });
 ❌ No global fake timers.
 ✅ Per-test only, for debounce/throttle:
 ```ts
-jest.useFakeTimers();
-const user = userEvent.setup({ advanceTimers: (ms) => jest.advanceTimersByTime(ms) });
+vi.useFakeTimers();
+const user = userEvent.setup({ advanceTimers: (ms) => vi.advanceTimersByTime(ms) });
 await user.type(screen.getByRole('textbox'), 'query');
-jest.advanceTimersByTime(400);
-jest.useRealTimers();
+vi.advanceTimersByTime(400);
+vi.useRealTimers();
 ```
 
 ## Queries
@@ -208,8 +208,8 @@ interface ApiResponse<T> {
 }
 
 // Type the mock functions
-const mockFetchUser = jest.fn() as jest.MockedFunction<(id: number) => Promise<ApiResponse<User>>>;
-const mockUpdateUser = jest.fn() as jest.MockedFunction<(user: User) => Promise<ApiResponse<User>>>;
+const mockFetchUser = vi.fn() as vi.MockedFunction<(id: number) => Promise<ApiResponse<User>>>;
+const mockUpdateUser = vi.fn() as vi.MockedFunction<(user: User) => Promise<ApiResponse<User>>>;
 
 // Mock implementation with proper typing
 mockFetchUser.mockResolvedValue({
@@ -219,7 +219,7 @@ mockFetchUser.mockResolvedValue({
 });
 
 // ❌ BAD - Using any type
-const mockFetchUser = jest.fn() as any; // Don't do this
+const mockFetchUser = vi.fn() as any; // Don't do this
 ```
 
 ## React Component Testing with Types
@@ -242,13 +242,13 @@ describe('TestComponent', () => {
     const mockProps: ComponentProps = {
       title: 'Test Title',
       data: [{ id: 1, name: 'John', email: 'john@example.com' }],
-      onUserSelect: jest.fn() as jest.MockedFunction<(user: User) => void>,
+      onUserSelect: vi.fn() as vi.MockedFunction<(user: User) => void>,
       isLoading: false
     };
-    
+
     // Act
     render(<TestComponent {...mockProps} />);
-    
+
     // Assert
     expect(screen.getByText('Test Title')).toBeInTheDocument();
   });
@@ -278,10 +278,10 @@ describe('useUserData', () => {
       status: 200,
       message: 'Success'
     });
-    
+
     // Act
     const { result } = renderHook(() => useUserData(1));
-    
+
     // Assert
     expect(result.current.user).toEqual(mockUser);
     expect(result.current.loading).toBe(false);
@@ -312,14 +312,14 @@ expect(location.pathname).toBe('/traces');
 
 ## Required Jest Configuration
 ```json
-// jest.config.ts
+// vi.config.ts
 {
   "preset": "ts-jest/presets/js-with-ts-esm",
   "globals": {
     "ts-jest": {
       "useESM": true,
       "isolatedModules": true,
-      "tsconfig": "<rootDir>/tsconfig.jest.json"
+      "tsconfig": "<rootDir>/tsconfig.vi.json"
     }
   },
   "extensionsToTreatAsEsm": [".ts", ".tsx"],
@@ -329,7 +329,7 @@ expect(location.pathname).toBe('/traces');
 
 ## TypeScript Jest Configuration
 ```json
-// tsconfig.jest.json
+// tsconfig.vi.json
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
@@ -352,11 +352,11 @@ expect(location.pathname).toBe('/traces');
 ### Mock Function Typing
 ```ts
 // ✅ GOOD - Proper mock function typing
-const mockApiCall = jest.fn() as jest.MockedFunction<typeof apiCall>;
-const mockEventHandler = jest.fn() as jest.MockedFunction<(event: Event) => void>;
+const mockApiCall = vi.fn() as vi.MockedFunction<typeof apiCall>;
+const mockEventHandler = vi.fn() as vi.MockedFunction<(event: Event) => void>;
 
 // ❌ BAD - Using any
-const mockApiCall = jest.fn() as any;
+const mockApiCall = vi.fn() as any;
 ```
 
 ### Generic Mock Typing
@@ -367,7 +367,7 @@ interface MockApiResponse<T> {
   status: number;
 }
 
-const mockFetchData = jest.fn() as jest.MockedFunction<
+const mockFetchData = vi.fn() as vi.MockedFunction<
   <T>(endpoint: string) => Promise<MockApiResponse<T>>
 >;
 
@@ -390,10 +390,10 @@ const renderTestComponent = (props: Partial<TestComponentProps> = {}): RenderRes
   const defaultProps: TestComponentProps = {
     title: 'Test',
     data: [],
-    onSelect: jest.fn(),
+    onSelect: vi.fn(),
     ...props
   };
-  
+
   return render(<TestComponent {...defaultProps} />);
 };
 ```
@@ -417,7 +417,7 @@ mockFetchUser.mockRejectedValue(new Error(JSON.stringify(mockApiError)));
 ```
 
 ## Type Safety Checklist
-- [ ] All mock functions use `jest.MockedFunction<T>`
+- [ ] All mock functions use `vi.MockedFunction<T>`
 - [ ] All mock data has proper interfaces
 - [ ] No `any` types in test files
 - [ ] Generic types are used where appropriate
@@ -458,14 +458,14 @@ Is it used in 20+ test files?
 ❌ **Don't mock global dependencies locally:**
 ```js
 // BAD - This is already globally mocked
-jest.mock('react-router-dom', () => ({ ... }));
+vi.mock('react-router-dom', () => ({ ... }));
 ```
 
 ❌ **Don't create global mocks for test-specific data:**
 ```js
 // BAD - This should be local
-jest.mock('../api/tracesService', () => ({
-  getTraces: jest.fn(() => specificTestData)
+vi.mock('../api/tracesService', () => ({
+  getTraces: vi.fn(() => specificTestData)
 }));
 ```
 
@@ -478,7 +478,7 @@ import { useLocation } from 'react-router-dom';
 ✅ **Do create local mocks for business logic:**
 ```js
 // GOOD - Local mock for specific test needs
-jest.mock('../api/tracesService', () => ({
-  getTraces: jest.fn(() => mockTracesData)
+vi.mock('../api/tracesService', () => ({
+  getTraces: vi.fn(() => mockTracesData)
 }));
 ```

@@ -13,7 +13,7 @@ import { Query } from 'types/api/queryBuilder/queryBuilderData';
 import { QueryRangeRequestV5 } from 'types/api/v5/queryRange';
 
 import useTableContextMenu from '../useTableContextMenu';
-import {
+import { vi } from 'vitest';
 	MOCK_AGGREGATE_DATA,
 	MOCK_COORDINATES,
 	MOCK_FILTER_DATA,
@@ -23,30 +23,30 @@ import {
 } from './mockTableData';
 
 // Mock the necessary hooks and dependencies
-const mockSafeNavigate = jest.fn();
-const mockRedirectWithQueryBuilderData = jest.fn();
+const mockSafeNavigate = vi.fn();
+const mockRedirectWithQueryBuilderData = vi.fn();
 
-jest.mock('hooks/useSafeNavigate', () => ({
+vi.mock('hooks/useSafeNavigate', () => ({
 	useSafeNavigate: (): any => ({
 		safeNavigate: mockSafeNavigate,
 	}),
 }));
 
-jest.mock('hooks/queryBuilder/useQueryBuilder', () => ({
+vi.mock('hooks/queryBuilder/useQueryBuilder', () => ({
 	useQueryBuilder: (): any => ({
 		redirectWithQueryBuilderData: mockRedirectWithQueryBuilderData,
 	}),
 }));
 
-jest.mock('react-router-dom', () => ({
-	...jest.requireActual('react-router-dom'),
+vi.mock('react-router-dom', async () => ({
+	...(await vi.importActual('react-router-dom')),
 	useLocation: (): { pathname: string } => ({
 		pathname: `${process.env.FRONTEND_API_ENDPOINT}/${ROUTES.DASHBOARD}/`,
 	}),
 }));
 
-jest.mock('react-redux', () => ({
-	...jest.requireActual('react-redux'),
+vi.mock('react-redux', async () => ({
+	...(await vi.importActual('react-redux')),
 	useSelector: (): any => ({
 		globalTime: {
 			selectedTime: {
@@ -59,7 +59,7 @@ jest.mock('react-redux', () => ({
 	}),
 }));
 
-jest.mock('container/QueryTable/Drilldown/useDashboardVarConfig', () => ({
+vi.mock('container/QueryTable/Drilldown/useDashboardVarConfig', () => ({
 	__esModule: true,
 	default: (): any => ({
 		dashbaordVariablesConfig: {
@@ -138,7 +138,7 @@ const renderWithProviders = (
 
 describe('TableDrilldown', () => {
 	beforeEach((): void => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	});
 
 	it('should show context menu filter options when button is clicked', (): void => {

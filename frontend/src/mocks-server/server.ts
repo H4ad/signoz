@@ -1,5 +1,5 @@
 // src/mocks/server.js
-import { rest } from 'msw';
+import { http } from "msw";
 import { setupServer } from 'msw/node';
 
 import { handlers } from './handlers';

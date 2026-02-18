@@ -2,11 +2,12 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import getSeries from '../getSeriesData';
 import {
+import { vi } from 'vitest';
 	seriesBarChartData,
 	seriesLineChartData,
 } from './__mocks__/seriesData';
 
-jest.mock('../getRenderer', () => jest.fn().mockImplementation(() => () => {}));
+vi.mock('../getRenderer', () => vi.fn().mockImplementation(() => () => {}));
 
 describe('Get Series Data', () => {
 	test('Should return series data for uplot chart', () => {

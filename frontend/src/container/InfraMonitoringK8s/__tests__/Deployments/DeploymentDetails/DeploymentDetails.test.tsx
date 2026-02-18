@@ -10,6 +10,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { fireEvent, render, screen } from '@testing-library/react';
 import DeploymentDetails from 'container/InfraMonitoringK8s/Deployments/DeploymentDetails/DeploymentDetails';
 import store from 'store';
+import { vi } from 'vitest';
 
 const queryClient = new QueryClient();
 
@@ -21,7 +22,7 @@ describe('DeploymentDetails', () => {
 			k8s_namespace_name: 'test-namespace',
 		},
 	} as any;
-	const mockOnClose = jest.fn();
+	const mockOnClose = vi.fn();
 
 	it('should render modal with relevant metadata', () => {
 		render(

@@ -1,5 +1,6 @@
 /* eslint-disable sonarjs/no-duplicate-string */
 /* eslint-disable react/jsx-props-no-spreading */
+import { vi } from 'vitest';
 import { VirtuosoMockContext } from 'react-virtuoso';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { renderHook } from '@testing-library/react';
@@ -13,7 +14,7 @@ import { useAddDynamicVariableToPanels } from '../../../hooks/dashboard/useAddDy
 import { WidgetSelector } from '../DashboardSettings/DashboardVariableSettings/VariableItem/WidgetSelector';
 
 // Mock scrollIntoView since it's not available in JSDOM
-window.HTMLElement.prototype.scrollIntoView = jest.fn();
+window.HTMLElement.prototype.scrollIntoView = vi.fn();
 
 // Constants to avoid duplication
 const CPU_USAGE_TEXT = 'CPU Usage';
@@ -58,13 +59,13 @@ const mockDashboard = {
 	},
 };
 // Mock dependencies
-jest.mock('providers/Dashboard/Dashboard', () => ({
+vi.mock('providers/Dashboard/Dashboard', () => ({
 	useDashboard: (): any => ({
 		selectedDashboard: mockDashboard,
 	}),
 }));
 
-jest.mock('constants/queryBuilder', () => ({
+vi.mock('constants/queryBuilder', () => ({
 	PANEL_GROUP_TYPES: {
 		ROW: 'row', // Match the actual constant value
 	},
@@ -98,16 +99,16 @@ jest.mock('constants/queryBuilder', () => ({
 	},
 }));
 
-jest.mock('container/GridPanelSwitch/utils', () => ({
+vi.mock('container/GridPanelSwitch/utils', () => ({
 	generateGridTitle: (title: string): string => title || 'Untitled Panel',
 }));
 
 describe('Panel Management Tests', () => {
 	describe('WidgetSelector Component', () => {
-		const mockSetSelectedWidgets = jest.fn();
+		const mockSetSelectedWidgets = vi.fn();
 
 		beforeEach(() => {
-			jest.clearAllMocks();
+			vi.clearAllMocks();
 		});
 
 		it('should display panel titles using generateGridTitle', async () => {
@@ -154,7 +155,7 @@ describe('Panel Management Tests', () => {
 			};
 
 			// Temporarily mock the dashboard
-			jest.doMock('providers/Dashboard/Dashboard', () => ({
+			vi.doMock('providers/Dashboard/Dashboard', () => ({
 				useDashboard: (): any => ({
 					selectedDashboard: modifiedDashboard,
 				}),

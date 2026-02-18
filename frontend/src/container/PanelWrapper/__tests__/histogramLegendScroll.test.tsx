@@ -1,9 +1,10 @@
 import { getUplotHistogramChartOptions } from 'lib/uPlotLib/getUplotHistogramChartOptions';
 import uPlot from 'uplot';
+import { vi } from 'vitest';
 
 // Mock dependencies
-jest.mock('lib/uPlotLib/plugins/tooltipPlugin', () => jest.fn(() => ({})));
-jest.mock('lib/uPlotLib/plugins/onClickPlugin', () => jest.fn(() => ({})));
+vi.mock('lib/uPlotLib/plugins/tooltipPlugin', () => vi.fn(() => ({})));
+vi.mock('lib/uPlotLib/plugins/onClickPlugin', () => vi.fn(() => ({})));
 
 const mockApiResponse = {
 	data: {
@@ -32,7 +33,7 @@ describe('Histogram Chart Options Legend Scroll Position', () => {
 	let originalRequestAnimationFrame: typeof global.requestAnimationFrame;
 
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		originalRequestAnimationFrame = global.requestAnimationFrame;
 	});
 
@@ -41,7 +42,7 @@ describe('Histogram Chart Options Legend Scroll Position', () => {
 	});
 
 	it('should set up scroll position tracking in histogram chart ready hook', () => {
-		const mockSetScrollPosition = jest.fn();
+		const mockSetScrollPosition = vi.fn();
 		const options = getUplotHistogramChartOptions({
 			id: TEST_HISTOGRAM_ID,
 			dimensions: mockDimensions,
@@ -61,7 +62,7 @@ describe('Histogram Chart Options Legend Scroll Position', () => {
 		legend.className = 'u-legend';
 		mockChart.root.appendChild(legend);
 
-		const addEventListenerSpy = jest.spyOn(legend, 'addEventListener');
+		const addEventListenerSpy = vi.spyOn(legend, 'addEventListener');
 
 		// Execute ready hook
 		if (options.hooks?.ready) {
@@ -81,7 +82,7 @@ describe('Histogram Chart Options Legend Scroll Position', () => {
 
 	it('should restore histogram chart scroll position when provided', () => {
 		const mockScrollPosition = 50;
-		const mockSetScrollPosition = jest.fn();
+		const mockSetScrollPosition = vi.fn();
 		const options = getUplotHistogramChartOptions({
 			id: TEST_HISTOGRAM_ID,
 			dimensions: mockDimensions,
@@ -103,7 +104,7 @@ describe('Histogram Chart Options Legend Scroll Position', () => {
 		mockChart.root.appendChild(legend);
 
 		// Mock requestAnimationFrame
-		const mockRequestAnimationFrame = jest.fn((callback) => callback());
+		const mockRequestAnimationFrame = vi.fn((callback) => callback());
 		global.requestAnimationFrame = mockRequestAnimationFrame;
 
 		// Execute ready hook

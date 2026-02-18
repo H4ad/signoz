@@ -1,13 +1,14 @@
 import { act, renderHook } from '@testing-library/react';
 
 import useScrollToTop from './index';
+import { vi } from 'vitest';
 
 // Mocking window.scrollTo method
-global.scrollTo = jest.fn();
+global.scrollTo = vi.fn();
 
 describe('useScrollToTop hook', () => {
 	beforeAll(() => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 	});
 
 	it('should change visibility and scroll to top on call', () => {
@@ -17,7 +18,7 @@ describe('useScrollToTop hook', () => {
 		act(() => {
 			global.pageYOffset = 150;
 			global.dispatchEvent(new Event('scroll'));
-			jest.advanceTimersByTime(300);
+			vi.advanceTimersByTime(300);
 		});
 
 		expect(result.current.isVisible).toBe(true);
@@ -37,7 +38,7 @@ describe('useScrollToTop hook', () => {
 		act(() => {
 			global.pageYOffset = 50;
 			global.dispatchEvent(new Event('scroll'));
-			jest.advanceTimersByTime(300);
+			vi.advanceTimersByTime(300);
 		});
 
 		expect(result.current.isVisible).toBe(false);
@@ -50,7 +51,7 @@ describe('useScrollToTop hook', () => {
 		act(() => {
 			global.pageYOffset = 200;
 			global.dispatchEvent(new Event('scroll'));
-			jest.advanceTimersByTime(300);
+			vi.advanceTimersByTime(300);
 		});
 
 		expect(result.current.isVisible).toBe(true);

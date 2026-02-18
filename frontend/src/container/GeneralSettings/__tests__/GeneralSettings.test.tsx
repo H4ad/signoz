@@ -14,33 +14,34 @@ import {
 } from 'types/api/settings/getRetention';
 
 import GeneralSettings from '../GeneralSettings';
+import { vi } from 'vitest';
 
 // Mock dependencies
-jest.mock('api/settings/setRetentionV2');
+vi.mock('api/settings/setRetentionV2');
 
 const mockNotifications = {
-	error: jest.fn(),
-	success: jest.fn(),
+	error: vi.fn(),
+	success: vi.fn(),
 };
 
-jest.mock('hooks/useNotifications', () => ({
+vi.mock('hooks/useNotifications', () => ({
 	useNotifications: (): { notifications: typeof mockNotifications } => ({
 		notifications: mockNotifications,
 	}),
 }));
 
-jest.mock('hooks/useComponentPermission', () => ({
+vi.mock('hooks/useComponentPermission', () => ({
 	__esModule: true,
-	default: jest.fn(() => [true]),
+	default: vi.fn(() => [true]),
 }));
 
-jest.mock('hooks/useGetTenantLicense', () => ({
+vi.mock('hooks/useGetTenantLicense', () => ({
 	useGetTenantLicense: (): { isCloudUser: boolean } => ({
 		isCloudUser: false,
 	}),
 }));
 
-jest.mock('container/GeneralSettingsCloud', () => ({
+vi.mock('container/GeneralSettingsCloud', () => ({
 	__esModule: true,
 	default: (): null => null,
 }));
@@ -98,8 +99,8 @@ describe('GeneralSettings - S3 Logs Retention', () => {
 	const PRIMARY_BUTTON_CLASS = 'ant-btn-primary';
 
 	beforeEach(() => {
-		jest.clearAllMocks();
-		(setRetentionApiV2 as jest.Mock).mockResolvedValue({
+		vi.clearAllMocks();
+		(setRetentionApiV2 as vi.Mock).mockResolvedValue({
 			httpStatusCode: 200,
 			data: { message: 'success' },
 		});
@@ -115,9 +116,9 @@ describe('GeneralSettings - S3 Logs Retention', () => {
 					tracesTtlValuesPayload={mockTracesRetention}
 					logsTtlValuesPayload={mockLogsRetentionWithS3}
 					getAvailableDiskPayload={mockDisksWithS3}
-					metricsTtlValuesRefetch={jest.fn()}
-					tracesTtlValuesRefetch={jest.fn()}
-					logsTtlValuesRefetch={jest.fn()}
+					metricsTtlValuesRefetch={vi.fn()}
+					tracesTtlValuesRefetch={vi.fn()}
+					logsTtlValuesRefetch={vi.fn()}
 				/>,
 			);
 
@@ -200,9 +201,9 @@ describe('GeneralSettings - S3 Logs Retention', () => {
 					tracesTtlValuesPayload={mockTracesRetention}
 					logsTtlValuesPayload={mockLogsRetentionWithS3}
 					getAvailableDiskPayload={mockDisksWithObjectStorage}
-					metricsTtlValuesRefetch={jest.fn()}
-					tracesTtlValuesRefetch={jest.fn()}
-					logsTtlValuesRefetch={jest.fn()}
+					metricsTtlValuesRefetch={vi.fn()}
+					tracesTtlValuesRefetch={vi.fn()}
+					logsTtlValuesRefetch={vi.fn()}
 				/>,
 			);
 
@@ -223,9 +224,9 @@ describe('GeneralSettings - S3 Logs Retention', () => {
 					tracesTtlValuesPayload={mockTracesRetention}
 					logsTtlValuesPayload={mockLogsRetentionWithoutS3}
 					getAvailableDiskPayload={mockDisksWithoutS3}
-					metricsTtlValuesRefetch={jest.fn()}
-					tracesTtlValuesRefetch={jest.fn()}
-					logsTtlValuesRefetch={jest.fn()}
+					metricsTtlValuesRefetch={vi.fn()}
+					tracesTtlValuesRefetch={vi.fn()}
+					logsTtlValuesRefetch={vi.fn()}
 				/>,
 			);
 
@@ -308,9 +309,9 @@ describe('GeneralSettings - S3 Logs Retention', () => {
 					tracesTtlValuesPayload={mockTracesRetention}
 					logsTtlValuesPayload={mockLogsRetentionWithS3}
 					getAvailableDiskPayload={mockDisksWithS3}
-					metricsTtlValuesRefetch={jest.fn()}
-					tracesTtlValuesRefetch={jest.fn()}
-					logsTtlValuesRefetch={jest.fn()}
+					metricsTtlValuesRefetch={vi.fn()}
+					tracesTtlValuesRefetch={vi.fn()}
+					logsTtlValuesRefetch={vi.fn()}
 				/>,
 			);
 
@@ -343,9 +344,9 @@ describe('GeneralSettings - S3 Logs Retention', () => {
 					tracesTtlValuesPayload={mockTracesRetention}
 					logsTtlValuesPayload={mockLogsRetentionWithoutS3}
 					getAvailableDiskPayload={mockDisksWithS3}
-					metricsTtlValuesRefetch={jest.fn()}
-					tracesTtlValuesRefetch={jest.fn()}
-					logsTtlValuesRefetch={jest.fn()}
+					metricsTtlValuesRefetch={vi.fn()}
+					tracesTtlValuesRefetch={vi.fn()}
+					logsTtlValuesRefetch={vi.fn()}
 				/>,
 			);
 

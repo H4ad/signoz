@@ -12,7 +12,7 @@ import { Typography } from 'antd';
 import { ToggleGraphProps } from 'components/Graph/types';
 import { LineChart } from 'lucide-react';
 import ErrorBoundaryFallback from 'pages/ErrorBoundaryFallback/ErrorBoundaryFallback';
-import UPlot from 'uplot';
+import uPlot from 'uplot';
 
 import { dataMatch, optionsUpdateState } from './utils';
 

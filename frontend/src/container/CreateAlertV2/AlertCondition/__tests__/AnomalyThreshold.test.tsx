@@ -7,24 +7,25 @@ import * as appHooks from 'providers/App/App';
 
 import * as context from '../../context';
 import AnomalyThreshold from '../AnomalyThreshold';
+import { vi } from 'vitest';
 
-jest.spyOn(appHooks, 'useAppContext').mockReturnValue(getAppContextMockState());
+vi.spyOn(appHooks, 'useAppContext').mockReturnValue(getAppContextMockState());
 
-jest.mock('uplot', () => {
+vi.mock('uplot', () => {
 	const paths = {
-		spline: jest.fn(),
-		bars: jest.fn(),
+		spline: vi.fn(),
+		bars: vi.fn(),
 	};
-	const uplotMock: any = jest.fn(() => ({
+	const uplotMock: any = vi.fn(() => ({
 		paths,
 	}));
 	uplotMock.paths = paths;
 	return uplotMock;
 });
 
-const mockSetAlertState = jest.fn();
-const mockSetThresholdState = jest.fn();
-jest.spyOn(context, 'useCreateAlertState').mockReturnValue(
+const mockSetAlertState = vi.fn();
+const mockSetThresholdState = vi.fn();
+vi.spyOn(context, 'useCreateAlertState').mockReturnValue(
 	createMockAlertContextState({
 		setThresholdState: mockSetThresholdState,
 		setAlertState: mockSetAlertState,
@@ -32,7 +33,7 @@ jest.spyOn(context, 'useCreateAlertState').mockReturnValue(
 );
 
 // Mock useQueryBuilder hook
-jest.mock('hooks/queryBuilder/useQueryBuilder', () => ({
+vi.mock('hooks/queryBuilder/useQueryBuilder', () => ({
 	useQueryBuilder: (): {
 		currentQuery: {
 			dataSource: string;
@@ -60,13 +61,13 @@ const renderAnomalyThreshold = (): ReturnType<typeof render> =>
 			channels={[]}
 			isLoadingChannels={false}
 			isErrorChannels={false}
-			refreshChannels={jest.fn()}
+			refreshChannels={vi.fn()}
 		/>,
 	);
 
 describe('AnomalyThreshold', () => {
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	});
 
 	it('renders the first condition sentence', () => {

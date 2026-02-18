@@ -1,14 +1,15 @@
 import { dragHandler, dropHandler } from '../utils';
+import { vi } from 'vitest';
 
-jest.mock('react-dnd', () => ({
-	useDrop: jest.fn().mockImplementation(() => [jest.fn(), jest.fn(), jest.fn()]),
-	useDrag: jest.fn().mockImplementation(() => [jest.fn(), jest.fn(), jest.fn()]),
+vi.mock('react-dnd', () => ({
+	useDrop: vi.fn().mockImplementation(() => [vi.fn(), vi.fn(), vi.fn()]),
+	useDrag: vi.fn().mockImplementation(() => [vi.fn(), vi.fn(), vi.fn()]),
 }));
 
 describe('Utils testing of DraggableTableRow component', () => {
 	test('Should dropHandler return true', () => {
 		const monitor = {
-			isOver: jest.fn().mockReturnValueOnce(true),
+			isOver: vi.fn().mockReturnValueOnce(true),
 		} as never;
 		const dropDataTruthy = dropHandler(monitor);
 
@@ -17,7 +18,7 @@ describe('Utils testing of DraggableTableRow component', () => {
 
 	test('Should dropHandler return false', () => {
 		const monitor = {
-			isOver: jest.fn().mockReturnValueOnce(false),
+			isOver: vi.fn().mockReturnValueOnce(false),
 		} as never;
 		const dropDataFalsy = dropHandler(monitor);
 
@@ -26,7 +27,7 @@ describe('Utils testing of DraggableTableRow component', () => {
 
 	test('Should dragHandler return true', () => {
 		const monitor = {
-			isDragging: jest.fn().mockReturnValueOnce(true),
+			isDragging: vi.fn().mockReturnValueOnce(true),
 		} as never;
 		const dragDataTruthy = dragHandler(monitor);
 
@@ -35,7 +36,7 @@ describe('Utils testing of DraggableTableRow component', () => {
 
 	test('Should dragHandler return false', () => {
 		const monitor = {
-			isDragging: jest.fn().mockReturnValueOnce(false),
+			isDragging: vi.fn().mockReturnValueOnce(false),
 		} as never;
 		const dragDataFalsy = dragHandler(monitor);
 

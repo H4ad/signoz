@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { useCopyToClipboard } from 'react-use';
 import { toast } from '@signozhq/sonner';
 import { fireEvent, within } from '@testing-library/react';
@@ -14,21 +15,24 @@ import { USER_ROLES } from 'types/roles';
 import PublicDashboardSetting from '../index';
 
 // Mock dependencies
-jest.mock('providers/Dashboard/Dashboard');
-jest.mock('react-use', () => ({
-	...jest.requireActual('react-use'),
-	useCopyToClipboard: jest.fn(),
-}));
-jest.mock('@signozhq/sonner', () => ({
+vi.mock('providers/Dashboard/Dashboard');
+vi.mock('react-use', async () => {
+	const actual = await vi.importActual('react-use');
+	return {
+		...actual,
+		useCopyToClipboard: vi.fn(),
+	};
+});
+vi.mock('@signozhq/sonner', () => ({
 	toast: {
-		success: jest.fn(),
-		error: jest.fn(),
+		success: vi.fn(),
+		error: vi.fn(),
 	},
 }));
 
-const mockUseDashboard = jest.mocked(useDashboard);
-const mockUseCopyToClipboard = jest.mocked(useCopyToClipboard);
-const mockToast = jest.mocked(toast);
+const mockUseDashboard = vi.mocked(useDashboard);
+const mockUseCopyToClipboard = vi.mocked(useCopyToClipboard);
+const mockToast = vi.mocked(toast);
 
 // Test constants
 const MOCK_DASHBOARD_ID = 'test-dashboard-id';
@@ -59,13 +63,13 @@ afterAll(() => {
 	server.close();
 });
 
-const mockSetCopyPublicDashboardURL = jest.fn();
+const mockSetCopyPublicDashboardURL = vi.fn();
 
 beforeEach(() => {
-	jest.clearAllMocks();
+	vi.clearAllMocks();
 
 	// Mock window.open
-	window.open = jest.fn();
+	window.open = vi.fn();
 
 	// Mock useDashboard
 	mockUseDashboard.mockReturnValue(({
@@ -81,7 +85,7 @@ beforeEach(() => {
 
 afterEach(() => {
 	server.resetHandlers();
-	jest.clearAllMocks();
+	vi.clearAllMocks();
 });
 
 describe('PublicDashboardSetting', () => {

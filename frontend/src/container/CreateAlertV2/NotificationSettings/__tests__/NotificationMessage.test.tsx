@@ -5,13 +5,14 @@ import * as createAlertContext from 'container/CreateAlertV2/context';
 import { createMockAlertContextState } from 'container/CreateAlertV2/EvaluationSettings/__tests__/testUtils';
 
 import NotificationMessage from '../NotificationMessage';
+import { vi } from 'vitest';
 
-jest.mock('uplot', () => {
+vi.mock('uplot', () => {
 	const paths = {
-		spline: jest.fn(),
-		bars: jest.fn(),
+		spline: vi.fn(),
+		bars: vi.fn(),
 	};
-	const uplotMock = jest.fn(() => ({
+	const uplotMock = vi.fn(() => ({
 		paths,
 	}));
 	return {
@@ -20,10 +21,10 @@ jest.mock('uplot', () => {
 	};
 });
 
-const mockSetNotificationSettings = jest.fn();
+const mockSetNotificationSettings = vi.fn();
 const initialNotificationSettingsState = createMockAlertContextState()
 	.notificationSettings;
-jest.spyOn(createAlertContext, 'useCreateAlertState').mockReturnValue(
+vi.spyOn(createAlertContext, 'useCreateAlertState').mockReturnValue(
 	createMockAlertContextState({
 		notificationSettings: {
 			...initialNotificationSettingsState,
@@ -35,7 +36,7 @@ jest.spyOn(createAlertContext, 'useCreateAlertState').mockReturnValue(
 
 describe('NotificationMessage', () => {
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	});
 
 	it('renders textarea with message and placeholder', () => {
@@ -57,7 +58,7 @@ describe('NotificationMessage', () => {
 	});
 
 	it('displays existing description value', () => {
-		jest.spyOn(createAlertContext, 'useCreateAlertState').mockImplementation(
+		vi.spyOn(createAlertContext, 'useCreateAlertState').mockImplementation(
 			() =>
 				({
 					notificationSettings: {

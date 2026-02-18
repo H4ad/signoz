@@ -10,6 +10,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { fireEvent, render, screen } from '@testing-library/react';
 import StatefulSetDetails from 'container/InfraMonitoringK8s/StatefulSets/StatefulSetDetails/StatefulSetDetails';
 import store from 'store';
+import { vi } from 'vitest';
 
 const queryClient = new QueryClient();
 
@@ -20,7 +21,7 @@ describe('StatefulSetDetails', () => {
 			k8s_statefulset_name: 'test-stateful-set',
 		},
 	} as any;
-	const mockOnClose = jest.fn();
+	const mockOnClose = vi.fn();
 
 	it('should render modal with relevant metadata', () => {
 		render(

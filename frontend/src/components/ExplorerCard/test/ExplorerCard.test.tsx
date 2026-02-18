@@ -6,55 +6,59 @@ import { DataSource } from 'types/common/queryBuilder';
 
 import { viewMockData } from '../__mock__/viewData';
 import ExplorerCard from '../ExplorerCard';
+import { vi } from 'vitest';
 
-const historyReplace = jest.fn();
+const historyReplace = vi.fn();
 
 // eslint-disable-next-line sonarjs/no-duplicate-string
-jest.mock('react-router-dom', () => ({
-	...jest.requireActual('react-router-dom'),
-	useLocation: (): { pathname: string } => ({
-		pathname: `${process.env.FRONTEND_API_ENDPOINT}/${ROUTES.TRACES_EXPLORER}/`,
-	}),
-	useHistory: (): any => ({
-		...jest.requireActual('react-router-dom').useHistory(),
-		replace: historyReplace,
-	}),
-}));
+vi.mock('react-router-dom', async () => {
+	const actual = await vi.importActual('react-router-dom');
+	return {
+		...actual,
+		useLocation: (): { pathname: string } => ({
+			pathname: `${process.env.FRONTEND_API_ENDPOINT}/${ROUTES.TRACES_EXPLORER}/`,
+		}),
+		useHistory: (): any => ({
+			...(actual as any).useHistory(),
+			replace: historyReplace,
+		}),
+	};
+});
 
-jest.mock('hooks/useSafeNavigate', () => ({
+vi.mock('hooks/useSafeNavigate', () => ({
 	useSafeNavigate: (): any => ({
-		safeNavigate: jest.fn(),
+		safeNavigate: vi.fn(),
 	}),
 }));
 
-jest.mock('hooks/queryBuilder/useGetPanelTypesQueryParam', () => ({
-	useGetPanelTypesQueryParam: jest.fn(() => 'mockedPanelType'),
+vi.mock('hooks/queryBuilder/useGetPanelTypesQueryParam', () => ({
+	useGetPanelTypesQueryParam: vi.fn(() => 'mockedPanelType'),
 }));
 
-jest.mock('hooks/saveViews/useGetAllViews', () => ({
-	useGetAllViews: jest.fn(() => ({
+vi.mock('hooks/saveViews/useGetAllViews', () => ({
+	useGetAllViews: vi.fn(() => ({
 		data: { data: { data: viewMockData } },
 		isLoading: false,
 		error: null,
 		isRefetching: false,
-		refetch: jest.fn(),
+		refetch: vi.fn(),
 	})),
 }));
 
-jest.mock('hooks/saveViews/useUpdateView', () => ({
-	useUpdateView: jest.fn(() => ({
-		mutateAsync: jest.fn(),
+vi.mock('hooks/saveViews/useUpdateView', () => ({
+	useUpdateView: vi.fn(() => ({
+		mutateAsync: vi.fn(),
 	})),
 }));
 
-jest.mock('hooks/saveViews/useDeleteView', () => ({
-	useDeleteView: jest.fn(() => ({
-		mutateAsync: jest.fn(),
+vi.mock('hooks/saveViews/useDeleteView', () => ({
+	useDeleteView: vi.fn(() => ({
+		mutateAsync: vi.fn(),
 	})),
 }));
 
 // Mock usePreferenceSync
-jest.mock('providers/preferences/sync/usePreferenceSync', () => ({
+vi.mock('providers/preferences/sync/usePreferenceSync', () => ({
 	usePreferenceSync: (): any => ({
 		preferences: {
 			columns: [],
@@ -67,8 +71,8 @@ jest.mock('providers/preferences/sync/usePreferenceSync', () => ({
 		},
 		loading: false,
 		error: null,
-		updateColumns: jest.fn(),
-		updateFormatting: jest.fn(),
+		updateColumns: vi.fn(),
+		updateFormatting: vi.fn(),
 	}),
 }));
 

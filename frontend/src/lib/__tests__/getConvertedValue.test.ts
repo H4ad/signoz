@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { UniversalYAxisUnit } from 'components/YAxisUnitSelector/types';
 import { convertValue, getFormattedUnit } from 'lib/getConvertedValue';
 

@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { UseMutationResult } from 'react-query';
 import { render, RenderResult, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -17,29 +18,29 @@ type MockUpdateMetricMetadata = UseMutationResult<
 	Error,
 	UseUpdateMetricMetadataProps
 >;
-const mockUpdateMetricMetadata = jest.fn();
-jest
+const mockUpdateMetricMetadata = vi.fn();
+vi
 	.spyOn(useUpdateMetricMetadataHooks, 'useUpdateMetricMetadata')
 	.mockReturnValue(({
 		mutate: mockUpdateMetricMetadata,
 		isLoading: false,
 	} as Partial<MockUpdateMetricMetadata>) as MockUpdateMetricMetadata);
 
-jest.mock('container/TimeSeriesView/TimeSeriesView', () => ({
+vi.mock('container/TimeSeriesView/TimeSeriesView', () => ({
 	__esModule: true,
-	default: jest.fn().mockReturnValue(
+	default: vi.fn().mockReturnValue(
 		<div role="img" aria-label="warning">
 			TimeSeriesView
 		</div>,
 	),
 }));
 
-jest.mock('react-query', () => ({
-	...jest.requireActual('react-query'),
-	useQueryClient: jest.fn().mockReturnValue({
-		invalidateQueries: jest.fn(),
+vi.mock('react-query', async () => ({
+	...(await vi.importActual<any>('react-query')),
+	useQueryClient: vi.fn().mockReturnValue({
+		invalidateQueries: vi.fn(),
 	}),
-	useQueries: jest.fn().mockImplementation((queries: any[]) =>
+	useQueries: vi.fn().mockImplementation((queries: any[]) =>
 		queries.map(() => ({
 			data: undefined,
 			isLoading: false,
@@ -49,9 +50,9 @@ jest.mock('react-query', () => ({
 	),
 }));
 
-jest.mock('react-redux', () => ({
-	...jest.requireActual('react-redux'),
-	useSelector: jest.fn().mockReturnValue({
+vi.mock('react-redux', async () => ({
+	...(await vi.importActual<any>('react-redux')),
+	useSelector: vi.fn().mockReturnValue({
 		globalTime: {
 			selectedTime: '5min',
 			maxTime: 1713738000000,
@@ -68,9 +69,9 @@ const mockMetric: MetricMetadata = {
 	isMonotonic: true,
 };
 
-const mockSetWarning = jest.fn();
-const mockSetIsMetricDetailsOpen = jest.fn();
-const mockSetYAxisUnit = jest.fn();
+const mockSetWarning = vi.fn();
+const mockSetIsMetricDetailsOpen = vi.fn();
+const mockSetYAxisUnit = vi.fn();
 
 function renderTimeSeries(
 	overrides: Partial<TimeSeriesProps> = {},

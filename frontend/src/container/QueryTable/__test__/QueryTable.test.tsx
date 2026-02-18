@@ -4,16 +4,17 @@ import { fireEvent, render } from 'tests/test-utils';
 
 import { QueryTable } from '../QueryTable';
 import { QueryTableProps, WidgetHeaderProps } from './mocks';
+import { vi } from 'vitest';
 
-jest.mock('react-router-dom', () => ({
-	...jest.requireActual('react-router-dom'),
+vi.mock('react-router-dom', async () => ({
+	...(await vi.importActual('react-router-dom')),
 	useLocation: (): { pathname: string } => ({
 		pathname: ``,
 	}),
 }));
 
 // Mock useDashabord hook
-jest.mock('providers/Dashboard/Dashboard', () => ({
+vi.mock('providers/Dashboard/Dashboard', () => ({
 	useDashboard: (): any => ({
 		selectedDashboard: {
 			data: {
@@ -23,9 +24,9 @@ jest.mock('providers/Dashboard/Dashboard', () => ({
 	}),
 }));
 
-jest.mock('hooks/useSafeNavigate', () => ({
+vi.mock('hooks/useSafeNavigate', () => ({
 	useSafeNavigate: (): any => ({
-		safeNavigate: jest.fn(),
+		safeNavigate: vi.fn(),
 	}),
 }));
 
@@ -45,7 +46,7 @@ describe('QueryTable -', () => {
 	});
 });
 
-const setSearchTerm = jest.fn();
+const setSearchTerm = vi.fn();
 describe('WidgetHeader -', () => {
 	it('global search option should be working', () => {
 		const { getByText, getByTestId } = render(

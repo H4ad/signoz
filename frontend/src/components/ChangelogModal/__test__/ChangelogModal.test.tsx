@@ -9,6 +9,7 @@ import {
 	ChangelogSchema,
 	DeploymentType,
 } from 'types/api/changelog/getChangelogByVersion';
+import { vi } from 'vitest';
 
 import ChangelogModal from '../ChangelogModal';
 
@@ -39,7 +40,7 @@ const mockChangelog: ChangelogSchema = {
 };
 
 // Mock react-markdown to just render children as plain text
-jest.mock(
+vi.mock(
 	'react-markdown',
 	() =>
 		function ReactMarkdown({ children }: any) {
@@ -47,9 +48,9 @@ jest.mock(
 		},
 );
 // mock useAppContext
-jest.mock('providers/App/App', () => ({
-	useAppContext: jest.fn(() => ({
-		updateUserPreferenceInContext: jest.fn(),
+vi.mock('providers/App/App', () => ({
+	useAppContext: vi.fn(() => ({
+		updateUserPreferenceInContext: vi.fn(),
 		userPreferences: [
 			{
 				name: USER_PREFERENCES.LAST_SEEN_CHANGELOG_VERSION,
@@ -59,7 +60,7 @@ jest.mock('providers/App/App', () => ({
 	})),
 }));
 
-function renderChangelog(onClose: () => void = jest.fn()): void {
+function renderChangelog(onClose: () => void = vi.fn()): void {
 	render(
 		<MockQueryClientProvider>
 			<ChangelogModal changelog={mockChangelog} onClose={onClose} />
@@ -80,14 +81,14 @@ describe('ChangelogModal', () => {
 	});
 
 	it('calls onClose when Skip for now is clicked', () => {
-		const onClose = jest.fn();
+		const onClose = vi.fn();
 		renderChangelog(onClose);
 		fireEvent.click(screen.getByText('Skip for now'));
 		expect(onClose).toHaveBeenCalled();
 	});
 
 	it('opens migration docs when Update my workspace is clicked', () => {
-		window.open = jest.fn();
+		window.open = vi.fn();
 		renderChangelog();
 		fireEvent.click(screen.getByText('Update my workspace'));
 		expect(window.open).toHaveBeenCalledWith(
@@ -102,7 +103,7 @@ describe('ChangelogModal', () => {
 		const scrollBtn = screen.getByTestId('scroll-more-btn');
 		const contentDiv = screen.getByTestId('changelog-content');
 		if (contentDiv) {
-			contentDiv.scrollTo = jest.fn();
+			contentDiv.scrollTo = vi.fn();
 		}
 		fireEvent.click(scrollBtn);
 		if (contentDiv) {

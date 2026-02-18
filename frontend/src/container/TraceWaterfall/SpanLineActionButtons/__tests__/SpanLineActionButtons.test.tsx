@@ -4,9 +4,10 @@ import { render } from 'tests/test-utils';
 import { Span } from 'types/api/trace/getTraceV2';
 
 import SpanLineActionButtons from '../index';
+import { vi } from 'vitest';
 
 // Mock the useCopySpanLink hook
-jest.mock('hooks/trace/useCopySpanLink');
+vi.mock('hooks/trace/useCopySpanLink');
 
 const mockSpan: Span = {
 	spanId: 'test-span-id',
@@ -35,12 +36,12 @@ const mockSpan: Span = {
 describe('SpanLineActionButtons', () => {
 	beforeEach(() => {
 		// Clear mock before each test
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	});
 
 	it('renders copy link button with correct icon', () => {
-		(useCopySpanLink as jest.Mock).mockReturnValue({
-			onSpanCopy: jest.fn(),
+		(useCopySpanLink as vi.Mock).mockReturnValue({
+			onSpanCopy: vi.fn(),
 		});
 
 		render(<SpanLineActionButtons span={mockSpan} />);
@@ -55,8 +56,8 @@ describe('SpanLineActionButtons', () => {
 	});
 
 	it('calls onSpanCopy when copy button is clicked', () => {
-		const mockOnSpanCopy = jest.fn();
-		(useCopySpanLink as jest.Mock).mockReturnValue({
+		const mockOnSpanCopy = vi.fn();
+		(useCopySpanLink as vi.Mock).mockReturnValue({
 			onSpanCopy: mockOnSpanCopy,
 		});
 
@@ -71,8 +72,8 @@ describe('SpanLineActionButtons', () => {
 	});
 
 	it('applies correct styling classes', () => {
-		(useCopySpanLink as jest.Mock).mockReturnValue({
-			onSpanCopy: jest.fn(),
+		(useCopySpanLink as vi.Mock).mockReturnValue({
+			onSpanCopy: vi.fn(),
 		});
 
 		render(<SpanLineActionButtons span={mockSpan} />);
@@ -89,11 +90,11 @@ describe('SpanLineActionButtons', () => {
 	});
 
 	it('copies span link to clipboard when copy button is clicked', () => {
-		const mockSetCopy = jest.fn();
+		const mockSetCopy = vi.fn();
 		const mockUrlQuery = {
-			delete: jest.fn(),
-			set: jest.fn(),
-			toString: jest.fn().mockReturnValue('spanId=test-span-id'),
+			delete: vi.fn(),
+			set: vi.fn(),
+			toString: vi.fn().mockReturnValue('spanId=test-span-id'),
 		};
 		const mockPathname = '/test-path';
 		const mockLocation = {
@@ -107,7 +108,7 @@ describe('SpanLineActionButtons', () => {
 		});
 
 		// Mock useCopySpanLink hook
-		(useCopySpanLink as jest.Mock).mockReturnValue({
+		(useCopySpanLink as vi.Mock).mockReturnValue({
 			onSpanCopy: (event: React.MouseEvent) => {
 				event.preventDefault();
 				event.stopPropagation();

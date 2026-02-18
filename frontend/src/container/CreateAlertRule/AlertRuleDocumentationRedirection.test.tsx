@@ -6,8 +6,9 @@ import { act, fireEvent, render } from 'tests/test-utils';
 import { AlertTypes } from 'types/api/alerts/alertTypes';
 
 import { ALERT_TYPE_TO_TITLE, ALERT_TYPE_URL_MAP } from './constants';
+import { vi } from 'vitest';
 
-jest
+vi
 	.spyOn(usePrefillAlertConditions, 'usePrefillAlertConditions')
 	.mockReturnValue({
 		matchType: '3',
@@ -16,14 +17,14 @@ jest
 		targetUnit: 'rpm',
 	});
 
-let mockWindowOpen: jest.Mock;
+let mockWindowOpen: vi.Mock;
 
 window.ResizeObserver =
 	window.ResizeObserver ||
-	jest.fn().mockImplementation(() => ({
-		disconnect: jest.fn(),
-		observe: jest.fn(),
-		unobserve: jest.fn(),
+	vi.fn().mockImplementation(() => ({
+		disconnect: vi.fn(),
+		observe: vi.fn(),
+		unobserve: vi.fn(),
 	}));
 
 function findLinkForAlertType(
@@ -50,16 +51,20 @@ describe('Alert rule documentation redirection', () => {
 	let renderResult: ReturnType<typeof render>;
 
 	beforeAll(() => {
-		mockWindowOpen = jest.fn();
+		mockWindowOpen = vi.fn();
 		window.open = mockWindowOpen;
 	});
 
-	jest.mock('react-router-dom', () => ({
-		...jest.requireActual('react-router-dom'),
-		useLocation: (): { pathname: string } => ({
+	// Instead of mocking the whole module, spy on the actual useLocation export
+	beforeAll(async () => {
+		const actual = await vi.importActual('react-router-dom');
+		vi.spyOn(actual, 'useLocation').mockReturnValue({
 			pathname: `${process.env.FRONTEND_API_ENDPOINT}${ROUTES.ALERT_TYPE_SELECTION}`,
-		}),
-	}));
+			search: '',
+			hash: '',
+			state: null,
+		} as any);
+	});
 
 	beforeEach(() => {
 		act(() => {

@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 /* eslint-disable sonarjs/no-duplicate-string */
 export const checkAPIInvocationMock = {
 	variablesToGetUpdated: [],
@@ -53,7 +54,7 @@ export const onUpdateVariableNodeMock = {
 		'k8s_namespace_name',
 		'http_status_code',
 	],
-	callback: jest.fn(),
+	callback: vi.fn(),
 };
 
 export const buildGraphMock = {

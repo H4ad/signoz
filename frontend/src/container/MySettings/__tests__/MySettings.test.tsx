@@ -1,6 +1,6 @@
 import userEvent from '@testing-library/user-event';
 import MySettingsContainer from 'container/MySettings';
-import {
+import { vi } from 'vitest';
 	act,
 	fireEvent,
 	render,
@@ -9,12 +9,12 @@ import {
 	within,
 } from 'tests/test-utils';
 
-const toggleThemeFunction = jest.fn();
-const logEventFunction = jest.fn();
-const copyToClipboardFn = jest.fn();
-const editUserFn = jest.fn();
+const toggleThemeFunction = vi.fn();
+const logEventFunction = vi.fn();
+const copyToClipboardFn = vi.fn();
+const editUserFn = vi.fn();
 
-jest.mock('react-use', () => ({
+vi.mock('react-use', () => ({
 	__esModule: true,
 	useCopyToClipboard: (): [unknown, (text: string) => void] => [
 		null,
@@ -22,32 +22,32 @@ jest.mock('react-use', () => ({
 	],
 }));
 
-jest.mock('api/v1/user/id/update', () => ({
+vi.mock('api/v1/user/id/update', () => ({
 	__esModule: true,
 	default: (...args: unknown[]): Promise<unknown> => editUserFn(...args),
 }));
 
-jest.mock('hooks/useDarkMode', () => ({
+vi.mock('hooks/useDarkMode', () => ({
 	__esModule: true,
-	useIsDarkMode: jest.fn(() => true),
-	useSystemTheme: jest.fn(() => 'dark'),
-	default: jest.fn(() => ({
+	useIsDarkMode: vi.fn(() => true),
+	useSystemTheme: vi.fn(() => 'dark'),
+	default: vi.fn(() => ({
 		toggleTheme: toggleThemeFunction,
 		autoSwitch: false,
-		setAutoSwitch: jest.fn(),
+		setAutoSwitch: vi.fn(),
 	})),
 }));
 
-jest.mock('api/common/logEvent', () => ({
+vi.mock('api/common/logEvent', () => ({
 	__esModule: true,
-	default: jest.fn((eventName, data) => logEventFunction(eventName, data)),
+	default: vi.fn((eventName, data) => logEventFunction(eventName, data)),
 }));
 
-const errorNotification = jest.fn();
-const successNotification = jest.fn();
-jest.mock('hooks/useNotifications', () => ({
+const errorNotification = vi.fn();
+const successNotification = vi.fn();
+vi.mock('hooks/useNotifications', () => ({
 	__esModule: true,
-	useNotifications: jest.fn(() => ({
+	useNotifications: vi.fn(() => ({
 		notifications: {
 			error: errorNotification,
 			success: successNotification,
@@ -66,7 +66,7 @@ const PASSWORD_VALIDATION_MESSAGE_TEST_ID = 'password-validation-message';
 
 describe('MySettings Flows', () => {
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		editUserFn.mockResolvedValue({});
 		render(<MySettingsContainer />);
 	});

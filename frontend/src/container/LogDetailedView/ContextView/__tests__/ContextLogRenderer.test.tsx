@@ -22,7 +22,7 @@ import { QueryRangePayload } from 'types/api/metrics/getQueryRange';
 import { IBuilderQuery } from 'types/api/queryBuilder/queryBuilderData';
 
 import ContextLogRenderer from '../ContextLogRenderer';
-import {
+import { vi } from 'vitest';
 	mockLog,
 	mockQuery,
 	mockQueryRangeResponse,
@@ -30,9 +30,9 @@ import {
 } from './mockData';
 
 // Mock the useContextLogData hook
-const mockHandleRunQuery = jest.fn();
+const mockHandleRunQuery = vi.fn();
 
-jest.mock('container/OptionsMenu', () => ({
+vi.mock('container/OptionsMenu', () => ({
 	useOptionsMenu: (): any => ({
 		options: {
 			fontSize: 'medium',
@@ -41,13 +41,13 @@ jest.mock('container/OptionsMenu', () => ({
 	}),
 }));
 
-jest.mock('hooks/useSafeNavigate', () => ({
+vi.mock('hooks/useSafeNavigate', () => ({
 	useSafeNavigate: (): any => ({
-		safeNavigate: jest.fn(),
+		safeNavigate: vi.fn(),
 	}),
 }));
 
-jest.mock(
+vi.mock(
 	'components/OverlayScrollbar/OverlayScrollbar',
 	() =>
 		function MockOverlayScrollbar({

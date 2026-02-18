@@ -8,18 +8,17 @@ import { act, render, screen } from 'tests/test-utils';
 import { getFormattedDate } from 'utils/timeUtils';
 
 import BillingContainer from './BillingContainer';
+import { vi } from 'vitest';
 
 window.ResizeObserver =
 	window.ResizeObserver ||
-	jest.fn().mockImplementation(() => ({
-		disconnect: jest.fn(),
-		observe: jest.fn(),
-		unobserve: jest.fn(),
+	vi.fn().mockImplementation(() => ({
+		disconnect: vi.fn(),
+		observe: vi.fn(),
+		unobserve: vi.fn(),
 	}));
 
 describe('BillingContainer', () => {
-	jest.setTimeout(30000);
-
 	test('Component should render', async () => {
 		render(<BillingContainer />);
 
@@ -53,12 +52,12 @@ describe('BillingContainer', () => {
 
 	describe('Trial scenarios', () => {
 		beforeEach(() => {
-			jest.useFakeTimers();
-			jest.setSystemTime(new Date('2023-10-20'));
+			vi.useFakeTimers();
+			vi.setSystemTime(new Date('2023-10-20'));
 		});
 
 		afterEach(() => {
-			jest.useRealTimers();
+			vi.useRealTimers();
 		});
 
 		test('OnTrail', async () => {
@@ -71,7 +70,7 @@ describe('BillingContainer', () => {
 			);
 
 			// If the component schedules any setTimeout on mount, flush them:
-			jest.runOnlyPendingTimers();
+			vi.runOnlyPendingTimers();
 
 			expect(await screen.findByText('Free Trial')).toBeInTheDocument();
 			expect(await screen.findByText('billing')).toBeInTheDocument();

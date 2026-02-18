@@ -9,6 +9,7 @@ import { IBuilderQuery } from 'types/api/queryBuilder/queryBuilderData';
 
 import ErrorState from '../Explorer/Domains/DomainDetails/components/ErrorState';
 import StatusCodeBarCharts from '../Explorer/Domains/DomainDetails/components/StatusCodeBarCharts';
+import { vi } from 'vitest';
 
 // Create a partial mock of the UseQueryResult interface for testing
 interface MockQueryResult {
@@ -21,24 +22,24 @@ interface MockQueryResult {
 }
 
 // Mocks
-jest.mock('components/Uplot', () => ({
+vi.mock('components/Uplot', () => ({
 	__esModule: true,
-	default: jest.fn().mockImplementation(() => <div data-testid="uplot-mock" />),
+	default: vi.fn().mockImplementation(() => <div data-testid="uplot-mock" />),
 }));
 
-jest.mock('components/CeleryTask/useGetGraphCustomSeries', () => ({
-	useGetGraphCustomSeries: (): { getCustomSeries: jest.Mock } => ({
-		getCustomSeries: jest.fn(),
+vi.mock('components/CeleryTask/useGetGraphCustomSeries', () => ({
+	useGetGraphCustomSeries: (): { getCustomSeries: vi.Mock } => ({
+		getCustomSeries: vi.fn(),
 	}),
 }));
 
-jest.mock('components/CeleryTask/useNavigateToExplorer', () => ({
-	useNavigateToExplorer: (): { navigateToExplorer: jest.Mock } => ({
-		navigateToExplorer: jest.fn(),
+vi.mock('components/CeleryTask/useNavigateToExplorer', () => ({
+	useNavigateToExplorer: (): { navigateToExplorer: vi.Mock } => ({
+		navigateToExplorer: vi.fn(),
 	}),
 }));
 
-jest.mock('container/GridCardLayout/useGraphClickToShowButton', () => ({
+vi.mock('container/GridCardLayout/useGraphClickToShowButton', () => ({
 	useGraphClickToShowButton: (): {
 		componentClick: boolean;
 		htmlRef: HTMLElement | null;
@@ -48,41 +49,41 @@ jest.mock('container/GridCardLayout/useGraphClickToShowButton', () => ({
 	}),
 }));
 
-jest.mock('container/GridCardLayout/useNavigateToExplorerPages', () => ({
+vi.mock('container/GridCardLayout/useNavigateToExplorerPages', () => ({
 	__esModule: true,
-	default: (): { navigateToExplorerPages: jest.Mock } => ({
-		navigateToExplorerPages: jest.fn(),
+	default: (): { navigateToExplorerPages: vi.Mock } => ({
+		navigateToExplorerPages: vi.fn(),
 	}),
 }));
 
-jest.mock('hooks/useDarkMode', () => ({
+vi.mock('hooks/useDarkMode', () => ({
 	useIsDarkMode: (): boolean => false,
 }));
 
-jest.mock('hooks/useDimensions', () => ({
+vi.mock('hooks/useDimensions', () => ({
 	useResizeObserver: (): { width: number; height: number } => ({
 		width: 800,
 		height: 400,
 	}),
 }));
 
-jest.mock('hooks/useNotifications', () => ({
+vi.mock('hooks/useNotifications', () => ({
 	useNotifications: (): { notifications: [] } => ({ notifications: [] }),
 }));
 
-jest.mock('lib/uPlotLib/getUplotChartOptions', () => ({
-	getUPlotChartOptions: jest.fn().mockReturnValue({}),
+vi.mock('lib/uPlotLib/getUplotChartOptions', () => ({
+	getUPlotChartOptions: vi.fn().mockReturnValue({}),
 }));
 
-jest.mock('lib/uPlotLib/utils/getUplotChartData', () => ({
-	getUPlotChartData: jest.fn().mockReturnValue([]),
+vi.mock('lib/uPlotLib/utils/getUplotChartData', () => ({
+	getUPlotChartData: vi.fn().mockReturnValue([]),
 }));
 
 // Mock utility functions
-jest.mock('container/ApiMonitoring/utils', () => ({
-	getFormattedEndPointStatusCodeChartData: jest.fn(),
-	getStatusCodeBarChartWidgetData: jest.fn(),
-	getCustomFiltersForBarChart: jest.fn(),
+vi.mock('container/ApiMonitoring/utils', () => ({
+	getFormattedEndPointStatusCodeChartData: vi.fn(),
+	getStatusCodeBarChartWidgetData: vi.fn(),
+	getCustomFiltersForBarChart: vi.fn(),
 	statusCodeWidgetInfo: [
 		{ title: 'Status Code Count', yAxisUnit: 'count' },
 		{ title: 'Status Code Latency', yAxisUnit: 'ms' },
@@ -90,9 +91,9 @@ jest.mock('container/ApiMonitoring/utils', () => ({
 }));
 
 // Mock the ErrorState component
-jest.mock('../Explorer/Domains/DomainDetails/components/ErrorState', () => ({
+vi.mock('../Explorer/Domains/DomainDetails/components/ErrorState', () => ({
 	__esModule: true,
-	default: jest.fn().mockImplementation(({ refetch }) => (
+	default: vi.fn().mockImplementation(({ refetch }) => (
 		<div data-testid="error-state-mock">
 			<button type="button" data-testid="refetch-button" onClick={refetch}>
 				Retry
@@ -102,17 +103,17 @@ jest.mock('../Explorer/Domains/DomainDetails/components/ErrorState', () => ({
 }));
 
 // Mock antd components
-jest.mock('antd', () => {
-	const originalModule = jest.requireActual('antd');
+vi.mock('antd', async () => {
+	const originalModule = await vi.importActual('antd');
 	return {
 		...originalModule,
-		Card: jest.fn().mockImplementation(({ children, className }) => (
+		Card: vi.fn().mockImplementation(({ children, className }) => (
 			<div data-testid="card-mock" className={className}>
 				{children}
 			</div>
 		)),
 		Typography: {
-			Text: jest
+			Text: vi
 				.fn()
 				.mockImplementation(({ children }) => (
 					<div data-testid="typography-text">{children}</div>
@@ -120,13 +121,13 @@ jest.mock('antd', () => {
 		},
 		Button: {
 			...originalModule.Button,
-			Group: jest.fn().mockImplementation(({ children, className }) => (
+			Group: vi.fn().mockImplementation(({ children, className }) => (
 				<div data-testid="button-group" className={className}>
 					{children}
 				</div>
 			)),
 		},
-		Skeleton: jest
+		Skeleton: vi
 			.fn()
 			.mockImplementation(() => (
 				<div data-testid="skeleton-mock">Loading skeleton...</div>
@@ -143,8 +144,8 @@ describe('StatusCodeBarCharts', () => {
 	};
 	const mockDomainName = 'test-domain';
 	const mockEndPointName = '/api/test';
-	const onDragSelectMock = jest.fn();
-	const refetchFn = jest.fn();
+	const onDragSelectMock = vi.fn();
+	const refetchFn = vi.fn();
 
 	// Mock formatted data
 	const mockFormattedData = {
@@ -192,18 +193,18 @@ describe('StatusCodeBarCharts', () => {
 	];
 
 	beforeEach(() => {
-		jest.clearAllMocks();
-		(getFormattedEndPointStatusCodeChartData as jest.Mock).mockReturnValue(
+		vi.clearAllMocks();
+		(getFormattedEndPointStatusCodeChartData as vi.Mock).mockReturnValue(
 			mockFormattedData,
 		);
-		(getStatusCodeBarChartWidgetData as jest.Mock).mockReturnValue({
+		(getStatusCodeBarChartWidgetData as vi.Mock).mockReturnValue({
 			id: 'test-widget',
 			title: 'Status Code',
 			description: 'Shows status code distribution',
 			query: { builder: { queryData: [] } },
 			panelTypes: 'bar',
 		});
-		(getCustomFiltersForBarChart as jest.Mock).mockReturnValue(
+		(getCustomFiltersForBarChart as vi.Mock).mockReturnValue(
 			mockStatusCodeFilters,
 		);
 	});

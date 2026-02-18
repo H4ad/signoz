@@ -2,9 +2,10 @@ import { fireEvent, render, screen } from '@testing-library/react';
 
 import { YAxisSource } from '../types';
 import YAxisUnitSelector from '../YAxisUnitSelector';
+import { vi } from 'vitest';
 
 describe('YAxisUnitSelector', () => {
-	const mockOnChange = jest.fn();
+	const mockOnChange = vi.fn();
 
 	beforeEach(() => {
 		mockOnChange.mockClear();

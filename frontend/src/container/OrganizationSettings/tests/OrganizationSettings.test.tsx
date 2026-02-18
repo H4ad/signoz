@@ -1,10 +1,11 @@
 import { act, render, screen, waitFor } from 'tests/test-utils';
 
 import Members from '../Members';
+import { vi } from 'vitest';
 
 describe('Organization Settings Page', () => {
 	afterEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	});
 
 	it('render list of members', async () => {

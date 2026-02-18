@@ -11,6 +11,7 @@ import { USER_ROLES } from 'types/roles';
 
 import { PlannedDowntime } from '../PlannedDowntime';
 import { buildSchedule, createMockDowntime } from './testUtils';
+import { Mock, vi } from 'vitest';
 
 const SEARCH_PLACEHOLDER = 'Search for a planned downtime...';
 
@@ -64,43 +65,44 @@ const mockDowntimeQueryResult: Partial<DowntimeQueryResult> = {
 	isLoading: false,
 	isFetching: false,
 	isError: false,
-	refetch: jest.fn(),
+	refetch: vi.fn(),
 };
 
-const mockUseLocation = jest.fn().mockReturnValue({
+const mockUseLocation = vi.fn().mockReturnValue({
 	pathname: '/alerts',
 });
 let mockUrlQuery: URLSearchParams;
 
-jest.mock('react-router-dom', () => ({
-	...jest.requireActual('react-router-dom'),
+vi.mock('react-router-dom', async () => ({
+	...(await vi.importActual('react-router-dom')),
 	useLocation: (): void => mockUseLocation(),
 }));
 
-jest.mock('hooks/useUrlQuery', () => ({
+vi.mock('hooks/useUrlQuery', () => ({
 	__esModule: true,
 	default: (): URLSearchParams => mockUrlQuery,
 }));
 
-const mockSafeNavigate = jest.fn();
-jest.mock('hooks/useSafeNavigate', () => ({
-	useSafeNavigate: (): { safeNavigate: jest.MockedFunction<() => void> } => ({
+const mockSafeNavigate = vi.fn();
+vi.mock('hooks/useSafeNavigate', () => ({
+	useSafeNavigate: (): { safeNavigate: Mock<() => void> } => ({
 		safeNavigate: mockSafeNavigate,
 	}),
 }));
 
-jest.mock('api/plannedDowntime/getAllDowntimeSchedules', () => ({
+vi.mock('api/plannedDowntime/getAllDowntimeSchedules', () => ({
 	useGetAllDowntimeSchedules: (): DowntimeQueryResult =>
 		mockDowntimeQueryResult as DowntimeQueryResult,
 }));
-jest.mock('api/alerts/getAll', () => ({
+
+vi.mock('api/alerts/getAll', () => ({
 	__esModule: true,
 	default: (): Promise<{ payload: [] }> => Promise.resolve({ payload: [] }),
 }));
 
 describe('PlannedDowntime Component', () => {
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockUrlQuery = mockQueryParams({});
 		mockLocation('/alerts');
 	});

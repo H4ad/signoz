@@ -8,17 +8,23 @@ import { DataSource, QueryBuilderContextType } from 'types/common/queryBuilder';
 
 import { useQueryBuilder } from './queryBuilder/useQueryBuilder';
 import useGetYAxisUnit from './useGetYAxisUnit';
+import { vi } from 'vitest';
 
-jest.mock('./queryBuilder/useQueryBuilder');
-jest.mock('container/MetricsExplorer/Explorer/utils', () => ({
-	...jest.requireActual('container/MetricsExplorer/Explorer/utils'),
-	useGetMetrics: jest.fn(),
-}));
+vi.mock('./queryBuilder/useQueryBuilder');
+vi.mock('container/MetricsExplorer/Explorer/utils', async () => {
+	const actual = await vi.importActual<any>(
+		'container/MetricsExplorer/Explorer/utils',
+	);
+	return {
+		...actual,
+		useGetMetrics: vi.fn(),
+	};
+});
 
-const mockUseQueryBuilder = useQueryBuilder as jest.MockedFunction<
+const mockUseQueryBuilder = useQueryBuilder as vi.MockedFunction<
 	typeof useQueryBuilder
 >;
-const mockUseGetMetrics = useGetMetrics as jest.MockedFunction<
+const mockUseGetMetrics = useGetMetrics as vi.MockedFunction<
 	typeof useGetMetrics
 >;
 
@@ -51,7 +57,7 @@ function createMockCurrentQuery(
 
 describe('useGetYAxisUnit', () => {
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockUseGetMetrics.mockReturnValue({
 			isLoading: false,
 			isError: false,

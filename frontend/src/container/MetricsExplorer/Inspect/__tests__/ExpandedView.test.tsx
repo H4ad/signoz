@@ -1,4 +1,5 @@
 /* eslint-disable sonarjs/no-duplicate-string */
+import { vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { InspectMetricsSeries } from 'api/metricsExplorer/getInspectMetricsDetails';
 

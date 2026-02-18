@@ -2,10 +2,11 @@ import { FontSize } from 'container/OptionsMenu/types';
 import { fireEvent, render, waitFor } from 'tests/test-utils';
 
 import LogsFormatOptionsMenu from '../LogsFormatOptionsMenu';
+import { vi } from 'vitest';
 
-const mockUpdateFormatting = jest.fn();
+const mockUpdateFormatting = vi.fn();
 
-jest.mock('providers/preferences/sync/usePreferenceSync', () => ({
+vi.mock('providers/preferences/sync/usePreferenceSync', () => ({
 	usePreferenceSync: (): any => ({
 		preferences: {
 			columns: [],
@@ -18,7 +19,7 @@ jest.mock('providers/preferences/sync/usePreferenceSync', () => ({
 		},
 		loading: false,
 		error: null,
-		updateColumns: jest.fn(),
+		updateColumns: vi.fn(),
 		updateFormatting: mockUpdateFormatting,
 	}),
 }));
@@ -31,9 +32,9 @@ describe('LogsFormatOptionsMenu (unit)', () => {
 	function setup(): {
 		getByTestId: ReturnType<typeof render>['getByTestId'];
 		findItemByLabel: (label: string) => Element | undefined;
-		formatOnChange: jest.Mock<any, any>;
-		maxLinesOnChange: jest.Mock<any, any>;
-		fontSizeOnChange: jest.Mock<any, any>;
+		formatOnChange: vi.Mock<any, any>;
+		maxLinesOnChange: vi.Mock<any, any>;
+		fontSizeOnChange: vi.Mock<any, any>;
 	} {
 		const items = [
 			{ key: 'raw', label: 'Raw', data: { title: 'max lines per row' } },
@@ -41,9 +42,9 @@ describe('LogsFormatOptionsMenu (unit)', () => {
 			{ key: 'table', label: 'Column', data: { title: 'columns' } },
 		];
 
-		const formatOnChange = jest.fn();
-		const maxLinesOnChange = jest.fn();
-		const fontSizeOnChange = jest.fn();
+		const formatOnChange = vi.fn();
+		const maxLinesOnChange = vi.fn();
+		const fontSizeOnChange = vi.fn();
 
 		const { getByTestId } = render(
 			<LogsFormatOptionsMenu
@@ -57,11 +58,11 @@ describe('LogsFormatOptionsMenu (unit)', () => {
 						isFetching: false,
 						value: [],
 						options: [],
-						onFocus: jest.fn(),
-						onBlur: jest.fn(),
-						onSearch: jest.fn(),
-						onSelect: jest.fn(),
-						onRemove: jest.fn(),
+						onFocus: vi.fn(),
+						onBlur: vi.fn(),
+						onSearch: vi.fn(),
+						onSelect: vi.fn(),
+						onRemove: vi.fn(),
 					},
 				}}
 			/>,

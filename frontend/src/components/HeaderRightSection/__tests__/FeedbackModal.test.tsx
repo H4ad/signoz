@@ -9,39 +9,40 @@ import { useGetTenantLicense } from 'hooks/useGetTenantLicense';
 import { handleContactSupport } from 'pages/Integrations/utils';
 
 import FeedbackModal from '../FeedbackModal';
+import { vi } from 'vitest';
 
-jest.mock('api/common/logEvent', () => ({
+vi.mock('api/common/logEvent', () => ({
 	__esModule: true,
-	default: jest.fn(() => Promise.resolve()),
+	default: vi.fn(() => Promise.resolve()),
 }));
 
-jest.mock('react-router-dom', () => ({
-	...jest.requireActual('react-router-dom'),
-	useLocation: jest.fn(),
+vi.mock('react-router-dom', async () => ({
+	...(await vi.importActual('react-router-dom')),
+	useLocation: vi.fn(),
 }));
 
-jest.mock('@signozhq/sonner', () => ({
+vi.mock('@signozhq/sonner', () => ({
 	toast: {
-		success: jest.fn(),
-		error: jest.fn(),
+		success: vi.fn(),
+		error: vi.fn(),
 	},
 }));
 
-jest.mock('hooks/useGetTenantLicense', () => ({
-	useGetTenantLicense: jest.fn(),
+vi.mock('hooks/useGetTenantLicense', () => ({
+	useGetTenantLicense: vi.fn(),
 }));
 
-jest.mock('pages/Integrations/utils', () => ({
-	handleContactSupport: jest.fn(),
+vi.mock('pages/Integrations/utils', () => ({
+	handleContactSupport: vi.fn(),
 }));
 
-const mockLogEvent = logEvent as jest.MockedFunction<typeof logEvent>;
-const mockUseLocation = useLocation as jest.Mock;
-const mockUseGetTenantLicense = useGetTenantLicense as jest.Mock;
-const mockHandleContactSupport = handleContactSupport as jest.Mock;
-const mockToast = toast as jest.Mocked<typeof toast>;
+const mockLogEvent = logEvent as vi.MockedFunction<typeof logEvent>;
+const mockUseLocation = useLocation as vi.Mock;
+const mockUseGetTenantLicense = useGetTenantLicense as vi.Mock;
+const mockHandleContactSupport = handleContactSupport as vi.Mock;
+const mockToast = toast as vi.Mocked<typeof toast>;
 
-const mockOnClose = jest.fn();
+const mockOnClose = vi.fn();
 
 const mockLocation = {
 	pathname: '/test-path',
@@ -49,7 +50,7 @@ const mockLocation = {
 
 describe('FeedbackModal', () => {
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockUseLocation.mockReturnValue(mockLocation);
 		mockUseGetTenantLicense.mockReturnValue({
 			isCloudUser: false,

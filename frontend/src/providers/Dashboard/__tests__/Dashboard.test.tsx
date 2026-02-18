@@ -1,5 +1,7 @@
 /* eslint-disable sonarjs/no-duplicate-string */
+import { vi } from 'vitest';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import * as reactRouterDom from 'react-router-dom';
 import { MemoryRouter } from 'react-router-dom';
 import { render, screen, waitFor } from '@testing-library/react';
 import getDashboard from 'api/v1/dashboards/id/get';
@@ -13,46 +15,46 @@ import { initializeDefaultVariables } from '../initializeDefaultVariables';
 import { normalizeUrlValueForVariable } from '../normalizeUrlValue';
 
 // Mock the dashboard API
-jest.mock('api/v1/dashboards/id/get');
-jest.mock('api/v1/dashboards/id/lock');
-const mockGetDashboard = jest.mocked(getDashboard);
+vi.mock('api/v1/dashboards/id/get');
+vi.mock('api/v1/dashboards/id/lock');
+const mockGetDashboard = vi.mocked(getDashboard);
 
 // Mock useRouteMatch to simulate different route scenarios
-const mockUseRouteMatch = jest.fn();
-jest.mock('react-router-dom', () => ({
-	...jest.requireActual('react-router-dom'),
+const mockUseRouteMatch = vi.fn();
+vi.mock('react-router-dom', () => ({
+	...reactRouterDom,
 	useRouteMatch: (): any => mockUseRouteMatch(),
 }));
 
 // Mock other dependencies
-jest.mock('hooks/useSafeNavigate', () => ({
+vi.mock('hooks/useSafeNavigate', () => ({
 	useSafeNavigate: (): any => ({
-		safeNavigate: jest.fn(),
+		safeNavigate: vi.fn(),
 	}),
 }));
 
 // Mock only the essential dependencies for Dashboard provider
-jest.mock('providers/App/App', () => ({
+vi.mock('providers/App/App', () => ({
 	useAppContext: (): any => ({
 		isLoggedIn: true,
 		user: { email: 'test@example.com', role: 'ADMIN' },
 	}),
 }));
 
-jest.mock('providers/ErrorModalProvider', () => ({
-	useErrorModal: (): any => ({ showErrorModal: jest.fn() }),
+vi.mock('providers/ErrorModalProvider', () => ({
+	useErrorModal: (): any => ({ showErrorModal: vi.fn() }),
 }));
 
-jest.mock('react-redux', () => ({
-	useSelector: jest.fn(() => ({
+vi.mock('react-redux', () => ({
+	useSelector: vi.fn(() => ({
 		selectedTime: 'GLOBAL_TIME',
 		minTime: '2023-01-01T00:00:00Z',
 		maxTime: '2023-01-01T01:00:00Z',
 	})),
-	useDispatch: jest.fn(() => jest.fn()),
+	useDispatch: vi.fn(() => vi.fn()),
 }));
 
-jest.mock('uuid', () => ({ v4: jest.fn(() => 'mock-uuid') }));
+vi.mock('uuid', () => ({ v4: vi.fn(() => 'mock-uuid') }));
 
 function TestComponent(): JSX.Element {
 	const { dashboardResponse, dashboardId, selectedDashboard } = useDashboard();
@@ -119,13 +121,13 @@ function renderWithDashboardProvider(
 }
 
 // Mock URL variables hook
-const mockGetUrlVariables = jest.fn();
-const mockUpdateUrlVariable = jest.fn();
-const mockSetUrlVariables = jest.fn();
+const mockGetUrlVariables = vi.fn();
+const mockUpdateUrlVariable = vi.fn();
+const mockSetUrlVariables = vi.fn();
 
-jest.mock('hooks/dashboard/useVariablesFromUrl', () => ({
+vi.mock('hooks/dashboard/useVariablesFromUrl', () => ({
 	__esModule: true,
-	default: jest.fn(() => ({
+	default: vi.fn(() => ({
 		getUrlVariables: mockGetUrlVariables,
 		updateUrlVariable: mockUpdateUrlVariable,
 		setUrlVariables: mockSetUrlVariables,
@@ -133,20 +135,20 @@ jest.mock('hooks/dashboard/useVariablesFromUrl', () => ({
 }));
 
 // Mock normalization function
-jest.mock('providers/Dashboard/normalizeUrlValue', () => ({
-	normalizeUrlValueForVariable: jest.fn(),
+vi.mock('providers/Dashboard/normalizeUrlValue', () => ({
+	normalizeUrlValueForVariable: vi.fn(),
 }));
 
 // Mock initialize default variables
-jest.mock('providers/Dashboard/initializeDefaultVariables', () => ({
-	initializeDefaultVariables: jest.fn(),
+vi.mock('providers/Dashboard/initializeDefaultVariables', () => ({
+	initializeDefaultVariables: vi.fn(),
 }));
 
-const mockNormalizeUrlValueForVariable = jest.mocked(
+const mockNormalizeUrlValueForVariable = vi.mocked(
 	normalizeUrlValueForVariable,
 );
 
-const mockInitializeDefaultVariables = jest.mocked(initializeDefaultVariables);
+const mockInitializeDefaultVariables = vi.mocked(initializeDefaultVariables);
 
 describe('Dashboard Provider - Query Key with Route Params', () => {
 	const DASHBOARD_ID = 'test-dashboard-id';
@@ -173,12 +175,12 @@ describe('Dashboard Provider - Query Key with Route Params', () => {
 	};
 
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockGetDashboard.mockResolvedValue(mockDashboardData);
 	});
 
 	afterEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	});
 
 	describe('Query Key Behavior', () => {
@@ -337,7 +339,7 @@ describe('Dashboard Provider - URL Variables Integration', () => {
 	const DASHBOARD_ID = 'test-dashboard-id';
 
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		/* eslint-disable @typescript-eslint/no-explicit-any */
 		mockGetDashboard.mockResolvedValue({
 			httpStatusCode: 200,
@@ -555,7 +557,7 @@ describe('Dashboard Provider - Textbox Variable Backward Compatibility', () => {
 	const DASHBOARD_ID = 'test-dashboard-id';
 
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockGetUrlVariables.mockReturnValue({});
 		// eslint-disable-next-line sonarjs/no-identical-functions
 		mockNormalizeUrlValueForVariable.mockImplementation((urlValue) => {

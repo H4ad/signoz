@@ -27,6 +27,7 @@ import {
 } from 'types/api/licensesV3/getActive';
 import { QueryBuilderContextType } from 'types/common/queryBuilder';
 import { ROLES, USER_ROLES } from 'types/roles';
+import { vi } from 'vitest';
 // import { MemoryRouter as V5MemoryRouter } from 'react-router-dom-v5-compat';
 
 // Mock ResizeObserver
@@ -53,13 +54,13 @@ const queryClient = new QueryClient({
 });
 
 beforeEach(() => {
-	// jest.useFakeTimers();
-	jest.setSystemTime(new Date('2023-10-20'));
+	// vi.useFakeTimers();
+	vi.setSystemTime(new Date('2023-10-20'));
 });
 
 afterEach(() => {
 	queryClient.clear();
-	// jest.useRealTimers();
+	// vi.useRealTimers();
 });
 
 const mockStore = configureStore([thunk]);
@@ -90,7 +91,7 @@ const mockStored = (role?: string): any =>
 		},
 	});
 
-jest.mock('react-i18next', () => ({
+vi.mock('react-i18next', () => ({
 	useTranslation: (): {
 		t: (str: string) => string;
 		i18n: {
@@ -232,17 +233,17 @@ export function getAppContextMock(
 			},
 		],
 		userPreferences: [],
-		updateUserPreferenceInContext: jest.fn(),
+		updateUserPreferenceInContext: vi.fn(),
 		isFetchingOrgPreferences: false,
 		orgPreferencesFetchError: null,
 		isLoggedIn: true,
 		showChangelogModal: false,
-		updateUser: jest.fn(),
-		updateOrg: jest.fn(),
-		updateOrgPreferences: jest.fn(),
-		activeLicenseRefetch: jest.fn(),
-		updateChangelog: jest.fn(),
-		toggleChangelogModal: jest.fn(),
+		updateUser: vi.fn(),
+		updateOrg: vi.fn(),
+		updateOrgPreferences: vi.fn(),
+		activeLicenseRefetch: vi.fn(),
+		updateChangelog: vi.fn(),
+		toggleChangelogModal: vi.fn(),
 		versionData: {
 			version: '1.0.0',
 			ee: 'Y',

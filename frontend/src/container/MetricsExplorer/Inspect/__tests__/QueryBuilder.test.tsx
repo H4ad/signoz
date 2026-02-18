@@ -1,4 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
+import { vi } from 'vitest';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import { render, screen } from '@testing-library/react';
@@ -15,14 +16,14 @@ import {
 	TimeAggregationOptions,
 } from '../types';
 
-jest.mock('react-router-dom', () => ({
-	...jest.requireActual('react-router-dom'),
+vi.mock('react-router-dom', async () => ({
+	...(await vi.importActual<any>('react-router-dom')),
 	useLocation: (): { pathname: string } => ({
 		pathname: `${ROUTES.METRICS_EXPLORER_BASE}`,
 	}),
 }));
 
-jest.spyOn(appContextHooks, 'useAppContext').mockReturnValue({
+vi.spyOn(appContextHooks, 'useAppContext').mockReturnValue({
 	user: {
 		role: 'admin',
 	},
@@ -51,7 +52,7 @@ const queryClient = new QueryClient();
 describe('QueryBuilder', () => {
 	const defaultProps = {
 		metricName: 'test_metric',
-		setMetricName: jest.fn(),
+		setMetricName: vi.fn(),
 		spaceAggregationLabels: ['label1', 'label2'],
 		metricInspectionOptions: {
 			timeAggregationInterval: 60,
@@ -63,7 +64,7 @@ describe('QueryBuilder', () => {
 				op: 'and',
 			},
 		},
-		dispatchMetricInspectionOptions: jest.fn(),
+		dispatchMetricInspectionOptions: vi.fn(),
 		metricType: MetricType.SUM,
 		inspectionStep: InspectionStep.TIME_AGGREGATION,
 		inspectMetricsTimeSeries: [],
@@ -76,7 +77,7 @@ describe('QueryBuilder', () => {
 	};
 
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	});
 
 	it('renders query builder header', () => {

@@ -6,9 +6,10 @@ import { IDashboardVariable } from 'types/api/dashboard/getAll';
 import '@testing-library/jest-dom/extend-expect';
 
 import VariableItem from '../VariableItem';
+import { vi } from 'vitest';
 
-const mockOnValueUpdate = jest.fn();
-const mockSetVariablesToGetUpdated = jest.fn();
+const mockOnValueUpdate = vi.fn();
+const mockSetVariablesToGetUpdated = vi.fn();
 
 const baseDependencyData = {
 	order: [],
@@ -40,7 +41,7 @@ const renderVariableItem = (
 
 describe('VariableItem Default Value Selection Behavior', () => {
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	});
 
 	describe('Single Select Variables', () => {

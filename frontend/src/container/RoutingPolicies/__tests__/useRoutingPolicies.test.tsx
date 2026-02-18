@@ -13,7 +13,7 @@ import { SuccessResponseV2 } from 'types/api';
 
 import { UseRoutingPoliciesReturn } from '../types';
 import useRoutingPolicies from '../useRoutingPolicies';
-import {
+import { vi } from 'vitest';
 	convertRoutingPolicyToApiResponse,
 	MOCK_CHANNEL_1,
 	MOCK_CHANNEL_2,
@@ -21,27 +21,30 @@ import {
 	MOCK_ROUTING_POLICY_2,
 } from './testUtils';
 
-const mockHistoryReplace = jest.fn();
+const mockHistoryReplace = vi.fn();
 // eslint-disable-next-line sonarjs/no-duplicate-string
-jest.mock('react-router-dom', () => ({
-	...jest.requireActual('react-router-dom'),
-	useHistory: (): any => ({
-		...jest.requireActual('react-router-dom').useHistory(),
-		replace: mockHistoryReplace,
-	}),
-}));
+vi.mock('react-router-dom', async () => {
+	const actual = await vi.importActual('react-router-dom');
+	return {
+		...actual,
+		useHistory: (): any => ({
+			...(actual as any).useHistory(),
+			replace: mockHistoryReplace,
+		}),
+	};
+});
 
-const mockDebouncedFn = jest.fn((fn: () => void) => fn);
-jest.mock('hooks/useDebouncedFunction', () => ({
+const mockDebouncedFn = vi.fn((fn: () => void) => fn);
+vi.mock('hooks/useDebouncedFunction', () => ({
 	__esModule: true,
 	default: (fn: () => void): (() => void) => mockDebouncedFn(fn),
 }));
 
-const mockRefetchRoutingPolicies = jest.fn();
-const mockCreateRoutingPolicy = jest.fn();
-const mockUpdateRoutingPolicy = jest.fn();
-const mockDeleteRoutingPolicy = jest.fn();
-jest.mock('hooks/routingPolicies/useGetRoutingPolicies', () => ({
+const mockRefetchRoutingPolicies = vi.fn();
+const mockCreateRoutingPolicy = vi.fn();
+const mockUpdateRoutingPolicy = vi.fn();
+const mockDeleteRoutingPolicy = vi.fn();
+vi.mock('hooks/routingPolicies/useGetRoutingPolicies', () => ({
 	useGetRoutingPolicies: (): UseQueryResult<
 		SuccessResponseV2<GetRoutingPoliciesResponse>,
 		Error
@@ -61,25 +64,25 @@ jest.mock('hooks/routingPolicies/useGetRoutingPolicies', () => ({
 			isError: false,
 		} as any),
 }));
-jest.mock('hooks/routingPolicies/useCreateRoutingPolicy', () => ({
+vi.mock('hooks/routingPolicies/useCreateRoutingPolicy', () => ({
 	useCreateRoutingPolicy: (): any => ({
 		mutate: mockCreateRoutingPolicy,
 		isLoading: false,
 	}),
 }));
-jest.mock('hooks/routingPolicies/useUpdateRoutingPolicy', () => ({
+vi.mock('hooks/routingPolicies/useUpdateRoutingPolicy', () => ({
 	useUpdateRoutingPolicy: (): any => ({
 		mutate: mockUpdateRoutingPolicy,
 		isLoading: false,
 	}),
 }));
-jest.mock('hooks/routingPolicies/useDeleteRoutingPolicy', () => ({
+vi.mock('hooks/routingPolicies/useDeleteRoutingPolicy', () => ({
 	useDeleteRoutingPolicy: (): any => ({
 		mutate: mockDeleteRoutingPolicy,
 		isLoading: false,
 	}),
 }));
-jest.mock('api/channels/getAll', () => ({
+vi.mock('api/channels/getAll', () => ({
 	__esModule: true,
 	default: (): any =>
 		Promise.resolve({
@@ -112,7 +115,7 @@ describe('useRoutingPolicies', () => {
 	};
 
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		queryClient = new QueryClient({
 			defaultOptions: {
 				queries: {

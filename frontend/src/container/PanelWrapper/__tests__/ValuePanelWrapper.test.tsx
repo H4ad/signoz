@@ -2,6 +2,7 @@ import { render } from 'tests/test-utils';
 import { Widgets } from 'types/api/dashboard/getAll';
 
 import ValuePanelWrapper from '../ValuePanelWrapper';
+import { vi } from 'vitest';
 import {
 	thresholds,
 	valuePanelQueryResponse,
@@ -10,10 +11,10 @@ import {
 
 window.ResizeObserver =
 	window.ResizeObserver ||
-	jest.fn().mockImplementation(() => ({
-		disconnect: jest.fn(),
-		observe: jest.fn(),
-		unobserve: jest.fn(),
+	vi.fn().mockImplementation(() => ({
+		disconnect: vi.fn(),
+		observe: vi.fn(),
+		unobserve: vi.fn(),
 	}));
 
 describe('Value panel wrappper tests', () => {

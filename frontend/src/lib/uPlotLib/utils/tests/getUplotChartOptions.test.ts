@@ -3,14 +3,15 @@ import { PANEL_TYPES } from 'constants/queryBuilder';
 import { getUPlotChartOptions } from 'lib/uPlotLib/getUplotChartOptions';
 
 import {
+import { vi } from 'vitest';
 	inputPropsTimeSeries,
 	seriesDataBarChart,
 	seriesDataTimeSeries,
 } from './__mocks__/uplotChartOptionsData';
 
-jest.mock('../../plugins/tooltipPlugin', () => jest.fn().mockReturnValue({}));
-jest.mock('../getSeriesData', () =>
-	jest.fn().mockImplementation((props) => {
+vi.mock('../../plugins/tooltipPlugin', () => vi.fn().mockReturnValue({}));
+vi.mock('../getSeriesData', () =>
+	vi.fn().mockImplementation((props) => {
 		const { panelType } = props;
 
 		if (panelType === PANEL_TYPES.TIME_SERIES) {

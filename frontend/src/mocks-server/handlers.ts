@@ -1,4 +1,4 @@
-import { rest } from 'msw';
+import { http, HttpResponse } from 'msw';
 
 import commonEnTranslation from '../../public/locales/en/common.json';
 import enTranslation from '../../public/locales/en/translation.json';
@@ -18,60 +18,59 @@ import { topLevelOperationSuccessResponse } from './__mockdata__/top_level_opera
 import { traceDetailResponse } from './__mockdata__/tracedetail';
 
 export const handlers = [
-	rest.post('http://localhost/api/v3/query_range', (req, res, ctx) =>
-		res(ctx.status(200), ctx.json(queryRangeSuccessResponse)),
-	),
+	http.post('/api/v3/query_range', () => {
+		return HttpResponse.json(queryRangeSuccessResponse, { status: 200 });
+	}),
 
-	rest.post('http://localhost/api/v4/query_range', (req, res, ctx) =>
-		res(ctx.status(200), ctx.json(queryRangeSuccessResponse)),
-	),
+	http.post('/api/v4/query_range', () => {
+		return HttpResponse.json(queryRangeSuccessResponse, { status: 200 });
+	}),
 
-	rest.post('http://localhost/api/v2/services', (req, res, ctx) =>
-		res(
-			ctx.status(200),
-			ctx.json({ status: 'success', data: serviceSuccessResponse }),
-		),
-	),
+	http.post('/api/v2/services', () => {
+		return HttpResponse.json(
+			{ status: 'success', data: serviceSuccessResponse },
+			{ status: 200 },
+		);
+	}),
 
-	rest.post(
-		'http://localhost/api/v1/service/top_level_operations',
-		(req, res, ctx) =>
-			res(ctx.status(200), ctx.json(topLevelOperationSuccessResponse)),
-	),
+	http.post('/api/v1/service/top_level_operations', () => {
+		return HttpResponse.json(topLevelOperationSuccessResponse, { status: 200 });
+	}),
 
-	rest.get('http://localhost/api/v1/user', (req, res, ctx) =>
-		res(ctx.status(200), ctx.json({ status: '200', data: membersResponse })),
-	),
-	rest.get(
-		'http://localhost/api/v3/autocomplete/attribute_keys',
-		(req, res, ctx) => {
-			const metricName = req.url.searchParams.get('metricName');
-			const match = req.url.searchParams.get('match');
+	http.get('/api/v1/user', () => {
+		return HttpResponse.json({ status: '200', data: membersResponse }, { status: 200 });
+	}),
+	http.get(
+		'/api/v3/autocomplete/attribute_keys',
+		({ request }) => {
+			let req = request;
+			const metricName = new URL(req.url).searchParams.get('metricName');
+			const match = new URL(req.url).searchParams.get('match');
 
 			if (metricName === 'signoz_calls_total' && match === 'resource_') {
-				return res(
-					ctx.status(200),
-					ctx.json({ status: 'success', data: ['resource_signoz_collector_id'] }),
+				return HttpResponse.json(
+					{ status: 'success', data: ['resource_signoz_collector_id'] },
+					{ status: 200 },
 				);
 			}
 
-			return res(ctx.status(500));
+			return HttpResponse.text('', { status: 500 });
 		},
 	),
 
-	rest.get(
-		'http://localhost/api/v3/autocomplete/attribute_values',
-		(req, res, ctx) => {
+	http.get(
+		'/api/v3/autocomplete/attribute_values',
+		({ request }) => {
+			let req = request;
 			// ?metricName=signoz_calls_total&tagKey=resource_signoz_collector_id
-			const metricName = req.url.searchParams.get('metricName');
-			const tagKey = req.url.searchParams.get('tagKey');
+			const metricName = new URL(req.url).searchParams.get('metricName');
+			const tagKey = new URL(req.url).searchParams.get('tagKey');
 
-			const attributeKey = req.url.searchParams.get('attributeKey');
+			const attributeKey = new URL(req.url).searchParams.get('attributeKey');
 
 			if (attributeKey === 'serviceName') {
-				return res(
-					ctx.status(200),
-					ctx.json({
+				return HttpResponse.json(
+					{
 						status: 'success',
 						data: {
 							stringAttributeValues: [
@@ -88,14 +87,14 @@ export const handlers = [
 							numberAttributeValues: null,
 							boolAttributeValues: null,
 						},
-					}),
+					},
+					{ status: 200 },
 				);
 			}
 
 			if (attributeKey === 'name') {
-				return res(
-					ctx.status(200),
-					ctx.json({
+				return HttpResponse.json(
+					{
 						status: 'success',
 						data: {
 							stringAttributeValues: [
@@ -107,7 +106,8 @@ export const handlers = [
 							numberAttributeValues: null,
 							boolAttributeValues: null,
 						},
-					}),
+					},
+					{ status: 200 },
 				);
 			}
 
@@ -115,9 +115,8 @@ export const handlers = [
 				metricName === 'signoz_calls_total' &&
 				tagKey === 'resource_signoz_collector_id'
 			) {
-				return res(
-					ctx.status(200),
-					ctx.json({
+				return HttpResponse.json(
+					{
 						status: 'success',
 						data: [
 							'f38916c2-daf2-4424-bd3e-4907a7e537b6',
@@ -131,22 +130,23 @@ export const handlers = [
 							'6e866423-7704-4d72-be8b-4695bc36f145',
 							'e4886c76-93f5-430f-9076-eef85524312f',
 						],
-					}),
+					},
+					{ status: 200 },
 				);
 			}
 
-			return res(ctx.status(500));
+			return HttpResponse.text('', { status: 500 });
 		},
 	),
-	rest.get('http://localhost/api/v1/loginPrecheck', (req, res, ctx) => {
-		const email = req.url.searchParams.get('email');
+	http.get('/api/v1/loginPrecheck', ({ request }) => {
+		let req = request;
+		const email = new URL(req.url).searchParams.get('email');
 		if (email === 'failEmail@signoz.io') {
-			return res(ctx.status(500));
+			return HttpResponse.text('', { status: 500 });
 		}
 
-		return res(
-			ctx.status(200),
-			ctx.json({
+		return HttpResponse.json(
+			{
 				status: 'success',
 				data: {
 					sso: true,
@@ -155,115 +155,119 @@ export const handlers = [
 					isUser: true,
 					ssoError: '',
 				},
-			}),
+			},
+			{ status: 200 },
 		);
 	}),
 
-	rest.get('http://localhost/api/v2/licenses', (req, res, ctx) =>
-		res(ctx.status(200), ctx.json(licensesSuccessResponse)),
-	),
+	http.get('/api/v2/licenses', () => {
+		return HttpResponse.json(licensesSuccessResponse, { status: 200 });
+	}),
 
-	rest.get('http://localhost/api/v1/billing', (req, res, ctx) =>
-		res(ctx.status(200), ctx.json(billingSuccessResponse)),
-	),
+	http.get('/api/v1/billing', () => {
+		return HttpResponse.json(billingSuccessResponse, { status: 200 });
+	}),
 
-	rest.get('http://localhost/api/v1/dashboards', (_, res, ctx) =>
-		res(ctx.status(200), ctx.json(dashboardSuccessResponse)),
-	),
+	http.get('/api/v1/dashboards', () => {
+		return HttpResponse.json(dashboardSuccessResponse, { status: 200 });
+	}),
 
-	rest.get('http://localhost/api/v1/dashboards/4', (_, res, ctx) =>
-		res(ctx.status(200), ctx.json(getDashboardById)),
-	),
+	http.get('/api/v1/dashboards/4', () => {
+		return HttpResponse.json(getDashboardById, { status: 200 });
+	}),
 
-	rest.get('http://localhost/api/v1/invite', (_, res, ctx) =>
-		res(ctx.status(200), ctx.json(inviteUser)),
-	),
-	rest.post('http://localhost/api/v1/invite', (_, res, ctx) =>
-		res(ctx.status(200), ctx.json(inviteUser)),
-	),
-	rest.put('http://localhost/api/v1/user/:id', (_, res, ctx) =>
-		res(
-			ctx.status(200),
-			ctx.json({
+	http.get('/api/v1/invite', () => {
+		return HttpResponse.json(inviteUser, { status: 200 });
+	}),
+	http.post('/api/v1/invite', () => {
+		return HttpResponse.json(inviteUser, { status: 200 });
+	}),
+	http.put('/api/v1/user/:id', () => {
+		return HttpResponse.json(
+			{
 				data: 'user updated successfully',
-			}),
-		),
-	),
-	rest.post('http://localhost/api/v1/changePassword', (_, res, ctx) =>
-		res(
-			ctx.status(403),
-			ctx.json({
+			},
+			{ status: 200 },
+		);
+	}),
+	http.post('/api/v1/changePassword', () => {
+		return HttpResponse.json(
+			{
 				status: 'error',
 				errorType: 'forbidden',
 				error: 'invalid credentials',
-			}),
-		),
-	),
+			},
+			{ status: 403 },
+		);
+	}),
 
-	rest.get(
-		'http://localhost/api/v3/autocomplete/aggregate_attributes',
-		(req, res, ctx) =>
-			res(
-				ctx.status(200),
-				ctx.json({
-					status: 'success',
-					data: { attributeKeys: null },
-				}),
-			),
-	),
+	http.get('/api/v3/autocomplete/aggregate_attributes', () => {
+		return HttpResponse.json(
+			{
+				status: 'success',
+				data: { attributeKeys: null },
+			},
+			{ status: 200 },
+		);
+	}),
 
-	rest.get('http://localhost/api/v1/explorer/views', (req, res, ctx) =>
-		res(ctx.status(200), ctx.json(explorerView)),
-	),
+	http.get('/api/v1/explorer/views', () => {
+		return HttpResponse.json(explorerView, { status: 200 });
+	}),
 
-	rest.post('http://localhost/api/v1/explorer/views', (req, res, ctx) =>
-		res(
-			ctx.status(200),
-			ctx.json({
+	http.post('/api/v1/explorer/views', () => {
+		return HttpResponse.json(
+			{
 				status: 'success',
 				data: '7731ece1-3fa3-4ed4-8b1c-58b4c28723b2',
-			}),
-		),
-	),
+			},
+			{ status: 200 },
+		);
+	}),
 
-	rest.post('http://localhost/api/v1/event', (req, res, ctx) =>
-		res(
-			ctx.status(200),
-			ctx.json({
+	http.post('/api/v1/event', () => {
+		return HttpResponse.json(
+			{
 				statusCode: 200,
 				error: null,
 				payload: 'Event Processed Successfully',
-			}),
-		),
+			},
+			{ status: 200 },
+		);
+	}),
+
+	http.get(
+		'/api/v1/traces/000000000000000071dc9b0a338729b4',
+		() => {
+			return HttpResponse.json(traceDetailResponse, { status: 200 });
+		},
 	),
 
-	rest.get(
-		'http://localhost/api/v1/traces/000000000000000071dc9b0a338729b4',
-		(req, res, ctx) => res(ctx.status(200), ctx.json(traceDetailResponse)),
-	),
-
-	rest.get('http://localhost/api/v1/channels', (_, res, ctx) =>
-		res(ctx.status(200), ctx.json({ data: allAlertChannels, status: 'success' })),
-	),
-	rest.delete('http://localhost/api/v1/channels/:id', (_, res, ctx) =>
-		res(
-			ctx.status(200),
-			ctx.json({
+	http.get('/api/v1/channels', () => {
+		return HttpResponse.json(
+			{ data: allAlertChannels, status: 'success' },
+			{ status: 200 },
+		);
+	}),
+	http.delete('/api/v1/channels/:id', () => {
+		return HttpResponse.json(
+			{
 				status: 'success',
 				data: 'notification channel successfully deleted',
-			}),
-		),
-	),
-	rest.get('http://localhost/locales/en/translation.json', (_, res, ctx) =>
-		res(ctx.status(200), ctx.json(enTranslation)),
-	),
-	rest.get('http://localhost/locales/en/common.json', (_, res, ctx) =>
-		res(ctx.status(200), ctx.json(commonEnTranslation)),
-	),
-	rest.get('http://localhost/locales/en-US/translation.json', (_, res, ctx) =>
-		res(ctx.status(200), ctx.json(enTranslation)),
-	),
-	rest.get('http://localhost/locales/en-US/common.json', (_, res, ctx) =>
-		res(ctx.status(200), ctx.json(commonEnTranslation)),
-	),
+			},
+			{ status: 200 },
+		);
+	}),
+	http.get('/locales/en/translation.json', () => {
+		return HttpResponse.json(enTranslation, { status: 200 });
+	}),
+	http.get('/locales/en/common.json', () => {
+		return HttpResponse.json(commonEnTranslation, { status: 200 });
+	}),
+	http.get('/locales/en-US/translation.json', () => {
+		return HttpResponse.json(enTranslation, { status: 200 });
+	}),
+	http.get('/locales/en-US/common.json', () => {
+		return HttpResponse.json(commonEnTranslation, { status: 200 });
+	}),
 ];

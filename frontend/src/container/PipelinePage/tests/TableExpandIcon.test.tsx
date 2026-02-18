@@ -6,6 +6,7 @@ import { pipelineMockData } from 'container/PipelinePage/mocks/pipeline';
 import TableExpandIcon from 'container/PipelinePage/PipelineListsView/TableComponents/TableExpandIcon';
 import i18n from 'ReactI18';
 import store from 'store';
+import { vi } from 'vitest';
 
 describe('PipelinePage container test', () => {
 	it('should render TableExpandIcon section', () => {
@@ -15,7 +16,7 @@ describe('PipelinePage container test', () => {
 					<I18nextProvider i18n={i18n}>
 						<TableExpandIcon
 							expanded
-							onExpand={jest.fn()}
+							onExpand={vi.fn()}
 							record={pipelineMockData[0]}
 						/>
 					</I18nextProvider>

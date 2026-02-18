@@ -4,9 +4,10 @@ import ROUTES from 'constants/routes';
 import { DataSource } from 'types/common/queryBuilder';
 
 import SaveViewWithName from '../SaveViewWithName';
+import { vi } from 'vitest';
 
-jest.mock('react-router-dom', () => ({
-	...jest.requireActual('react-router-dom'),
+vi.mock('react-router-dom', async () => ({
+	...(await vi.importActual('react-router-dom')),
 	useLocation: (): { pathname: string } => ({
 		pathname: `${process.env.FRONTEND_API_ENDPOINT}${ROUTES.APPLICATION}/`,
 	}),
@@ -20,13 +21,13 @@ const queryClient = new QueryClient({
 	},
 });
 
-jest.mock('hooks/queryBuilder/useGetPanelTypesQueryParam', () => ({
-	useGetPanelTypesQueryParam: jest.fn(() => 'mockedPanelType'),
+vi.mock('hooks/queryBuilder/useGetPanelTypesQueryParam', () => ({
+	useGetPanelTypesQueryParam: vi.fn(() => 'mockedPanelType'),
 }));
 
-jest.mock('hooks/saveViews/useSaveView', () => ({
-	useSaveView: jest.fn(() => ({
-		mutateAsync: jest.fn(),
+vi.mock('hooks/saveViews/useSaveView', () => ({
+	useSaveView: vi.fn(() => ({
+		mutateAsync: vi.fn(),
 	})),
 }));
 
@@ -36,8 +37,8 @@ describe('SaveViewWithName', () => {
 			<QueryClientProvider client={queryClient}>
 				<SaveViewWithName
 					sourcePage={DataSource.TRACES}
-					handlePopOverClose={jest.fn()}
-					refetchAllView={jest.fn()}
+					handlePopOverClose={vi.fn()}
+					refetchAllView={vi.fn()}
 				/>
 			</QueryClientProvider>,
 		);
@@ -50,8 +51,8 @@ describe('SaveViewWithName', () => {
 			<QueryClientProvider client={queryClient}>
 				<SaveViewWithName
 					sourcePage={DataSource.TRACES}
-					handlePopOverClose={jest.fn()}
-					refetchAllView={jest.fn()}
+					handlePopOverClose={vi.fn()}
+					refetchAllView={vi.fn()}
 				/>
 			</QueryClientProvider>,
 		);
