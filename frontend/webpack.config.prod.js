@@ -104,8 +104,24 @@ const config = {
 	module: {
 		rules: [
 			{
-				test: [/\.jsx?$/, /\.tsx?$/],
-				use: ['babel-loader'],
+				test: /\.[jt]sx$/,
+				include: /src/,
+				loader: 'esbuild-loader',
+				options: {
+					loader: 'tsx', // handles .ts, .tsx, .js, .jsx
+					target: 'es2018', // replaces @babel/preset-env
+					jsx: 'automatic', // replaces @babel/preset-react runtime
+				},
+				exclude: /node_modules/,
+			},
+			{
+				test: /\.[jt]s$/,
+				include: /src/,
+				loader: 'esbuild-loader',
+				options: {
+					loader: 'ts', // handles .ts, .tsx, .js, .jsx
+					target: 'es2018', // replaces @babel/preset-env
+				},
 				exclude: /node_modules/,
 			},
 			{
@@ -183,18 +199,9 @@ const config = {
 			name: (entrypoint) => `runtime~${entrypoint.name}`,
 		},
 		minimizer: [
-			new TerserPlugin({
-				parallel: true,
-				terserOptions: {
-					compress: true,
-					keep_classnames: true,
-					keep_fnames: false,
-					sourceMap: false,
-					safari10: true,
-					parse: {
-						html5_comments: false,
-					},
-				},
+			new (require('esbuild-loader').EsbuildPlugin)({
+				target: 'es2018',
+				minify: true,
 			}),
 			new CssMinimizerPlugin(),
 			new ImageMinimizerPlugin({

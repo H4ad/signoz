@@ -104,13 +104,23 @@ const config = {
 	module: {
 		rules: [
 			{
-				test: [/\.jsx?$/, /\.tsx?$/],
+				test: /\.[jt]sx$/,
 				include: /src/,
-				use: {
-					loader: 'babel-loader',
-					options: {
-						cacheDirectory: true,
-					},
+				loader: 'esbuild-loader',
+				options: {
+					loader: 'tsx', // handles .ts, .tsx, .js, .jsx
+					target: 'es2018', // replaces @babel/preset-env
+					jsx: 'automatic', // replaces @babel/preset-react runtime
+				},
+				exclude: /node_modules/,
+			},
+			{
+				test: /\.[jt]s$/,
+				include: /src/,
+				loader: 'esbuild-loader',
+				options: {
+					loader: 'ts', // handles .ts, .tsx, .js, .jsx
+					target: 'es2018', // replaces @babel/preset-env
 				},
 				exclude: /node_modules/,
 			},

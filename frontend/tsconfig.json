@@ -37,7 +37,6 @@
 		"./src/**/*.ts",
 		"src/**/*.tsx",
 		"src/**/*.d.ts",
-		"./babel.config.js",
 		"./jest.config.ts",
 		"./.eslintrc.js",
 		"./__mocks__",
