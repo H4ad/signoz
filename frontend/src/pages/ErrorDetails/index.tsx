@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
-import { Redirect, useLocation } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { Typography } from 'antd';
 import getByErrorType from 'api/errors/getByErrorTypeAndService';
 import getById from 'api/errors/getById';
@@ -59,7 +59,7 @@ function ErrorDetails(): JSX.Element {
 
 	// if errorType and serviceName is null redirecting to the ALL_ERROR page not now
 	if (groupId === null || timestamp === null) {
-		return <Redirect to={ROUTES.ALL_ERROR} />;
+		return <Navigate to={ROUTES.ALL_ERROR} replace />;
 	}
 
 	// when the api is in loading state

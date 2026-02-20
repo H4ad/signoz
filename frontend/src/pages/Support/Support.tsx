@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useMutation } from 'react-query';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Button, Card, Modal, Typography } from 'antd';
 import logEvent from 'api/common/logEvent';
 import updateCreditCardApi from 'api/v1/checkout/create';
@@ -83,7 +83,7 @@ const supportChannels = [
 ];
 
 export default function Support(): JSX.Element {
-	const history = useHistory();
+	const navigate = useNavigate();
 	const { notifications } = useNotifications();
 	const { trialInfo, featureFlags } = useAppContext();
 	const [isAddCreditCardModalOpen, setIsAddCreditCardModalOpen] = useState(
@@ -96,8 +96,8 @@ export default function Support(): JSX.Element {
 	};
 
 	useEffect(() => {
-		if (history?.location?.state) {
-			const histroyState = history?.location?.state as any;
+		if (location?.state) {
+			const histroyState = location?.state as any;
 
 			if (histroyState && histroyState?.from) {
 				logEvent(`Support : From URL : ${histroyState.from}`, {});

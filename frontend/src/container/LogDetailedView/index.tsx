@@ -1,6 +1,6 @@
 import { memo, useCallback } from 'react';
 import { connect, useDispatch, useSelector } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import LogDetail from 'components/LogDetail';
 import { VIEW_TYPES } from 'components/LogDetail/constants';
 import ROUTES from 'constants/routes';
@@ -33,7 +33,7 @@ function LogDetailedView({
 	getLogs,
 	getLogsAggregate,
 }: LogDetailedViewProps): JSX.Element {
-	const history = useHistory();
+	const navigate = useNavigate();
 	const {
 		detailedLog,
 		searchFilter: { queryString },
@@ -66,9 +66,11 @@ function LogDetailedView({
 				queryString,
 			);
 
-			history.replace(`${ROUTES.OLD_LOGS_EXPLORER}?q=${updatedQueryString}`);
+			navigate(`${ROUTES.OLD_LOGS_EXPLORER}?q=${updatedQueryString}`, {
+				replace: true,
+			});
 		},
-		[history, queryString],
+		[navigate, queryString],
 	);
 
 	const handleClickActionItem = useCallback(

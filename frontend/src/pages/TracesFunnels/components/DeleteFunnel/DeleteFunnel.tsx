@@ -1,5 +1,5 @@
 import { useQueryClient } from 'react-query';
-import { useHistory } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import SignozModal from 'components/SignozModal/SignozModal';
 import { LOCALSTORAGE } from 'constants/localStorage';
 import { REACT_QUERY_KEY } from 'constants/reactQueryKeys';
@@ -30,8 +30,8 @@ function DeleteFunnel({
 	const { notifications } = useNotifications();
 	const queryClient = useQueryClient();
 
-	const history = useHistory();
-	const { pathname } = history.location;
+	const navigate = useNavigate();
+	const { pathname } = useLocation();
 
 	// localStorage hook for funnel steps
 	const localStorageKey = `${LOCALSTORAGE.FUNNEL_STEPS}_${funnelId}`;
@@ -56,7 +56,7 @@ function DeleteFunnel({
 						pathname !== ROUTES.TRACES_FUNNELS &&
 						shouldRedirectToTracesListOnDeleteSuccess
 					) {
-						history.push(ROUTES.TRACES_FUNNELS);
+						navigate(ROUTES.TRACES_FUNNELS);
 						return;
 					}
 					queryClient.invalidateQueries([REACT_QUERY_KEY.GET_FUNNELS_LIST]);

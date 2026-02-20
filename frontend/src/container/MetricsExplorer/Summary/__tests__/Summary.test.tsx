@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
-import { useSearchParams } from 'react-router-dom-v5-compat';
+import { useSearchParams } from 'react-router-dom';
 import { MetricType } from 'api/metricsExplorer/getMetricsList';
 import ROUTES from 'constants/routes';
 import * as useGetMetricsListHooks from 'hooks/metricsExplorer/useGetMetricsList';

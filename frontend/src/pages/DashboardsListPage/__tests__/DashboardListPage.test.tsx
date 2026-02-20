@@ -20,7 +20,7 @@ jest.mock('container/DashboardContainer/DashboardDescription/utils', () => ({
 jest.mock('react-router-dom', () => ({
 	...jest.requireActual('react-router-dom'),
 	useLocation: jest.fn(),
-	useRouteMatch: jest.fn().mockReturnValue({
+	useMatch: jest.fn().mockReturnValue({
 		params: {
 			dashboardId: 4,
 		},

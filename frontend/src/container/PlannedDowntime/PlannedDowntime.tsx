@@ -1,6 +1,6 @@
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { PlusOutlined } from '@ant-design/icons';
 import { Color } from '@signozhq/design-tokens';
 import { Button, Flex, Form, Input, Tooltip, Typography } from 'antd';
@@ -40,7 +40,7 @@ export function PlannedDowntime(): JSX.Element {
 	const [isOpen, setIsOpen] = React.useState(false);
 	const [form] = Form.useForm();
 	const { user } = useAppContext();
-	const history = useHistory();
+	const navigate = useNavigate();
 	const urlQuery = useUrlQuery();
 
 	const [initialValues, setInitialValues] = useState<
@@ -77,7 +77,7 @@ export function PlannedDowntime(): JSX.Element {
 			urlQuery.delete('search');
 		}
 		const url = `/alerts?${urlQuery.toString()}`;
-		history.replace(url);
+		navigate(url, { replace: true });
 	}, 300);
 
 	const handleSearch = (e: ChangeEvent<HTMLInputElement>): void => {

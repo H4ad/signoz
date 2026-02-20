@@ -1,6 +1,5 @@
 import { Suspense, useCallback, useEffect, useState } from 'react';
-import { Route, Router, Switch } from 'react-router-dom';
-import { CompatRouter } from 'react-router-dom-v5-compat';
+import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom';
 import * as Sentry from '@sentry/react';
 import { ConfigProvider } from 'antd';
 import getLocalStorageApi from 'api/browser/localstorage/get';
@@ -23,7 +22,6 @@ import { useGetTenantLicense } from 'hooks/useGetTenantLicense';
 import { NotificationProvider } from 'hooks/useNotifications';
 import { ResourceProvider } from 'hooks/useResourceAttribute';
 import { StatusCodes } from 'http-status-codes';
-import history from 'lib/history';
 import ErrorBoundaryFallback from 'pages/ErrorBoundaryFallback/ErrorBoundaryFallback';
 import posthog from 'posthog-js';
 import { useAppContext } from 'providers/App/App';
@@ -35,14 +33,23 @@ import { PreferenceContextProvider } from 'providers/preferences/context/Prefere
 import { QueryBuilderProvider } from 'providers/QueryBuilder';
 import { LicenseStatus } from 'types/api/licensesV3/getActive';
 import { extractDomain } from 'utils/app';
+import { setNavigate } from 'lib/history';
 
 import { Home } from './pageComponents';
+
+function NavigateSetter(): null {
+	const navigate = useNavigate();
+	useEffect(() => {
+		setNavigate(navigate);
+	}, [navigate]);
+	return null;
+}
 import PrivateRoute from './Private';
 import defaultRoutes, {
 	AppRoutes,
 	LIST_LICENSES,
 	SUPPORT_ROUTE,
-} from './routes';
+} from './routes.tsx';
 
 function App(): JSX.Element {
 	const themeConfig = useThemeConfig();
@@ -347,7 +354,7 @@ function App(): JSX.Element {
 		// this needs to be on top of data missing error because if there is an error, data will never be loaded and it will
 		// move to indefinitive loading
 		if (userFetchError && pathname !== ROUTES.SOMETHING_WENT_WRONG) {
-			history.replace(ROUTES.SOMETHING_WENT_WRONG);
+			window.location.replace(ROUTES.SOMETHING_WENT_WRONG);
 		}
 
 		// if all of the data is not set then return a spinner, this is required because there is some gap between loading states and data setting
@@ -363,48 +370,44 @@ function App(): JSX.Element {
 	return (
 		<Sentry.ErrorBoundary fallback={<ErrorBoundaryFallback />}>
 			<ConfigProvider theme={themeConfig}>
-				<Router history={history}>
-					<CompatRouter>
-						<CmdKProvider>
-							<NotificationProvider>
-								<ErrorModalProvider>
-									{isLoggedInState && <CmdKPalette userRole={user.role} />}
-									{isLoggedInState && (
-										<ShiftHoldOverlayController userRole={user.role} />
-									)}
-									<PrivateRoute>
-										<ResourceProvider>
-											<QueryBuilderProvider>
-												<DashboardProvider>
-													<KeyboardHotkeysProvider>
-														<AppLayout>
-															<PreferenceContextProvider>
-																<Suspense fallback={<Spinner size="large" tip="Loading..." />}>
-																	<Switch>
-																		{routes.map(({ path, component, exact }) => (
-																			<Route
-																				key={`${path}`}
-																				exact={exact}
-																				path={path}
-																				component={component}
-																			/>
-																		))}
-																		<Route exact path="/" component={Home} />
-																		<Route path="*" component={NotFound} />
-																	</Switch>
-																</Suspense>
-															</PreferenceContextProvider>
-														</AppLayout>
-													</KeyboardHotkeysProvider>
-												</DashboardProvider>
-											</QueryBuilderProvider>
-										</ResourceProvider>
-									</PrivateRoute>
-								</ErrorModalProvider>
-							</NotificationProvider>
-						</CmdKProvider>
-					</CompatRouter>
-				</Router>
+				<BrowserRouter>
+					<CmdKProvider>
+						<NotificationProvider>
+							<ErrorModalProvider>
+								{isLoggedInState && <CmdKPalette userRole={user.role} />}
+								{isLoggedInState && <ShiftHoldOverlayController userRole={user.role} />}
+								<PrivateRoute>
+									<ResourceProvider>
+										<QueryBuilderProvider>
+											<DashboardProvider>
+												<KeyboardHotkeysProvider>
+													<AppLayout>
+														<PreferenceContextProvider>
+															<Suspense fallback={<Spinner size="large" tip="Loading..." />}>
+																<NavigateSetter />
+																<Routes>
+																	{routes.map(({ path, element, exact }) => (
+																		<Route
+																			key={`${path}`}
+																			path={exact ? path : `${path}/*`}
+																			element={element}
+																		/>
+																	))}
+																	<Route path="/" element={<Home />} />
+																	<Route path="*" element={<NotFound />} />
+																</Routes>
+															</Suspense>
+														</PreferenceContextProvider>
+													</AppLayout>
+												</KeyboardHotkeysProvider>
+											</DashboardProvider>
+										</QueryBuilderProvider>
+									</ResourceProvider>
+								</PrivateRoute>
+							</ErrorModalProvider>
+						</NotificationProvider>
+					</CmdKProvider>
+				</BrowserRouter>
 			</ConfigProvider>
 		</Sentry.ErrorBoundary>
 	);

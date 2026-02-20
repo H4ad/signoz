@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-syntax */
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useSearchParams } from 'react-router-dom-v5-compat';
+import { useSearchParams } from 'react-router-dom';
 import { LoadingOutlined } from '@ant-design/icons';
 import {
 	Button,

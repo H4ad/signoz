@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import logEvent from 'api/common/logEvent';
 import useUrlQuery from 'hooks/useUrlQuery';
 
@@ -12,7 +12,7 @@ import './Integrations.styles.scss';
 
 function Integrations(): JSX.Element {
 	const urlQuery = useUrlQuery();
-	const history = useHistory();
+	const navigate = useNavigate();
 	const location = useLocation();
 
 	const selectedIntegration = useMemo(() => urlQuery.get('integration'), [
@@ -30,9 +30,9 @@ function Integrations(): JSX.Element {
 				urlQuery.set('integration', '');
 			}
 			const generatedUrl = `${location.pathname}?${urlQuery.toString()}`;
-			history.push(generatedUrl);
+			navigate(generatedUrl);
 		},
-		[history, location.pathname, urlQuery],
+		[navigate, location.pathname, urlQuery],
 	);
 
 	const [activeDetailTab, setActiveDetailTab] = useState<string | null>(

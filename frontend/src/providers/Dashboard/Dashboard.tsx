@@ -12,7 +12,7 @@ import { Layout } from 'react-grid-layout';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, UseQueryResult } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
-import { useRouteMatch } from 'react-router-dom';
+import { useMatch } from 'react-router-dom';
 import { Modal } from 'antd';
 import getDashboard from 'api/v1/dashboards/id/get';
 import locked from 'api/v1/dashboards/id/lock';
@@ -117,14 +117,14 @@ export function DashboardProvider({
 		setDashboardQueryRangeCalled,
 	] = useState<boolean>(false);
 
-	const isDashboardPage = useRouteMatch<Props>({
+	const isDashboardPage = useMatch({
 		path: ROUTES.DASHBOARD,
-		exact: true,
+		end: true,
 	});
 
-	const isDashboardListPage = useRouteMatch<Props>({
+	const isDashboardListPage = useMatch({
 		path: ROUTES.ALL_DASHBOARD,
-		exact: true,
+		end: true,
 	});
 
 	const { showErrorModal } = useErrorModal();
@@ -176,9 +176,9 @@ export function DashboardProvider({
 
 	const [onModal, Content] = Modal.useModal();
 
-	const isDashboardWidgetPage = useRouteMatch<Props>({
+	const isDashboardWidgetPage = useMatch({
 		path: ROUTES.DASHBOARD_WIDGET,
-		exact: true,
+		end: true,
 	});
 
 	const [layouts, setLayouts] = useState<Layout[]>([]);

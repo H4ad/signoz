@@ -5,7 +5,7 @@ import { Select, Space, Typography } from 'antd';
 import Graph from 'components/Graph';
 import { useEffect, useState } from 'react';
 import { connect, useSelector } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+
 import { GetService, getUsageData, UsageDataItem } from 'store/actions';
 import { AppState } from 'store/reducers';
 import { GlobalTime } from 'types/actions/globalTime';
@@ -216,9 +216,7 @@ const mapStateToProps = (
 	};
 };
 
-export const UsageExplorer = withRouter(
-	connect(mapStateToProps, {
-		getUsageData,
-		getServicesList: GetService,
-	})(_UsageExplorer),
-);
+export const UsageExplorer = connect(mapStateToProps, {
+	getUsageData,
+	getServicesList: GetService,
+})(_UsageExplorer);

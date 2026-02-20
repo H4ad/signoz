@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
-import { useSearchParams } from 'react-router-dom-v5-compat';
+import { useSearchParams } from 'react-router-dom';
 import { Button, Menu, Popover, Tooltip } from 'antd';
 import { MetricType } from 'api/metricsExplorer/getMetricsList';
 import { Search } from 'lucide-react';

@@ -8,7 +8,7 @@
 // - Handling widgets with different heights
 
 import { I18nextProvider } from 'react-i18next';
-import { useSearchParams } from 'react-router-dom-v5-compat';
+import { useSearchParams } from 'react-router-dom';
 import { screen } from '@testing-library/react';
 import { PANEL_TYPES } from 'constants/queryBuilder';
 import { DashboardProvider } from 'providers/Dashboard/Dashboard';

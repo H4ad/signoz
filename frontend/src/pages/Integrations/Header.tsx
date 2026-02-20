@@ -1,4 +1,4 @@
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Button, Flex, Typography } from 'antd';
 import ROUTES from 'constants/routes';
 import { ArrowRight } from 'lucide-react';
@@ -8,7 +8,7 @@ import { routePermission } from 'utils/permission';
 import './Integrations.styles.scss';
 
 function Header(): JSX.Element {
-	const history = useHistory();
+	const navigate = useNavigate();
 	const { user } = useAppContext();
 
 	const isGetStartedWithCloudAllowed = routePermission.GET_STARTED_WITH_CLOUD.includes(
@@ -30,7 +30,7 @@ function Header(): JSX.Element {
 					<Button
 						className="periscope-btn primary view-data-sources-btn"
 						type="primary"
-						onClick={(): void => history.push(ROUTES.GET_STARTED_WITH_CLOUD)}
+						onClick={(): void => navigate(ROUTES.GET_STARTED_WITH_CLOUD)}
 					>
 						<span>View 150+ Data Sources</span>
 						<ArrowRight size={14} />

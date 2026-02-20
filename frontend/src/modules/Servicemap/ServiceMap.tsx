@@ -10,7 +10,7 @@ import { whilelistedKeys } from 'hooks/useResourceAttribute/config';
 import { IResourceAttribute } from 'hooks/useResourceAttribute/types';
 import { useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
-import { RouteComponentProps, withRouter } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { getDetailedServiceMapItems, ServiceMapStore } from 'store/actions';
 import { AppState } from 'store/reducers';
 import styled from 'styled-components';
@@ -38,7 +38,7 @@ const Container = styled.div`
 	}
 `;
 
-interface ServiceMapProps extends RouteComponentProps<any> {
+interface ServiceMapProps {
 	serviceMap: ServiceMapStore;
 	globalTime: GlobalTime;
 	getDetailedServiceMapItems: (
@@ -65,6 +65,7 @@ export interface graphDataType {
 
 function ServiceMap(props: ServiceMapProps): JSX.Element {
 	const fgRef = useRef();
+	const location = useLocation();
 
 	const { getDetailedServiceMapItems, globalTime, serviceMap } = props;
 
@@ -123,8 +124,6 @@ const mapStateToProps = (
 	globalTime: state.globalTime,
 });
 
-export default withRouter(
-	connect(mapStateToProps, {
-		getDetailedServiceMapItems,
-	})(ServiceMap),
-);
+export default connect(mapStateToProps, {
+	getDetailedServiceMapItems,
+})(ServiceMap);

@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { InfoCircleOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Button, Spin, Tooltip, Typography } from 'antd';
 import { AxiosError } from 'axios';
@@ -81,7 +81,7 @@ function Filters({
 		[onFilteredSpansChange],
 	);
 	const { search } = useLocation();
-	const history = useHistory();
+	const navigate = useNavigate();
 
 	const handlePrevNext = useCallback(
 		(index: number, spanId?: string): void => {
@@ -92,9 +92,9 @@ function Filters({
 				searchParams.set('spanId', filteredSpanIds[index]);
 			}
 
-			history.replace({ search: searchParams.toString() });
+			navigate({ search: searchParams.toString() }, { replace: true });
 		},
-		[filteredSpanIds, history, search],
+		[filteredSpanIds, navigate, search],
 	);
 
 	const { isFetching, error } = useGetQueryRange(

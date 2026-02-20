@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { toast } from '@signozhq/sonner';
 import getAllChannels from 'api/channels/getAll';
 import { GetRoutingPoliciesResponse } from 'api/routingPolicies/getRoutingPolicies';
@@ -32,7 +32,7 @@ import './styles.scss';
 function useRoutingPolicies(): UseRoutingPoliciesReturn {
 	const queryClient = useQueryClient();
 	const urlQuery = useUrlQuery();
-	const history = useHistory();
+	const navigate = useNavigate();
 
 	// Local state
 	const [searchTerm, setSearchTerm] = useState(urlQuery.get('search') || '');
@@ -57,7 +57,7 @@ function useRoutingPolicies(): UseRoutingPoliciesReturn {
 			urlQuery.delete('search');
 		}
 		const url = `/alerts?${urlQuery.toString()}`;
-		history.replace(url);
+		navigate(url, { replace: true });
 	}, 300);
 
 	const handleSearch = (value: string): void => {

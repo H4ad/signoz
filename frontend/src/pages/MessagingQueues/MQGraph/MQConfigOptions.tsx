@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useCopyToClipboard } from 'react-use';
 import { Color } from '@signozhq/design-tokens';
 import { Button, Select, Spin, Tooltip } from 'antd';
 import { DefaultOptionType } from 'antd/es/select';
 import { SelectMaxTagPlaceholder } from 'components/MessagingQueues/MQCommon/MQCommon';
 import { QueryParams } from 'constants/query';
-import { History, Location } from 'history';
+import type { Location } from 'history';
 import useDebouncedFn from 'hooks/useDebouncedFunction';
 import useUrlQuery from 'hooks/useUrlQuery';
 import { Check, Share2 } from 'lucide-react';
@@ -67,13 +67,13 @@ const useConfigOptions = (
 function setQueryParamsForConfigOptions(
 	value: string[],
 	urlQuery: URLSearchParams,
-	history: History<unknown>,
+	navigate: ReturnType<typeof useNavigate>,
 	location: Location<unknown>,
 	queryParams: QueryParams,
 ): void {
 	urlQuery.set(queryParams, value.join(','));
 	const generatedUrl = `${location.pathname}?${urlQuery.toString()}`;
-	history.replace(generatedUrl);
+	navigate(generatedUrl, { replace: true });
 }
 
 function getConfigValuesFromQueryParams(
@@ -87,12 +87,12 @@ function getConfigValuesFromQueryParams(
 function MessagingQueuesConfigOptions(): JSX.Element {
 	const urlQuery = useUrlQuery();
 	const location = useLocation();
-	const history = useHistory();
+	const navigate = useNavigate();
 
 	const resetTabularConfigDetailsOnChange = (): void => {
 		urlQuery.delete(QueryParams.selectedTimelineQuery);
 		const generatedUrl = `${location.pathname}?${urlQuery.toString()}`;
-		history.replace(generatedUrl);
+		navigate(generatedUrl, { replace: true });
 	};
 
 	const {
@@ -145,7 +145,7 @@ function MessagingQueuesConfigOptions(): JSX.Element {
 						setQueryParamsForConfigOptions(
 							value,
 							urlQuery,
-							history,
+							navigate,
 							location,
 							QueryParams.consumerGrp,
 						);
@@ -177,7 +177,7 @@ function MessagingQueuesConfigOptions(): JSX.Element {
 						setQueryParamsForConfigOptions(
 							value,
 							urlQuery,
-							history,
+							navigate,
 							location,
 							QueryParams.topic,
 						);
@@ -211,7 +211,7 @@ function MessagingQueuesConfigOptions(): JSX.Element {
 						setQueryParamsForConfigOptions(
 							value,
 							urlQuery,
-							history,
+							navigate,
 							location,
 							QueryParams.partition,
 						);

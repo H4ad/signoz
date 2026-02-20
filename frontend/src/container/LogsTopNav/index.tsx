@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import { useQueryClient } from 'react-query';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { PlayCircleFilled } from '@ant-design/icons';
 import { QueryParams } from 'constants/query';
 import {
@@ -22,7 +22,7 @@ import { MetricRangePayloadProps } from 'types/api/metrics/getQueryRange';
 import { LiveButtonStyled } from './styles';
 
 function LogsTopNav(): JSX.Element {
-	const history = useHistory();
+	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 
 	const { stagedQuery, panelType } = useQueryBuilder();
@@ -67,8 +67,8 @@ function LogsTopNav(): JSX.Element {
 
 		const path = `${ROUTES.LIVE_LOGS}?${QueryParams.compositeQuery}=${JSONCompositeQuery}`;
 
-		history.push(path, queryHistoryState);
-	}, [history, panelType, queryClient, stagedQuery]);
+		navigate(path, { state: queryHistoryState });
+	}, [navigate, panelType, queryClient, stagedQuery]);
 
 	const liveButton = useMemo(
 		() => (

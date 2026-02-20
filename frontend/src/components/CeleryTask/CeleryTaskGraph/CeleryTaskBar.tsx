@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Color } from '@signozhq/design-tokens';
 import { QueryParams } from 'constants/query';
 import { PANEL_TYPES } from 'constants/queryBuilder';
@@ -49,7 +49,7 @@ function CeleryTaskBar({
 	queryEnabled: boolean;
 	checkIfDataExists?: (isDataAvailable: boolean) => void;
 }): JSX.Element {
-	const history = useHistory();
+	const navigate = useNavigate();
 	const { pathname } = useLocation();
 	const dispatch = useDispatch();
 	const urlQuery = useUrlQuery();
@@ -67,13 +67,13 @@ function CeleryTaskBar({
 			urlQuery.set(QueryParams.startTime, startTimestamp.toString());
 			urlQuery.set(QueryParams.endTime, endTimestamp.toString());
 			const generatedUrl = `${pathname}?${urlQuery.toString()}`;
-			history.push(generatedUrl);
+			navigate(generatedUrl);
 
 			if (startTimestamp !== endTimestamp) {
 				dispatch(UpdateTimeInterval('custom', [startTimestamp, endTimestamp]));
 			}
 		},
-		[dispatch, history, pathname, urlQuery],
+		[dispatch, navigate, pathname, urlQuery],
 	);
 
 	const [barState, setBarState] = useState<CeleryTaskState>(CeleryTaskState.All);

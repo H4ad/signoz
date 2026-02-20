@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import * as Sentry from '@sentry/react';
 import { QueryParams } from 'constants/query';
 import useUrlQuery from 'hooks/useUrlQuery';
@@ -22,7 +22,7 @@ interface UseVariablesFromUrlReturn {
 
 const useVariablesFromUrl = (): UseVariablesFromUrlReturn => {
 	const urlQuery = useUrlQuery();
-	const history = useHistory();
+	const navigate = useNavigate();
 
 	const getUrlVariables = useCallback((): LocalStoreDashboardVariables => {
 		const variablesParam = urlQuery.get(QueryParams.variables);
@@ -60,11 +60,14 @@ const useVariablesFromUrl = (): UseVariablesFromUrlReturn => {
 				}
 			}
 
-			history.replace({
-				search: params.toString(),
-			});
+			navigate(
+				{
+					search: params.toString(),
+				},
+				{ replace: true },
+			);
 		},
-		[history, urlQuery],
+		[navigate, urlQuery],
 	);
 
 	const updateUrlVariable = useCallback(

@@ -1,7 +1,7 @@
 /* eslint-disable no-nested-ternary */
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useSearchParams } from 'react-router-dom-v5-compat';
+import { useSearchParams } from 'react-router-dom';
 import * as Sentry from '@sentry/react';
 import logEvent from 'api/common/logEvent';
 import { initialQueriesMap } from 'constants/queryBuilder';

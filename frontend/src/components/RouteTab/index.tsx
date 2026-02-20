@@ -2,6 +2,7 @@ import {
 	generatePath,
 	matchPath,
 	useLocation,
+	useNavigate,
 	useParams,
 } from 'react-router-dom';
 import { Tabs, TabsProps } from 'antd';
@@ -17,12 +18,12 @@ function RouteTab({
 	routes,
 	activeKey,
 	onChangeHandler,
-	history,
 	showRightSection,
 	...rest
 }: RouteTabProps & TabsProps): JSX.Element {
 	const params = useParams<Params>();
 	const location = useLocation();
+	const navigate = useNavigate();
 
 	// Find the matching route for the current pathname
 	const currentRoute = routes.find((route) => {
@@ -42,7 +43,7 @@ function RouteTab({
 
 		if (selectedRoute) {
 			const resolvedRoute = generatePath(selectedRoute.route, params);
-			history.push(resolvedRoute);
+			navigate(resolvedRoute);
 		}
 	};
 

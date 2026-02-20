@@ -17,11 +17,11 @@ jest.mock('api/v1/dashboards/id/get');
 jest.mock('api/v1/dashboards/id/lock');
 const mockGetDashboard = jest.mocked(getDashboard);
 
-// Mock useRouteMatch to simulate different route scenarios
-const mockUseRouteMatch = jest.fn();
+// Mock useMatch to simulate different route scenarios
+const mockUseMatch = jest.fn();
 jest.mock('react-router-dom', () => ({
 	...jest.requireActual('react-router-dom'),
-	useRouteMatch: (): any => mockUseRouteMatch(),
+	useMatch: (): any => mockUseMatch(),
 }));
 
 // Mock other dependencies
@@ -96,7 +96,7 @@ function renderWithDashboardProvider(
 	const queryClient = createTestQueryClient();
 
 	// Mock the route match
-	mockUseRouteMatch.mockReturnValue(
+	mockUseMatch.mockReturnValue(
 		routeMatchParams
 			? {
 					path: ROUTES.DASHBOARD,
@@ -211,7 +211,7 @@ describe('Dashboard Provider - Query Key with Route Params', () => {
 			});
 
 			// Change route params to simulate navigation
-			mockUseRouteMatch.mockReturnValue({
+			mockUseMatch.mockReturnValue({
 				path: ROUTES.DASHBOARD,
 				url: `/dashboard/${newDashboardId}`,
 				isExact: true,
@@ -239,7 +239,7 @@ describe('Dashboard Provider - Query Key with Route Params', () => {
 
 		it('should not fetch when not on dashboard page', () => {
 			// Mock no route match (not on dashboard page)
-			mockUseRouteMatch.mockReturnValue(null);
+			mockUseMatch.mockReturnValue(null);
 
 			renderWithDashboardProvider('/some-other-page', null);
 
@@ -249,7 +249,7 @@ describe('Dashboard Provider - Query Key with Route Params', () => {
 
 		it('should handle undefined route params gracefully', async () => {
 			// Mock route match with undefined params
-			mockUseRouteMatch.mockReturnValue({
+			mockUseMatch.mockReturnValue({
 				path: ROUTES.DASHBOARD,
 				url: '/dashboard/undefined',
 				isExact: true,
@@ -270,7 +270,7 @@ describe('Dashboard Provider - Query Key with Route Params', () => {
 			const dashboardId2 = 'dashboard-2';
 
 			// First dashboard
-			mockUseRouteMatch.mockReturnValue({
+			mockUseMatch.mockReturnValue({
 				path: ROUTES.DASHBOARD,
 				url: `/dashboard/${dashboardId1}`,
 				isExact: true,
@@ -292,7 +292,7 @@ describe('Dashboard Provider - Query Key with Route Params', () => {
 			});
 
 			// Second dashboard
-			mockUseRouteMatch.mockReturnValue({
+			mockUseMatch.mockReturnValue({
 				path: ROUTES.DASHBOARD,
 				url: `/dashboard/${dashboardId2}`,
 				isExact: true,

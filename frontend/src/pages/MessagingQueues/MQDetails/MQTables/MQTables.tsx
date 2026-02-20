@@ -2,7 +2,7 @@
 /* eslint-disable react/require-default-props */
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useMutation } from 'react-query';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Skeleton, Table, Typography } from 'antd';
 import logEvent from 'api/common/logEvent';
 import {
@@ -14,7 +14,7 @@ import cx from 'classnames';
 import { ColumnTypeRender } from 'components/Logs/TableView/types';
 import { SOMETHING_WENT_WRONG } from 'constants/api';
 import { QueryParams } from 'constants/query';
-import { History } from 'history';
+import type { NavigateFunction } from 'react-router-dom';
 import { useNotifications } from 'hooks/useNotifications';
 import useUrlQuery from 'hooks/useUrlQuery';
 import { isEmpty } from 'lodash-es';
@@ -41,7 +41,7 @@ const INITIAL_PAGE_SIZE = 10;
 // eslint-disable-next-line sonarjs/cognitive-complexity
 export function getColumns(
 	data: MessagingQueuesPayloadProps['payload'],
-	history: History<unknown>,
+	navigate: NavigateFunction,
 	isProducerOverview?: boolean,
 ): RowData[] {
 	if (data?.result?.length === 0) {
@@ -80,7 +80,7 @@ export function getColumns(
 								onClick={(e): void => {
 									e.preventDefault();
 									e.stopPropagation();
-									history.push(`/services/${encodeURIComponent(text)}`);
+									navigate(`/services/${encodeURIComponent(text)}`);
 								}}
 							>
 								{text}
@@ -147,7 +147,7 @@ function MessagingQueuesTable({
 	const [tableData, setTableData] = useState<any[]>([]);
 	const { notifications } = useNotifications();
 	const urlQuery = useUrlQuery();
-	const history = useHistory();
+	const navigate = useNavigate();
 	const timelineQuery = decodeURIComponent(
 		urlQuery.get(QueryParams.selectedTimelineQuery) || '',
 	);
@@ -197,7 +197,7 @@ function MessagingQueuesTable({
 		{
 			onSuccess: (data) => {
 				if (data.payload) {
-					setColumns(getColumns(data?.payload, history, isProducerOverview));
+					setColumns(getColumns(data?.payload, navigate, isProducerOverview));
 					setTableData(
 						isProducerOverview
 							? getTableDataForProducerLatencyOverview(data?.payload)
@@ -243,13 +243,13 @@ function MessagingQueuesTable({
 		if (selectedRowKeyGenerator(record) === selectedRowKey) {
 			setSelectedRowKey(undefined);
 			setSelectedRows({});
-			setConfigDetail(urlQuery, location, history, {});
+			setConfigDetail(urlQuery, location, navigate, {});
 		} else {
 			setSelectedRowKey(selectedRowKeyGenerator(record));
 			setSelectedRows(record);
 
 			if (!isEmpty(record)) {
-				setConfigDetail(urlQuery, location, history, record);
+				setConfigDetail(urlQuery, location, navigate, record);
 			}
 		}
 	};

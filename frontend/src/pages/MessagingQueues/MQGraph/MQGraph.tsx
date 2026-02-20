@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useRef } from 'react';
 import { useDispatch } from 'react-redux';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import logEvent from 'api/common/logEvent';
 import { FeatureKeys } from 'constants/features';
 import { QueryParams } from 'constants/query';
@@ -44,7 +44,7 @@ function MessagingQueuesGraph(): JSX.Element {
 		[filterItems, dotMetricsEnabled],
 	);
 
-	const history = useHistory();
+	const navigate = useNavigate();
 	const location = useLocation();
 	const isLogEventCalled = useRef<boolean>(false);
 
@@ -68,13 +68,13 @@ function MessagingQueuesGraph(): JSX.Element {
 			urlQuery.set(QueryParams.startTime, startTimestamp.toString());
 			urlQuery.set(QueryParams.endTime, endTimestamp.toString());
 			const generatedUrl = `${pathname}?${urlQuery.toString()}`;
-			history.push(generatedUrl);
+			navigate(generatedUrl);
 
 			if (startTimestamp !== endTimestamp) {
 				dispatch(UpdateTimeInterval('custom', [startTimestamp, endTimestamp]));
 			}
 		},
-		[dispatch, history, pathname, urlQuery],
+		[dispatch, navigate, pathname, urlQuery],
 	);
 
 	const checkIfDataExists = (isDataAvailable: boolean): void => {
@@ -95,7 +95,7 @@ function MessagingQueuesGraph(): JSX.Element {
 				widget={widgetData}
 				headerMenuList={[...ViewMenuAction]}
 				onClickHandler={(xValue, _yValue, _mouseX, _mouseY, data): void => {
-					setSelectedTimelineQuery(urlQuery, xValue, location, history, data);
+					setSelectedTimelineQuery(urlQuery, xValue, location, navigate, data);
 				}}
 				onDragSelect={onDragSelect}
 				customTooltipElement={messagingQueueCustomTooltipText()}

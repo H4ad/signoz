@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useLocation } from 'react-router-dom-v5-compat';
+import { useLocation } from 'react-router-dom';
 import { ThresholdProps } from 'container/NewWidget/RightContainer/Threshold/types';
 import { Query } from 'types/api/queryBuilder/queryBuilderData';
 

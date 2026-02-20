@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Col, Row } from 'antd';
 import logEvent from 'api/common/logEvent';
 import { QueryParams } from 'constants/query';
@@ -47,7 +47,7 @@ function CeleryTaskLatencyGraph({
 	queryEnabled: boolean;
 	checkIfDataExists?: (isDataAvailable: boolean) => void;
 }): JSX.Element {
-	const history = useHistory();
+	const navigate = useNavigate();
 	const { pathname } = useLocation();
 	const dispatch = useDispatch();
 	const urlQuery = useUrlQuery();
@@ -79,13 +79,13 @@ function CeleryTaskLatencyGraph({
 			urlQuery.set(QueryParams.startTime, startTimestamp.toString());
 			urlQuery.set(QueryParams.endTime, endTimestamp.toString());
 			const generatedUrl = `${pathname}?${urlQuery.toString()}`;
-			history.push(generatedUrl);
+			navigate(generatedUrl);
 
 			if (startTimestamp !== endTimestamp) {
 				dispatch(UpdateTimeInterval('custom', [startTimestamp, endTimestamp]));
 			}
 		},
-		[dispatch, history, pathname, urlQuery],
+		[dispatch, navigate, pathname, urlQuery],
 	);
 
 	const selectedFilters = useMemo(

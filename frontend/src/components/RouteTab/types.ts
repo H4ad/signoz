@@ -1,5 +1,4 @@
 import { TabsProps } from 'antd';
-import { History } from 'history';
 
 export type TabRoutes = {
 	name: React.ReactNode;
@@ -12,6 +11,5 @@ export interface RouteTabProps {
 	routes: TabRoutes[];
 	activeKey: TabsProps['activeKey'];
 	onChangeHandler?: (key: string) => void;
-	history: History<unknown>;
 	showRightSection: boolean;
 }

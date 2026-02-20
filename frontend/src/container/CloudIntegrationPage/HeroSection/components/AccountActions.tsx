@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom-v5-compat';
+import { useNavigate } from 'react-router-dom';
 import { Color } from '@signozhq/design-tokens';
 import { Button, Select, Skeleton } from 'antd';
 import { SelectProps } from 'antd/lib';

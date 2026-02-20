@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { connect, useDispatch, useSelector } from 'react-redux';
-import { RouteComponentProps, withRouter } from 'react-router-dom';
-import { useNavigationType, useSearchParams } from 'react-router-dom-v5-compat';
+import { useLocation } from 'react-router-dom';
+import { useNavigationType, useSearchParams } from 'react-router-dom';
 import { SyncOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import getLocalStorageKey from 'api/browser/localstorage/get';
@@ -54,7 +54,6 @@ import './DateTimeSelectionV2.styles.scss';
 function DateTimeSelection({
 	showAutoRefresh,
 	showRefreshText = true,
-	location,
 	updateTimeInterval,
 	globalTimeLoading,
 	showResetButton = false,
@@ -71,6 +70,7 @@ function DateTimeSelection({
 	disableUrlSync = false,
 	showRecentlyUsed = true,
 }: Props): JSX.Element {
+	const location = useLocation();
 	const [formSelector] = Form.useForm();
 	const { safeNavigate } = useSafeNavigate();
 	const navigationType = useNavigationType(); // Returns 'POP' for back/forward navigation
@@ -837,6 +837,6 @@ const mapDispatchToProps = (
 	globalTimeLoading: bindActionCreators(GlobalTimeLoading, dispatch),
 });
 
-type Props = DateTimeSelectionV2Props & DispatchProps & RouteComponentProps;
+type Props = DateTimeSelectionV2Props & DispatchProps;
 
-export default connect(null, mapDispatchToProps)(withRouter(DateTimeSelection));
+export default connect(null, mapDispatchToProps)(DateTimeSelection);

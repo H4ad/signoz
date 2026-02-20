@@ -8,7 +8,7 @@ import {
 	useRef,
 	useState,
 } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { ListRange, Virtuoso, VirtuosoHandle } from 'react-virtuoso';
 import { Tooltip } from 'antd';
 import Color from 'color';
@@ -45,7 +45,7 @@ function Success(props: ISuccessProps): JSX.Element {
 		selectedSpan,
 	} = props;
 	const { search } = useLocation();
-	const history = useHistory();
+	const navigate = useNavigate();
 	const isDarkMode = useIsDarkMode();
 	const virtuosoRef = useRef<VirtuosoHandle>(null);
 	const [hoveredSpanId, setHoveredSpanId] = useState<string>('');
@@ -91,7 +91,7 @@ function Success(props: ISuccessProps): JSX.Element {
 									event.stopPropagation();
 									event.preventDefault();
 									searchParams.set('spanId', span.spanId);
-									history.replace({ search: searchParams.toString() });
+									navigate({ search: searchParams.toString() }, { replace: true });
 								}}
 							>
 								{span.event?.map((event) => {

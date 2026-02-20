@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useSearchParams } from 'react-router-dom-v5-compat';
+import { useSearchParams } from 'react-router-dom';
 import * as Sentry from '@sentry/react';
 import { Card } from 'antd';
 import logEvent from 'api/common/logEvent';

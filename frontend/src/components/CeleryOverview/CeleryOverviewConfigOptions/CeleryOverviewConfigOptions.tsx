@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Row, Select, Spin } from 'antd';
 import {
 	getValuesFromQueryParams,
@@ -36,7 +36,7 @@ export function FilterSelect({
 	);
 
 	const urlQuery = useUrlQuery();
-	const history = useHistory();
+	const navigate = useNavigate();
 	const location = useLocation();
 
 	// Add state to track the current search input
@@ -67,7 +67,7 @@ export function FilterSelect({
 				setQueryParamsFromOptions(
 					value as string[],
 					urlQuery,
-					history,
+					navigate,
 					location,
 					queryParam,
 				);
@@ -78,7 +78,7 @@ export function FilterSelect({
 			handleSearch,
 			shouldSetQueryParams,
 			urlQuery,
-			history,
+			navigate,
 			location,
 			queryParam,
 			onChange,

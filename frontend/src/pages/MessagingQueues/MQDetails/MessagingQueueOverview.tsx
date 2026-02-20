@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Radio } from 'antd';
 import { MessagingQueueServicePayload } from 'api/messagingQueues/getConsumerLagDetails';
 import { getKafkaSpanEval } from 'api/messagingQueues/getKafkaSpanEval';
@@ -31,12 +31,12 @@ function ProducerLatencyTabs({
 }): JSX.Element {
 	const urlQuery = useUrlQuery();
 	const location = useLocation();
-	const history = useHistory();
+	const navigate = useNavigate();
 
 	return (
 		<Radio.Group
 			onChange={(e): void => {
-				setConfigDetail(urlQuery, location, history, {});
+				setConfigDetail(urlQuery, location, navigate, {});
 				setOption(e.target.value);
 			}}
 			value={option}

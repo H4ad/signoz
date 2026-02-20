@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useQueryClient } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { getAggregateKeys } from 'api/queryBuilder/getAttributeKeys';
 import { SOMETHING_WENT_WRONG } from 'constants/api';
 import { OPERATORS, QueryBuilderKeys } from 'constants/queryBuilder';
@@ -44,7 +44,7 @@ export const useActiveLog = (): UseActiveLog => {
 	} = useSelector<AppState, ILogsReducer>((state) => state.logs);
 	const queryClient = useQueryClient();
 	const { pathname } = useLocation();
-	const history = useHistory();
+	const navigate = useNavigate();
 	const { currentQuery, redirectWithQueryBuilderData } = useQueryBuilder();
 	const { notifications } = useNotifications();
 
@@ -196,9 +196,11 @@ export const useActiveLog = (): UseActiveLog => {
 				queryString,
 			);
 
-			history.replace(`${ROUTES.OLD_LOGS_EXPLORER}?q=${updatedQueryString}`);
+			navigate(`${ROUTES.OLD_LOGS_EXPLORER}?q=${updatedQueryString}`, {
+				replace: true,
+			});
 		},
-		[history, queryString],
+		[navigate, queryString],
 	);
 
 	return {

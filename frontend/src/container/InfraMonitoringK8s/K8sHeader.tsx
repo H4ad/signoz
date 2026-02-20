@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { useCallback, useMemo, useState } from 'react';
-import { useSearchParams } from 'react-router-dom-v5-compat';
+import { useSearchParams } from 'react-router-dom';
 import { Button, Select } from 'antd';
 import { initialQueriesMap } from 'constants/queryBuilder';
 import QueryBuilderSearch from 'container/QueryBuilder/filters/QueryBuilderSearch';

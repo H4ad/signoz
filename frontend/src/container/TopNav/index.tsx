@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { matchPath, useHistory } from 'react-router-dom';
+import { matchPath, useLocation } from 'react-router-dom';
 import HeaderRightSection from 'components/HeaderRightSection/HeaderRightSection';
 import ROUTES from 'constants/routes';
 
@@ -10,7 +10,7 @@ import { routesToDisable, routesToSkip } from './DateTimeSelectionV2/constants';
 import './TopNav.styles.scss';
 
 function TopNav(): JSX.Element | null {
-	const { location } = useHistory();
+	const location = useLocation();
 
 	const isRouteToSkip = useMemo(
 		() =>

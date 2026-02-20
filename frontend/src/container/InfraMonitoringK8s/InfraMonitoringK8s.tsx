@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useSearchParams } from 'react-router-dom-v5-compat';
+import { useSearchParams } from 'react-router-dom';
 import { VerticalAlignTopOutlined } from '@ant-design/icons';
 import * as Sentry from '@sentry/react';
 import type { CollapseProps } from 'antd';

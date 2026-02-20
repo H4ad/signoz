@@ -5,7 +5,6 @@ import { TabRoutes } from 'components/RouteTab/types';
 import { initialQueriesMap, PANEL_TYPES } from 'constants/queryBuilder';
 import { useQueryBuilder } from 'hooks/queryBuilder/useQueryBuilder';
 import { useShareBuilderUrl } from 'hooks/queryBuilder/useShareBuilderUrl';
-import history from 'lib/history';
 import { DataSource } from 'types/common/queryBuilder';
 
 import { Explorer, Summary, Views } from './constants';
@@ -33,7 +32,7 @@ function MetricsExplorerPage(): JSX.Element {
 
 	return (
 		<div className="metrics-explorer-page">
-			<RouteTab routes={routes} activeKey={pathname} history={history} />
+			<RouteTab routes={routes} activeKey={pathname} />
 		</div>
 	);
 }

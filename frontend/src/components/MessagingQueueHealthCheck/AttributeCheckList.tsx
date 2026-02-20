@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { ReactNode, useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { CaretDownOutlined, LoadingOutlined } from '@ant-design/icons';
 import {
 	Modal,
@@ -15,7 +15,7 @@ import {
 import { OnboardingStatusResponse } from 'api/messagingQueues/onboarding/getOnboardingStatus';
 import { QueryParams } from 'constants/query';
 import ROUTES from 'constants/routes';
-import { History } from 'history';
+import { NavigateFunction } from 'react-router-dom';
 import { useGetTenantLicense } from 'hooks/useGetTenantLicense';
 import { Bolt, Check, OctagonAlert, X } from 'lucide-react';
 import {
@@ -46,15 +46,13 @@ export enum AttributesFilters {
 function ErrorTitleAndKey({
 	title,
 	parentTitle,
-	history,
+	navigate,
 	isCloudUserVal,
-	errorMsg,
-	isLeaf,
 }: {
 	title: string;
 	parentTitle: string;
 	isCloudUserVal: boolean;
-	history: History<unknown>;
+	navigate: NavigateFunction;
 	errorMsg?: string;
 	isLeaf?: boolean;
 }): TreeDataNode {
@@ -76,7 +74,7 @@ function ErrorTitleAndKey({
 		}
 
 		if (isCloudUserVal && !!link) {
-			history.push(link);
+			navigate(link);
 		} else {
 			window.open(KAFKA_SETUP_DOC_LINK, '_blank');
 		}
@@ -146,7 +144,7 @@ function generateTreeDataNodes(
 	response: OnboardingStatusResponse['data'],
 	parentTitle: string,
 	isCloudUserVal: boolean,
-	history: History<unknown>,
+	navigate: NavigateFunction,
 ): TreeDataNode[] {
 	return response
 		.map((item) => {
@@ -159,7 +157,7 @@ function generateTreeDataNodes(
 						title: item.attribute,
 						errorMsg: item.error_message || '',
 						parentTitle,
-						history,
+						navigate,
 						isCloudUserVal,
 					});
 				}
@@ -182,7 +180,7 @@ function AttributeCheckList({
 		setFilter(value);
 	};
 	const { isCloudUser: isCloudUserVal } = useGetTenantLicense();
-	const history = useHistory();
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		const filteredData = onboardingStatusResponses.map((response) => {
@@ -192,7 +190,7 @@ function AttributeCheckList({
 					errorMsg: response.errorMsg,
 					isLeaf: true,
 					parentTitle: response.title,
-					history,
+					navigate,
 					isCloudUserVal,
 				});
 			}
@@ -210,14 +208,14 @@ function AttributeCheckList({
 					filteredData,
 					response.title,
 					isCloudUserVal,
-					history,
+					navigate,
 				),
 			};
 		});
 
 		setTreeData(filteredData);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [filter, onboardingStatusResponses]);
+	}, [filter, onboardingStatusResponses, navigate, isCloudUserVal]);
 
 	return (
 		<Modal

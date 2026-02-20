@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import { QueryParams } from 'constants/query';
@@ -15,7 +15,7 @@ import { DataSource } from 'types/common/queryBuilder';
 import { constructCompositeQuery } from '../constants';
 
 function BackButton(): JSX.Element {
-	const history = useHistory();
+	const navigate = useNavigate();
 
 	const { updateAllQueriesOperators } = useQueryBuilder();
 
@@ -42,8 +42,8 @@ function BackButton(): JSX.Element {
 
 		const path = `${ROUTES.LOGS_EXPLORER}?${QueryParams.compositeQuery}=${JSONCompositeQuery}`;
 
-		history.push(path);
-	}, [history, compositeQuery, updateAllQueriesOperators]);
+		navigate(path);
+	}, [navigate, compositeQuery, updateAllQueriesOperators]);
 
 	return (
 		<Button icon={<ArrowLeftOutlined />} onClick={handleBack}>

@@ -2,7 +2,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Button, Card, Form, Input, Select, Space, Typography } from 'antd';
 import logEvent from 'api/common/logEvent';
@@ -37,7 +37,7 @@ export interface DataSourceType {
 export default function DataSource(): JSX.Element {
 	const [form] = Form.useForm();
 	const { t } = useTranslation(['common']);
-	const history = useHistory();
+	const navigate = useNavigate();
 
 	const getStartedSource = useUrlQuery().get(QueryParams.getStartedSource);
 
@@ -147,7 +147,7 @@ export default function DataSource(): JSX.Element {
 			dataSource: selectedDataSource?.name,
 			framework: selectedFramework,
 		});
-		history.push(ROUTES.INTEGRATIONS);
+		navigate(ROUTES.INTEGRATIONS);
 	};
 
 	return (

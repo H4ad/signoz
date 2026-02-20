@@ -32,7 +32,7 @@ describe('RouteTab component', () => {
 		const history = createMemoryHistory();
 		render(
 			<Router history={history}>
-				<RouteTab history={history} routes={testRoutes} activeKey="Tab1" />
+				<RouteTab routes={testRoutes} activeKey="Tab1" />
 			</Router>,
 		);
 		expect(screen.getByRole('tab', { name: 'Tab1' })).toBeInTheDocument();
@@ -43,7 +43,7 @@ describe('RouteTab component', () => {
 		const history = createMemoryHistory();
 		render(
 			<Router history={history}>
-				<RouteTab history={history} routes={testRoutes} activeKey="Tab1" />
+				<RouteTab routes={testRoutes} activeKey="Tab1" />
 			</Router>,
 		);
 		const tabs = screen.getAllByRole('tab');
@@ -54,7 +54,7 @@ describe('RouteTab component', () => {
 		const history = createMemoryHistory();
 		render(
 			<Router history={history}>
-				<RouteTab history={history} routes={testRoutes} activeKey="Tab2" />
+				<RouteTab routes={testRoutes} activeKey="Tab1" />
 			</Router>,
 		);
 		expect(
@@ -66,7 +66,7 @@ describe('RouteTab component', () => {
 		const history = createMemoryHistory();
 		render(
 			<Router history={history}>
-				<RouteTab history={history} routes={testRoutes} activeKey="Tab1" />
+				<RouteTab routes={testRoutes} activeKey="Tab1" />
 			</Router>,
 		);
 		expect(history.location.pathname).toBe('/');
@@ -83,7 +83,6 @@ describe('RouteTab component', () => {
 					routes={testRoutes}
 					activeKey="Tab1"
 					onChangeHandler={onChangeHandler}
-					history={history}
 				/>
 			</Router>,
 		);

@@ -1,5 +1,5 @@
 /* eslint-disable sonarjs/no-duplicate-string */
-import { MemoryRouter } from 'react-router-dom-v5-compat';
+import { MemoryRouter } from 'react-router-dom';
 // https://virtuoso.dev/mocking-in-tests/
 import { VirtuosoMockContext } from 'react-virtuoso';
 import {

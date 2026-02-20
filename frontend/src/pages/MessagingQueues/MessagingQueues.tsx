@@ -1,7 +1,7 @@
 /* eslint-disable sonarjs/no-duplicate-string */
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Button } from 'antd';
 import logEvent from 'api/common/logEvent';
 import cx from 'classnames';
@@ -20,7 +20,7 @@ import {
 import './MessagingQueues.styles.scss';
 
 function MessagingQueues(): JSX.Element {
-	const history = useHistory();
+	const navigate = useNavigate();
 	const { t } = useTranslation('messagingQueuesKafkaOverview');
 
 	const redirectToDetailsPage = (callerView?: string): void => {
@@ -29,7 +29,7 @@ function MessagingQueues(): JSX.Element {
 			source: callerView,
 		});
 
-		history.push(
+		navigate(
 			`${ROUTES.MESSAGING_QUEUES_KAFKA_DETAIL}?${QueryParams.mqServiceView}=${callerView}`,
 		);
 	};
@@ -42,7 +42,7 @@ function MessagingQueues(): JSX.Element {
 			link: isCloudUserVal ? link : KAFKA_SETUP_DOC_LINK,
 		});
 		if (isCloudUserVal) {
-			history.push(link);
+			navigate(link);
 		} else {
 			window.open(KAFKA_SETUP_DOC_LINK, '_blank');
 		}

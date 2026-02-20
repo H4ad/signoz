@@ -1,6 +1,6 @@
 import { ReactChild, useCallback, useEffect, useMemo, useState } from 'react';
 import { useQuery } from 'react-query';
-import { matchPath, useLocation } from 'react-router-dom';
+import { matchPath, useLocation, useNavigate } from 'react-router-dom';
 import getLocalStorageApi from 'api/browser/localstorage/get';
 import setLocalStorageApi from 'api/browser/localstorage/set';
 import getAll from 'api/v1/user/get';
@@ -9,7 +9,6 @@ import { LOCALSTORAGE } from 'constants/localStorage';
 import { ORG_PREFERENCES } from 'constants/orgPreferences';
 import ROUTES from 'constants/routes';
 import { useGetTenantLicense } from 'hooks/useGetTenantLicense';
-import history from 'lib/history';
 import { isEmpty } from 'lodash-es';
 import { useAppContext } from 'providers/App/App';
 import { SuccessResponseV2 } from 'types/api';
@@ -27,10 +26,11 @@ import routes, {
 	oldRoutes,
 	ROUTES_NOT_TO_BE_OVERRIDEN,
 	SUPPORT_ROUTE,
-} from './routes';
+} from './routes.tsx';
 
 function PrivateRoute({ children }: PrivateRouteProps): JSX.Element {
 	const location = useLocation();
+	const navigate = useNavigate();
 	const { pathname } = location;
 	const {
 		org,
@@ -49,9 +49,10 @@ function PrivateRoute({ children }: PrivateRouteProps): JSX.Element {
 		() =>
 			new Map(
 				[...routes, LIST_LICENSES, SUPPORT_ROUTE].map((e) => {
-					const currentPath = matchPath(pathname, {
-						path: e.path,
-					});
+					const currentPath = matchPath(
+						{ path: e.path as string, end: false, caseSensitive: false },
+						pathname,
+					);
 					return [currentPath === null ? null : 'current', e];
 				}),
 			),
@@ -108,7 +109,7 @@ function PrivateRoute({ children }: PrivateRouteProps): JSX.Element {
 				// if the current route is allowed to be overriden by org onboarding then only do the same
 				!ROUTES_NOT_TO_BE_OVERRIDEN.includes(pathname)
 			) {
-				history.push(ROUTES.ONBOARDING);
+				navigate(ROUTES.ONBOARDING);
 			}
 		}
 	}, [
@@ -136,7 +137,7 @@ function PrivateRoute({ children }: PrivateRouteProps): JSX.Element {
 			path !== ROUTES.WORKSPACE_LOCKED &&
 			!isRouteEnabledForWorkspaceBlockedState
 		) {
-			history.push(ROUTES.WORKSPACE_LOCKED);
+			navigate(ROUTES.WORKSPACE_LOCKED);
 		}
 	};
 
@@ -144,7 +145,7 @@ function PrivateRoute({ children }: PrivateRouteProps): JSX.Element {
 		const { path } = route;
 
 		if (path && path !== ROUTES.WORKSPACE_ACCESS_RESTRICTED) {
-			history.push(ROUTES.WORKSPACE_ACCESS_RESTRICTED);
+			navigate(ROUTES.WORKSPACE_ACCESS_RESTRICTED);
 		}
 	};
 
@@ -196,7 +197,7 @@ function PrivateRoute({ children }: PrivateRouteProps): JSX.Element {
 		const { path } = route;
 
 		if (path && path !== ROUTES.WORKSPACE_SUSPENDED) {
-			history.push(ROUTES.WORKSPACE_SUSPENDED);
+			navigate(ROUTES.WORKSPACE_SUSPENDED);
 		}
 	};
 
@@ -228,21 +229,16 @@ function PrivateRoute({ children }: PrivateRouteProps): JSX.Element {
 			currentRoute?.path === ROUTES.GET_STARTED &&
 			featureFlags?.find((e) => e.name === FeatureKeys.ONBOARDING_V3)?.active
 		) {
-			history.push(ROUTES.GET_STARTED_WITH_CLOUD);
+			navigate(ROUTES.GET_STARTED_WITH_CLOUD);
 		}
-	}, [currentRoute, featureFlags]);
+	}, [currentRoute, featureFlags, navigate]);
 
 	// eslint-disable-next-line sonarjs/cognitive-complexity
 	useEffect(() => {
 		// if it is an old route navigate to the new route
 		if (isOldRoute) {
 			const redirectUrl = oldNewRoutesMapping[pathname];
-
-			const newLocation = {
-				...location,
-				pathname: redirectUrl,
-			};
-			history.replace(newLocation);
+			navigate(redirectUrl, { replace: true });
 			return;
 		}
 
@@ -260,21 +256,21 @@ function PrivateRoute({ children }: PrivateRouteProps): JSX.Element {
 				if (isLoggedInState) {
 					const route = routePermission[key];
 					if (route && route.find((e) => e === user.role) === undefined) {
-						history.push(ROUTES.UN_AUTHORIZED);
+						navigate(ROUTES.UN_AUTHORIZED);
 					}
 				} else {
 					setLocalStorageApi(LOCALSTORAGE.UNAUTHENTICATED_ROUTE_HIT, pathname);
-					history.push(ROUTES.LOGIN);
+					navigate(ROUTES.LOGIN);
 				}
 			} else if (isLoggedInState) {
 				const fromPathname = getLocalStorageApi(
 					LOCALSTORAGE.UNAUTHENTICATED_ROUTE_HIT,
 				);
 				if (fromPathname) {
-					history.push(fromPathname);
+					navigate(fromPathname);
 					setLocalStorageApi(LOCALSTORAGE.UNAUTHENTICATED_ROUTE_HIT, '');
 				} else if (pathname !== ROUTES.SOMETHING_WENT_WRONG) {
-					history.push(ROUTES.HOME);
+					navigate(ROUTES.HOME);
 				}
 			} else {
 				// do nothing as the unauthenticated routes are LOGIN and SIGNUP and the LOGIN container takes care of routing to signup if
@@ -285,16 +281,24 @@ function PrivateRoute({ children }: PrivateRouteProps): JSX.Element {
 				LOCALSTORAGE.UNAUTHENTICATED_ROUTE_HIT,
 			);
 			if (fromPathname) {
-				history.push(fromPathname);
+				navigate(fromPathname);
 				setLocalStorageApi(LOCALSTORAGE.UNAUTHENTICATED_ROUTE_HIT, '');
 			} else {
-				history.push(ROUTES.HOME);
+				navigate(ROUTES.HOME);
 			}
 		} else {
 			setLocalStorageApi(LOCALSTORAGE.UNAUTHENTICATED_ROUTE_HIT, pathname);
-			history.push(ROUTES.LOGIN);
+			navigate(ROUTES.LOGIN);
 		}
-	}, [isLoggedInState, pathname, user, isOldRoute, currentRoute, location]);
+	}, [
+		isLoggedInState,
+		pathname,
+		user,
+		isOldRoute,
+		currentRoute,
+		location,
+		navigate,
+	]);
 
 	// NOTE: disabling this rule as there is no need to have div
 	// eslint-disable-next-line react/jsx-no-useless-fragment
