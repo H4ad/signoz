@@ -2,7 +2,7 @@ import {
 	NULL_EXPAND,
 	NULL_REMOVE,
 	NULL_RETAIN,
-} from 'container/PanelWrapper/constants';
+} from 'container/PanelWrapper/histogramConstants';
 import { AlignedData } from 'uplot';
 
 /**

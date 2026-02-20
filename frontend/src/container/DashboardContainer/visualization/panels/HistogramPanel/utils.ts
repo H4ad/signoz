@@ -1,6 +1,6 @@
 import { histogramBucketSizes } from '@grafana/data';
 import { PANEL_TYPES } from 'constants/queryBuilder';
-import { DEFAULT_BUCKET_COUNT } from 'container/PanelWrapper/constants';
+import { DEFAULT_BUCKET_COUNT } from 'container/PanelWrapper/histogramConstants';
 import { getLegend } from 'lib/dashboard/getQueryResults';
 import getLabelName from 'lib/getLabelName';
 import { DrawStyle } from 'lib/uPlotV2/config/types';

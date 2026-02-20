@@ -18,7 +18,7 @@ import {
 } from 'constants/queryBuilder';
 import ROUTES from 'constants/routes';
 import { DashboardShortcuts } from 'constants/shortcuts/DashboardShortcuts';
-import { DEFAULT_BUCKET_COUNT } from 'container/PanelWrapper/constants';
+import { DEFAULT_BUCKET_COUNT } from 'container/PanelWrapper/histogramConstants';
 import { useDashboardVariables } from 'hooks/dashboard/useDashboardVariables';
 import { useUpdateDashboard } from 'hooks/dashboard/useUpdateDashboard';
 import { useKeyboardHotkeys } from 'hooks/hotkeys/useKeyboardHotkeys';

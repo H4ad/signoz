@@ -12,7 +12,7 @@ import APIError from 'types/api/error';
 
 import './ReactI18';
 
-import 'styles.scss';
+import './styles.scss';
 
 const queryClient = new QueryClient({
 	defaultOptions: {
