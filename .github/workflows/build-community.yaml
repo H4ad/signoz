@@ -56,6 +56,8 @@ jobs:
       JS_OUTPUT_ARTIFACT_PATH: frontend/build
       DOCKER_BUILD: false
       DOCKER_MANIFEST: false
+      # TODO: Update primus.workflow after merging
+      NODE_VERSION: "24"
   go-build:
     uses: signoz/primus.workflows/.github/workflows/go-build.yaml@main
     needs: [prepare, js-build]

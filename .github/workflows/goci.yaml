@@ -68,7 +68,7 @@ jobs:
       - name: node-install
         uses: actions/setup-node@v5
         with:
-          node-version: "22"
+          node-version: "24"
       - name: docker-community
         shell: bash
         run: |
@@ -96,7 +96,7 @@ jobs:
       - name: node-install
         uses: actions/setup-node@v5
         with:
-          node-version: "22"
+          node-version: "24"
       - name: install-frontend
         run: cd frontend && yarn install
       - name: generate-api-clients
